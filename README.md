@@ -1,3 +1,3 @@
-This is our README :)
+# This is our README :)
 
 That's correct ^^^
