@@ -50,6 +50,15 @@ at being the "best study buddy".
 materials from courses they've already taken. Then, they can use the points they win
 to unlock materials other students have uploaded from the classes they're currently in.  
 
+additions after group session:
+- Study Buddy app will analyze user profile data and recommend 
+users for each other who have compatible courses, schedules, possibly even compatible skill 
+levels
+- There will be an option for TA's to see times when most of their students
+are available, in order to host effective office hours
+- Once groups are formed, Study Buddy will dynamically keep track of group members' 
+schedules, and find ideal meeting times for future study sessions
+
 
 ## Wireframes
 
