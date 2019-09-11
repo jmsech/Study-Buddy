@@ -47,6 +47,15 @@ Integrating with the Spotify and Apple Music APIs
 - View the current playlist and "upvote" or "downvote" any song in the queue
 - The song at the top of the queue will play as soon as the current song finishes
 
+new features after first group session:
+ 
+- keep track of how the user does at Parties (which of their songs are most upvoted/downvoted) 
+- use this Party history to give Users feedback and recommendation what they should add to the queue (the idea is to help you be a  better Party Member)
+- Sound Buster -> if over half of the party "boos" a song as it plays, play a "wah-wah-wah" sound and skip song
+- Save a Party Queue if you want to play it again later
+- Ability for the host to end the party
+- Party Radio mode -> have the same Party Queue play on every Party Member's device (opposed to just the host's) for group listening even when the group isn't physically together!
+
 ## Wireframes
 
 **Start Screen**
