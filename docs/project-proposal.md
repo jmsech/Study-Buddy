@@ -33,7 +33,7 @@ Mobile app, desktop app, web server
 
 ## Features
 
-####Primary
+#### Primary 
 - Students have a profile that includes all the classes they're taking and other weekly commitments, as well
 as classes they're willing to tutor
 - Study Buddy app will analyze user profile data and recommend
@@ -43,7 +43,7 @@ levels
 are available, in order to host effective office hours
 - Once groups are formed, Study Buddy will dynamically keep track of group members'
 schedules, and find ideal meeting times for future study sessions
-####Secondary
+#### Secondary 
 - Students can create events to study with others in the class
 - Each event has a homepage with details (when/where/how many can attend) as well as
 details about the activity ("we'll be working on data structures assignment 4")
@@ -51,7 +51,7 @@ details about the activity ("we'll be working on data structures assignment 4")
 created events for the class
 - Students can indicate whether or not they're attending an event, and it will appear
 on their profile, as well as on the event homepage
-####Tertiary
+#### Tertiary 
 - Students can tutor for a class for payment (ex: $1 per student who attends)
 - Students can also win points by uploading course notes, back tests, other study
 materials from courses they've already taken. Then, they can use the points they win
@@ -63,7 +63,6 @@ at being the "best study buddy".
 
 ## Wireframes
 
-<!--TODO-->
 
 **Events Map (Mobile App)**
 
@@ -71,6 +70,10 @@ at being the "best study buddy".
 
 **Leaderboard and Unlocking Resources**
 ![](wireframe2.png)
+
+**Calendar and Study Session Recommendation**
+<!--TODO-->
+
 
 ## User Stories
 
@@ -110,14 +113,19 @@ Integrate with Facebook API for the messaging/event aspect.
 
 ## Tools
 
-<!--TODO-->
-
 - XCode
 - Swift
 - Java
 - IntelliJ
 - Javascript
 - Gradle
+- Git
+- Jackson
+- SQLite
+- HTML/CSS
+- React
+- JSON
+- Heroku
 
 ## Proof of Concept
 
