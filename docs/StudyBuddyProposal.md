@@ -14,7 +14,8 @@ planning review sessions, and overall success in classes.
 
 # Problem
 
-Students need help meeting others in their classes and forming study groups.
+Students need help meeting others in their classes, forming study groups, and 
+scheduling time to meet to study.
 
 ## Introduction to Domain
 All terms are pretty self explanatory here :)
