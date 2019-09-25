@@ -1,72 +1,9 @@
-# <!-- Title -->
+# This is our README :)
 
-# Elevator Pitch
+From Lab Session 1
 
-<!-- TODO -->
+Rough sketch of our class diagram outline
+![Class Diagram](docs/class_diagram_outline.jpg)
 
-# Problem
-
-<!-- TODO -->
-
-## Introduction to Domain
-
-<!-- TODO -->
-
-# Solution
-
-<!-- TODO -->
-
-## Architecture Overview
-
-<!-- TODO -->
-
-## Features
-
-- <!-- TO -->
-- <!-- DO -->
-
-## Wireframes
-
-**<!-- Description, for example, “Events Map” -->**
-
-(<!-- TODO -->)
-
-## User Stories
-
-<!-- TODO -->
-
-# Viability
-
-## Hardware
-
-<!-- TODO -->
-
-## APIs
-
-<!-- TODO -->
-
-## Tools
-
-<!-- TODO -->
-
-## Proof of Concept
-
-<!-- TODO -->
-
-# Difficulty
-
-<!-- TODO -->
-
-# Market Research
-
-## Users
-
-<!-- TODO -->
-
-## Competition
-
-<!-- TODO -->
-
-# Roadmap
-
-https://github.com/jhu-oose/<!-- TODO -->/projects/<!-- TODO -->
+Brainstorm list of features and which features to prioritize
+![List of Features](docs/features_and_priorities.jpg)
