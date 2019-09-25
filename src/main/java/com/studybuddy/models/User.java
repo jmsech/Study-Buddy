@@ -2,9 +2,9 @@ package com.studybuddy.models;
 
 import java.util.List;
 
-public class User {
+public class User implements Cloneable{
 
-    private int id;
+    private Integer id;
     private String name;
     private Calendar cal;
     private Course[] courseList;

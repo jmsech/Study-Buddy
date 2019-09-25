@@ -2,7 +2,7 @@ package com.studybuddy.models;
 
 import java.util.List;
 
-public class ParticularCourse {
+public class ParticularCourse implements Cloneable{
 
     private Course course;
     private String semester;
