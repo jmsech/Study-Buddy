@@ -1,5 +1,6 @@
 package com.studybuddy.models;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,16 +12,18 @@ public class Course {
     private List<ParticularCourse> semesters;
     private List<ParticularCourse> activeClasses;
     private HashMap<User, String> grades;
+    private LocalDateTime time;
 
-    public Course(String id, String courseNumber, List<User> alumni, List<ParticularCourse> semesters, List<ParticularCourse> activeClasses, HashMap<User, String> grades) {
+    public Course(String id, String courseNumber, List<User> alumni, List<ParticularCourse> semesters, List<ParticularCourse> activeClasses, HashMap<User, String> grades, LocalDateTime time) {
         this.id = id;
         this.courseNumber = courseNumber;
         this.alumni = alumni;
         this.semesters = semesters;
         this.activeClasses = activeClasses;
         this.grades = grades;
+        this.time =  time;
     }
-
+    /*
     public String getId() {
         return id;
     }
@@ -68,4 +71,17 @@ public class Course {
     public void setGrades(HashMap<User, String> grades) {
         this.grades = grades;
     }
+
+    public LocalDateTime getTime() { return time; }
+
+    public void setTime(LocalDateTime time) { this.time = time; }
+
+    */
+    public void generateMatches(){
+        //TODO
+    }
+    public void makeDistribution(){
+        //TODO
+    }
+
 }
