@@ -21,7 +21,7 @@ public class ParticularCourse {
         Instructor = instructor;
         this.classEvents = classEvents;
     }
-
+    /*
     public Course getCourse() {
         return course;
     }
@@ -73,7 +73,7 @@ public class ParticularCourse {
     public void setClassEvents(List<Event> classEvents) {
         this.classEvents = classEvents;
     }
-
+    */
     public void initializeRoster() {
         //TODO
     }
