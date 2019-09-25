@@ -8,4 +8,3 @@ Rough sketch of our class diagram outline
 Brainstorm list of features and which features to prioritize
 ![List of Features](docs/features_and_priorities.jpg)
 
-Testing Git
