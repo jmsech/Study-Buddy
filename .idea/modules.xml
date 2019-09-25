@@ -2,20 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
-<<<<<<< HEAD
-      <module fileurl="file://$PROJECT_DIR$/.idea/2019-group-jhuoosers.iml" filepath="$PROJECT_DIR$/.idea/2019-group-jhuoosers.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" />
->>>>>>> 95d3ce390d8af6ceb87fdb4acba276b1d71a63db
-=======
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
->>>>>>> 56e22bec5945b391985f4df277318449cc4f4362
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.test.iml" />
     </modules>
   </component>
 </project>
