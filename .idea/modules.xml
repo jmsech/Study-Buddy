@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
     </modules>
   </component>
 </project>
