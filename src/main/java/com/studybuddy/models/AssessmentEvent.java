@@ -17,27 +17,27 @@ public class AssessmentEvent extends Event{
 
     public void remind() { /*TODO*/ }
 
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public ParticularCourse getCourse() {
-        return course;
-    }
-
-    public void setCourse(ParticularCourse course) {
-        this.course = course;
-    }
-
-    public List<Event> getStudyEvents() {
-        return studyEvents;
-    }
-
-    public void setStudyEvents(List<Event> studyEvents) {
-        this.studyEvents = studyEvents;
-    }
+//    public double getWeight() {
+//        return weight;
+//    }
+//
+//    public void setWeight(double weight) {
+//        this.weight = weight;
+//    }
+//
+//    public ParticularCourse getCourse() {
+//        return course;
+//    }
+//
+//    public void setCourse(ParticularCourse course) {
+//        this.course = course;
+//    }
+//
+//    public List<Event> getStudyEvents() {
+//        return studyEvents;
+//    }
+//
+//    public void setStudyEvents(List<Event> studyEvents) {
+//        this.studyEvents = studyEvents;
+//    }
 }

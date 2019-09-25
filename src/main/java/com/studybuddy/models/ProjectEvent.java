@@ -19,15 +19,15 @@ public class ProjectEvent extends AssessmentEvent{
         return group;
     }
 
-    public void setGroup(List<User> group) {
-        this.group = group;
-    }
-
-    public List<Event> getMeetings() {
-        return meetings;
-    }
-
-    public void setMeetings(List<Event> meetings) {
-        this.meetings = meetings;
-    }
+//    public void setGroup(List<User> group) {
+//        this.group = group;
+//    }
+//
+//    public List<Event> getMeetings() {
+//        return meetings;
+//    }
+//
+//    public void setMeetings(List<Event> meetings) {
+//        this.meetings = meetings;
+//    }
 }
