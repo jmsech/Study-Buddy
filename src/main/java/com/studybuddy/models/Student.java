@@ -32,6 +32,10 @@ public class Student extends User {
         return null;
     }
 
+    public List<User> findTutor() {
+        //TODO
+        return null;
+    }
     
 
 //    public String getStudentID() {

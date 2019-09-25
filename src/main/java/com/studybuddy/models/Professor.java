@@ -11,19 +11,35 @@ public class Professor extends User{
         super(id, name, cal);
     }
 
-    public List<ParticularCourse> getCurrentCourses() {
-        return currentCourses;
+    public void scheduleOfficeHours() {
+        //TODO
     }
 
-    public void setCurrentCourses(List<ParticularCourse> currentCourses) {
-        this.currentCourses = currentCourses;
+    public void createAssessment() {
+        //TODO
     }
 
-    public List<ParticularCourse> getPastCourses() {
-        return pastCourses;
+    public void scheduleTAMeeting() {
+        //TODO
     }
 
-    public void setPastCourses(List<ParticularCourse> pastCourses) {
-        this.pastCourses = pastCourses;
+    public void sendAssessmentReminder() {
+        //TODO
     }
+
+//    public List<ParticularCourse> getCurrentCourses() {
+//        return currentCourses;
+//    }
+//
+//    public void setCurrentCourses(List<ParticularCourse> currentCourses) {
+//        this.currentCourses = currentCourses;
+//    }
+//
+//    public List<ParticularCourse> getPastCourses() {
+//        return pastCourses;
+//    }
+//
+//    public void setPastCourses(List<ParticularCourse> pastCourses) {
+//        this.pastCourses = pastCourses;
+//    }
 }
