@@ -23,4 +23,14 @@ can then be added to the user's calendar.
 
 ### Design Patterns
 Factory Pattern (The Cache classes are all factories which can produce a lot of cloneable objects)
+
+EventCache:
+This factory design pattern will create all Events, AssessmentEvents, StudyEvents, and ProjectEvents and temporarily store them in a map. This will be used to generate availabilities and reminders.
+UserCache:
+This factory design pattern will create all Users, Students, and Professors and temporarily store them in a map. This will be used by the Server whenever a new user is generated or recommendations are trying to be generated for events.
+CourseCache:
+This factory design pattern will create all Courses and store them in Cache. This will likely be used by a University so that only one body can create Courses.
+ParticularCourseCache:
+This factory design pattern will create all ParticularCourses and temporarily store them in Cache. This will likely be used by a University so that only one body can create classes each semester.
+
 ![Class Diagram](class_diagram.png)
