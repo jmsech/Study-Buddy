@@ -7,8 +7,8 @@ public class Professor extends User{
     private List<ParticularCourse> currentCourses;
     private List<ParticularCourse> pastCourses;
 
-    public Professor(int id, String name, Calendar cal, Course[] courseList) {
-        super(id, name, cal, courseList);
+    public Professor(int id, String name, Calendar cal) {
+        super(id, name, cal);
     }
 
     public List<ParticularCourse> getCurrentCourses() {

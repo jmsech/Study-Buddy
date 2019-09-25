@@ -1,5 +1,7 @@
 package com.studybuddy.models;
 
+import java.util.List;
+
 public class User {
 
     private int id;
@@ -13,35 +15,52 @@ public class User {
         this.cal = cal;
     }
 
-    public int getId() {
-        return id;
+    public void createEvent() {
+        // TODO
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void attendEvent(Event e) {
+        // TODO
     }
 
-    public String getName() {
-        return name;
+    public void declineEvent(Event e) {
+        // TODO
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<Event> getRecommendations() {
+        //  TODO
+        return null;
     }
 
-    public Calendar getCal() {
-        return cal;
-    }
-
-    public void setCal(Calendar cal) {
-        this.cal = cal;
-    }
-
-    public Course[] getCourseList() {
-        return courseList;
-    }
-
-    public void setCourseList(Course[] courseList) {
-        this.courseList = courseList;
-    }
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public Calendar getCal() {
+//        return cal;
+//    }
+//
+//    public void setCal(Calendar cal) {
+//        this.cal = cal;
+//    }
+//
+//    public Course[] getCourseList() {
+//        return courseList;
+//    }
+//
+//    public void setCourseList(Course[] courseList) {
+//        this.courseList = courseList;
+//    }
 }
