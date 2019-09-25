@@ -33,4 +33,4 @@ This factory design pattern will create all Courses and store them in Cache. Thi
 ParticularCourseCache:
 This factory design pattern will create all ParticularCourses and temporarily store them in Cache. This will likely be used by a University so that only one body can create classes each semester.
 
-![Class Diagram](class_diagram.png)
+![Class Diagram](class_diagram.jpg)
