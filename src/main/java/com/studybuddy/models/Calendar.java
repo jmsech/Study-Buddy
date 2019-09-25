@@ -2,5 +2,7 @@ package com.studybuddy.models;
 
 public class Calendar {
 
-    Event[]
+    private List<Event> events;
+
+
 }
