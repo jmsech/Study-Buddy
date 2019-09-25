@@ -38,10 +38,6 @@ public class ParticularCourse {
         this.semester = semester;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -76,5 +72,25 @@ public class ParticularCourse {
 
     public void setClassEvents(List<Event> classEvents) {
         this.classEvents = classEvents;
+    }
+
+    public void initializeRoster() {
+        //TODO
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void createGroup() {
+        //TODO
+    }
+
+    public void getDistribution() {
+        //TODO
+    }
+
+    public void generateOfficeHours() {
+        //TODO
     }
 }
