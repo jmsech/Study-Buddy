@@ -18,7 +18,7 @@ public class University {
         this.professors = professors;
     }
 
-    public String getName() {
+    /*public String getName() {
         return name;
     }
 
@@ -56,5 +56,29 @@ public class University {
 
     public void setProfessors(List<Professor> professors) {
         this.professors = professors;
+    }*/
+
+    public void addStudent(Student student) {
+        //TODO
+    }
+
+    public void removeStudent(Student student) {
+        //TODO
+    }
+
+    public void addCourse(Course course) {
+        //TODO
+    }
+
+    public void removeCourse(Course course) {
+        //TODO
+    }
+
+    public void addProfessor(Course course) {
+        //TODO
+    }
+
+    public void removeProfessor(Course course) {
+        //TODO
     }
 }
