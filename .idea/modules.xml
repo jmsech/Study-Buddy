@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/2019-group-jhuoosers.iml" filepath="$PROJECT_DIR$/.idea/2019-group-jhuoosers.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" filepath="$PROJECT_DIR$/.idea/modules/StudyBuddy.StudyBuddy.test.iml" />
+>>>>>>> 95d3ce390d8af6ceb87fdb4acba276b1d71a63db
     </modules>
   </component>
 </project>
