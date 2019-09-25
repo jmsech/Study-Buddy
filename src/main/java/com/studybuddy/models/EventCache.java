@@ -2,16 +2,16 @@ package com.studybuddy.models;
 
 import java.util.HashMap;
 
-public class ParticularCourseCache {
+public class EventCache {
 
-    private HashMap<Integer, ParticularCourse> courseMap;
+    private HashMap<Integer, Event> eventMap;
 
-    private ParticularCourse makeCourse() {
+    private Event makeEvent() {
         // TODO
         return null;
     }
 
-    private ParticularCourse getCourse(Integer id) {
+    private Event getEvent(Integer id) {
         // TODO
         return null;
     }
@@ -19,4 +19,5 @@ public class ParticularCourseCache {
     private void loadCache() {
         // TODO
     }
+
 }

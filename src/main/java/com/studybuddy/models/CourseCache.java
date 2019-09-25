@@ -11,7 +11,7 @@ public class CourseCache {
         return null;
     }
 
-    private Course getCourse() {
+    private Course getCourse(Integer id) {
         // TODO
         return null;
     }
