@@ -15,6 +15,10 @@ public class Event {
         this.id = id;
     }
 
+    public void addToCalendar(String calendarID) {
+        // TODO
+    }
+
     public LocalDateTime getTime() {
         return time;
     }
