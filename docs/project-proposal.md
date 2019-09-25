@@ -64,7 +64,7 @@ at being the "best study buddy".
 ## Wireframes
 
 
-**Events Map (Mobile App)**
+**Events Map**
 
 ![](wireframeoose.png)
 
@@ -72,7 +72,10 @@ at being the "best study buddy".
 ![](wireframe2.png)
 
 **Calendar and Study Session Recommendation**
-<!--TODO-->
+![](CalandRec.png)
+
+**Generate Recommendations**
+![](GenRec.png)
 
 
 ## User Stories
