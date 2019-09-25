@@ -11,7 +11,8 @@ public class Student extends User {
     private List<ParticularCourse> TAing;
     private List<Course> Tutoring;
 
-    public Student(String studentID, University university) {
+    public Student(int id, String name, Calendar cal, String studentID, University university) {
+        super(id, name, cal);
         this.studentID = studentID;
         this.university = university;
     }

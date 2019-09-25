@@ -7,11 +7,10 @@ public class User {
     private Calendar cal;
     private Course[] courseList;
 
-    public User(int id, String name, Calendar cal, Course[] courseList) {
+    public User(int id, String name, Calendar cal) {
         this.id = id;
         this.name = name;
         this.cal = cal;
-        this.courseList = courseList;
     }
 
     public int getId() {
