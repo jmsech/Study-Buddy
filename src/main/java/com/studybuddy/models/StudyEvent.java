@@ -23,6 +23,8 @@ public class StudyEvent extends Event{
         this.importance = importance;
     }
 
+    public void addUser(User user) { /*TODO*/}
+
     public Location getPlace() {
         return place;
     }

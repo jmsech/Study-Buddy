@@ -15,6 +15,8 @@ public class AssessmentEvent extends Event{
         this.course = course;
     }
 
+    public void remind() { /*TODO*/ }
+
     public double getWeight() {
         return weight;
     }
