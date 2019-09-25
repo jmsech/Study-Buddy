@@ -22,5 +22,5 @@ can then be added to the user's calendar.
 4. Single Responsibility Principle - The Caches only have the responsibility of creating specific cloneable objects. Calendar has the single responsibility of storing a list of events.
 
 ### Design Patterns
-Factory Classes (The Cache classes are all factories)
+Factory Pattern (The Cache classes are all factories which can produce a lot of cloneable objects)
 ![Class Diagram](class_diagram.png)
