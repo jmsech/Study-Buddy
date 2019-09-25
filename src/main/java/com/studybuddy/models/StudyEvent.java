@@ -4,7 +4,7 @@ import javax.xml.stream.Location;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class StudyEvent extends Event {
+public class StudyEvent {
 
     private Location place; // TODO - Fix This
     private List<User> peopleAttending;
