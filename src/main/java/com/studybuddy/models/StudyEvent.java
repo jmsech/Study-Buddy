@@ -25,43 +25,43 @@ public class StudyEvent extends Event{
 
     public void addUser(User user) { /*TODO*/}
 
-    public Location getPlace() {
-        return place;
-    }
+//    public Location getPlace() {
+//        return place;
+//    }
+//
+//    public void setPlace(Location place) {
+//        this.place = place;
+//    }
+//
+//    public List<User> getPeopleAttending() {
+//        return peopleAttending;
+//    }
+//
+//    public void setPeopleAttending(List<User> peopleAttending) {
+//        this.peopleAttending = peopleAttending;
+//    }
 
-    public void setPlace(Location place) {
-        this.place = place;
-    }
-
-    public List<User> getPeopleAttending() {
-        return peopleAttending;
-    }
-
-    public void setPeopleAttending(List<User> peopleAttending) {
-        this.peopleAttending = peopleAttending;
-    }
-
-    public List<User> getPendingInvitations() {
-        return pendingInvitations;
-    }
-
-    public void setPendingInvitations(List<User> pendingInvitations) {
-        this.pendingInvitations = pendingInvitations;
-    }
-
-    public User getHost() {
-        return host;
-    }
-
-    public void setHost(User host) {
-        this.host = host;
-    }
-
-    public double getImportance() {
-        return importance;
-    }
-
-    public void setImportance(double importance) {
-        this.importance = importance;
-    }
+//    public List<User> getPendingInvitations() {
+//        return pendingInvitations;
+//    }
+//
+//    public void setPendingInvitations(List<User> pendingInvitations) {
+//        this.pendingInvitations = pendingInvitations;
+//    }
+//
+//    public User getHost() {
+//        return host;
+//    }
+//
+//    public void setHost(User host) {
+//        this.host = host;
+//    }
+//
+//    public double getImportance() {
+//        return importance;
+//    }
+//
+//    public void setImportance(double importance) {
+//        this.importance = importance;
+//    }
 }
