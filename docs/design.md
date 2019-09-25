@@ -15,5 +15,12 @@ can then be added to the user's calendar.
 - JHU SIS API - use it to add classes based on the JHU SIS catalog, learn from documentation
 
 # Class Diagram
+### Design Principles:
+1. Interface Segregation - TODO
+2. Don't Repeat Yourself - TODO
+3. Liskiv Substitution - TODO
+4. Open-Closed Principle - TODO
 
+### Design Patterns
+Factory Classes - TODO
 ![Class Diagram](classDiagram.png)
