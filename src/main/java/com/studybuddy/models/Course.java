@@ -1,7 +1,7 @@
 package com.studybuddy.models;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class Course implements Cloneable{
@@ -11,10 +11,11 @@ public class Course implements Cloneable{
     private List<User> alumni;
     private List<ParticularCourse> semesters;
     private List<ParticularCourse> activeClasses;
-    private HashMap<User, String> grades;
+    private Map<User, String> grades;
     private LocalDateTime time;
 
-    public Course(String id, String courseNumber, List<User> alumni, List<ParticularCourse> semesters, List<ParticularCourse> activeClasses, HashMap<User, String> grades, LocalDateTime time) {
+    public Course(String id, String courseNumber, List<User> alumni, List<ParticularCourse> semesters,
+                  List<ParticularCourse> activeClasses, Map<User, String> grades, LocalDateTime time) {
         this.id = id;
         this.courseNumber = courseNumber;
         this.alumni = alumni;
@@ -23,7 +24,6 @@ public class Course implements Cloneable{
         this.grades = grades;
         this.time =  time;
     }
-    /*
     public String getId() {
         return id;
     }
@@ -64,11 +64,11 @@ public class Course implements Cloneable{
         this.activeClasses = activeClasses;
     }
 
-    public HashMap<User, String> getGrades() {
+    public Map<User, String> getGrades() {
         return grades;
     }
 
-    public void setGrades(HashMap<User, String> grades) {
+    public void setGrades(Map<User, String> grades) {
         this.grades = grades;
     }
 
@@ -76,7 +76,6 @@ public class Course implements Cloneable{
 
     public void setTime(LocalDateTime time) { this.time = time; }
 
-    */
     public void generateMatches(){
         //TODO
     }
