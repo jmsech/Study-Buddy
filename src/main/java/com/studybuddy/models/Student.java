@@ -1,6 +1,8 @@
 package com.studybuddy.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class Student extends User {
@@ -12,10 +14,15 @@ public class Student extends User {
     private List<ParticularCourse> TAing;
     private List<Course> Tutoring;
 
-    public Student(int id, String name, Calendar cal, String studentID, University university) {
-        super(id, name, cal);
+    public Student(int id, String name, String studentID, University university) {
+        super(id, name);
+        super.setCal(new Calendar(this, new HashSet<Event>()));
         this.studentID = studentID;
-        this.university = university;
+        this.university = null;  // TODO (maybe) If we want to expand to other universities
+    }
+
+    public void addEvent2Calendar(Event e) {
+        super.cal.addEvent(e);
     }
 
     public void generateStudyPlan() {
