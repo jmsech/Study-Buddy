@@ -1,7 +1,7 @@
 package com.studybuddy.models;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class Course implements Cloneable{
@@ -9,21 +9,33 @@ public class Course implements Cloneable{
     private String id;
     private String courseNumber;
     private List<User> alumni;
+    private List<User> potentialTutors;
     private List<ParticularCourse> semesters;
     private List<ParticularCourse> activeClasses;
-    private HashMap<User, String> grades;
+    private Map<User, String> grades;
     private LocalDateTime time;
 
-    public Course(String id, String courseNumber, List<User> alumni, List<ParticularCourse> semesters, List<ParticularCourse> activeClasses, HashMap<User, String> grades, LocalDateTime time) {
+    public Course(String id, String courseNumber, List<User> alumni, List<User> potentialTutors,
+                  List<ParticularCourse> semesters, List<ParticularCourse> activeClasses,
+                  Map<User, String> grades, LocalDateTime time) {
         this.id = id;
         this.courseNumber = courseNumber;
         this.alumni = alumni;
+        this.potentialTutors = potentialTutors;
         this.semesters = semesters;
         this.activeClasses = activeClasses;
         this.grades = grades;
-        this.time =  time;
+        this.time = time;
     }
-    /*
+
+    public List<User> getPotentialTutors() {
+        return potentialTutors;
+    }
+
+    public void setPotentialTutors(List<User> potentialTutors) {
+        this.potentialTutors = potentialTutors;
+    }
+
     public String getId() {
         return id;
     }
@@ -64,11 +76,11 @@ public class Course implements Cloneable{
         this.activeClasses = activeClasses;
     }
 
-    public HashMap<User, String> getGrades() {
+    public Map<User, String> getGrades() {
         return grades;
     }
 
-    public void setGrades(HashMap<User, String> grades) {
+    public void setGrades(Map<User, String> grades) {
         this.grades = grades;
     }
 
@@ -76,7 +88,6 @@ public class Course implements Cloneable{
 
     public void setTime(LocalDateTime time) { this.time = time; }
 
-    */
     public void generateMatches(){
         //TODO
     }
