@@ -18,7 +18,7 @@ public class Student extends User {
         super(id, name);
         super.setCal(new Calendar(this, new HashSet<Event>()));
         this.studentID = studentID;
-        this.university = null;  // TODO (maybe) If we want to expand to other universities
+        this.university = null;  // TODO (maybe) If we want to expand to other universities 
     }
 
     public void addEvent2Calendar(Event e) {
