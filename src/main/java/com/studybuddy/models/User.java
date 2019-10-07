@@ -25,9 +25,32 @@ public class User implements Cloneable{
         this.cal = new Calendar(this, new HashSet<Event>());
     }
 
+    /** Add events to Calendar
+     *
+     * @param usersEvents - events that user is adding to their calendar.
+     */
+    public void addToCalendar(List<Event> usersEvents) {
+        cal.add(usersEvents);
+    }
+
+    /** Remove events from Calendar
+     *
+     * @param usersEvents - Events to be removed from calendar
+     */
+    public void removeFromCalendar(List<Event> usersEvents) {
+        cal.remove(usersEvents);
+    }
+
+    /** Get list of events that user has on their calendar
+     *
+     * @return the events in the users calendar
+     */
+    public Set<Event> getEvents() {
+        return this.cal.getEvents();
+    }
+
     /** Create a StudyEvent
      *
-     * @param id - Unique 12 character int which identifies Event (22xxxxxxxxxx)
      * @param descr - Description of event
      * @param StartTime - Time which the event starts. LocalDateTime will be set to EST
      * @param EndTime - Time which the event ends. LocalDateTime will be set to EST
@@ -96,16 +119,11 @@ public class User implements Cloneable{
         }
     }
 
-
-    public void populateCalendar(List<Event> usersEvents) {
-        cal.populate(usersEvents);
-    }
-
-    public List<Event> getRecommendations() {
-        //  TODO big algo
-        return null;
-    }
-
+    /** Invite a list of users to StudyEvent
+     *
+     * @param e - Event which users are being invited to
+     * @param l - list of users to invite event to
+     */
     public void inviteBuddies(StudyEvent e, List<User> l) {
         ArrayList<User> hosts = new ArrayList<>();
         hosts.add(this);
@@ -115,8 +133,11 @@ public class User implements Cloneable{
         }
     }
 
-    public Set<Event> getEvents() {
-        return this.cal.getEvents();
+    // TODO Iron out kinks in functions below
+
+    public List<Event> getRecommendations() {
+        //  TODO big algo
+        return null;
     }
 
 
@@ -124,6 +145,11 @@ public class User implements Cloneable{
 
 
 
+
+
+
+
+    
 
     //getters
     public int getId() {
