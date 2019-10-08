@@ -1,20 +1,20 @@
 package com.studybuddy.models;
 
-import java.util.Set;
+import java.util.List;
 
 public class Calendar {
 
     // This calendar's owner
     private User owner;
     // The set of events in this calendar
-    private Set<Event> events;
+    private List<Event> events;
 
     /**
      * Constructor based on a set of events.
      * @param events the set of events to add to the calendar
      * @param user the owner of this calendar
      */
-    public Calendar(User user, Set<Event> events) {
+    public Calendar(User user, List<Event> events) {
         this.owner = user;
         this.events = events;
     }
@@ -39,7 +39,7 @@ public class Calendar {
      * Get set of all events in the calendar.
      * @return the set of all events
      */
-    public Set<Event> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
@@ -47,7 +47,7 @@ public class Calendar {
      * Sets a set of events as the events in the calendar.
      * @param events the set of events for the calendar
      */
-    public void setEvents(Set<Event> events) {
+    public void setEvents(List<Event> events) {
         this.events = events;
     }
 

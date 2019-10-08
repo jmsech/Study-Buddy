@@ -9,7 +9,7 @@ import static java.lang.Double.compare;
 
 public class StudyEvent extends Event{
 
-    private Location place; // TODO - Fix This
+    private Location place;
     private List<User> peopleAttending;
     private List<User> pendingInvitations;
     private double importance;

@@ -2,7 +2,6 @@ package com.studybuddy.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ public class User implements Cloneable{
     public User(int id, String name) {
         this.id = id;
         this.name = name;
-        this.cal = new Calendar(this, new HashSet<Event>());
+        this.cal = new Calendar(this, new ArrayList<Event>());
     }
 
     /** Add events to Calendar
@@ -30,7 +29,8 @@ public class User implements Cloneable{
      * @param usersEvents - events that user is adding to their calendar.
      */
     public void addToCalendar(List<Event> usersEvents) {
-        cal.add(usersEvents);
+        // TODO
+        // cal.add(usersEvents);
     }
 
     /** Remove events from Calendar
@@ -38,14 +38,15 @@ public class User implements Cloneable{
      * @param usersEvents - Events to be removed from calendar
      */
     public void removeFromCalendar(List<Event> usersEvents) {
-        cal.remove(usersEvents);
+        // TODO
+        // cal.remove(usersEvents);
     }
 
     /** Get list of events that user has on their calendar
      *
      * @return the events in the users calendar
      */
-    public Set<Event> getEvents() {
+    public List<Event> getEvents() {
         return this.cal.getEvents();
     }
 
@@ -57,7 +58,8 @@ public class User implements Cloneable{
      * @param inviteList - List of Users to invite to event.
      */
     public void createStudyEvent(String descr, LocalDateTime StartTime, LocalDateTime EndTime, List<User> inviteList) {
-        int id = generateID();
+        // TODO
+        // int id = generateID();
         ArrayList<User> hosts = new ArrayList<>();
         hosts.add(this);
         // User can create a study event
@@ -76,7 +78,8 @@ public class User implements Cloneable{
         // they want to attend, so add to calendar
         this.cal.addEvent(e);
         //add user to the event's attending list
-        e.addUser(this);
+        // TODO
+        //e.addUser(this);
     }
 
     /** User decids that they will no longer be attending a StudyEvent
@@ -86,7 +89,8 @@ public class User implements Cloneable{
     public void unattendStudyEvent(StudyEvent e) {
         //if they change their mind & don't want to go anymore
         this.cal.removeEvent(e);
-        e.removeUser(this);
+        // TODO
+        // e.removeUser(this);
         //TODO : (optional) have  a 'trash' list of events you've unattended?
     }
 
@@ -97,8 +101,8 @@ public class User implements Cloneable{
     public void declineStudyEvent(StudyEvent e) {
         // just remove from personal pending list
         this.pendingEvents.remove(e);
-        //remove from event's pending list
-        e.removeFromPending(this);
+        // TODO remove from event's pending list
+        // e.removeFromPending(this);
     }
 
     /** Send user a message to ask if they will be attending the new event.
@@ -110,13 +114,13 @@ public class User implements Cloneable{
         this.pendingEvents.add(e);
         //ask user if they want to go
         // TODO Fix messagePopUp to be able to add items to a pending list
-        boolean going = messagePopUp("You've been invited to " + e.getDescription() + ", would you like to attend?");
-        if (going) {
-            this.attendStudyEvent(e);
-        }
-        else {
-            this.declineStudyEvent(e);
-        }
+//        boolean going = messagePopUp("You've been invited to " + e.getDescription() + ", would you like to attend?");
+//        if (going) {
+//            this.attendStudyEvent(e);
+//        }
+//        else {
+//            this.declineStudyEvent(e);
+//        }
     }
 
     /** Invite a list of users to StudyEvent
@@ -128,8 +132,9 @@ public class User implements Cloneable{
         ArrayList<User> hosts = new ArrayList<>();
         hosts.add(this);
         //invite everyone in the list
-        for (var user:l) {
-            e.invite(user, hosts); //invite adds to pending
+        for (var user : l) {
+            // TODO
+            // e.invite(user, hosts); //invite adds to pending
         }
     }
 

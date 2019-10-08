@@ -44,10 +44,9 @@ public class Student extends User {
 
     public List<User> findTutor(Course c) {
         //messageTutors will reach out to all of the courses' potential tutors and find you a match
-        c.messageTutors();
+        // c.messageTutors();
         return null;
     }
-    
 
     public String getStudentID() {
         return studentID;
