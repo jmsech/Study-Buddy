@@ -13,7 +13,7 @@ public class Server {
         String studentName = "Leandro Facchinetti";
         var student = new Student(id, studentName, studentId, null);
         var StudentController = new StudentController(student);
-        Javalin.create(config -> { config.addStaticFiles("/public"); })
+        Javalin.create(/* ~~TODO put this back when we have frontend~~ config -> { config.addStaticFiles("/public"); }*/)
                 .routes(() -> {
                     path(":id/events", () -> {
                         get(StudentController::getEvents);

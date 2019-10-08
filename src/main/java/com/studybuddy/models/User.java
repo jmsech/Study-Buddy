@@ -3,11 +3,10 @@ package com.studybuddy.models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class User implements Cloneable{
+public class User implements Cloneable {
 
-    private Integer id;
+    private long id;
     private String name;
     protected Calendar cal;
     private Course[] courseList;
@@ -52,18 +51,19 @@ public class User implements Cloneable{
 
     /** Create a StudyEvent
      *
-     * @param descr - Description of event
+     * @param description - Description of event
      * @param StartTime - Time which the event starts. LocalDateTime will be set to EST
      * @param EndTime - Time which the event ends. LocalDateTime will be set to EST
      * @param inviteList - List of Users to invite to event.
      */
-    public void createStudyEvent(String descr, LocalDateTime StartTime, LocalDateTime EndTime, List<User> inviteList) {
-        // TODO
+    public void createStudyEvent(LocalDateTime StartTime, LocalDateTime EndTime, String location, String description,
+                                 List<User> inviteList, double importance) {
+        // TODO - FIX THIS
         // int id = generateID();
         ArrayList<User> hosts = new ArrayList<>();
         hosts.add(this);
         // User can create a study event
-        var userEvent = new StudyEvent(StartTime, EndTime, descr, id, hosts);
+        var userEvent = new StudyEvent(StartTime, EndTime, location, description, hosts, inviteList, importance);
         //add it to their own calendar
         this.attendStudyEvent(userEvent);  //do we want to automatically attend events we create? // TODO (optional)
         //invite the list of other buddies
@@ -157,7 +157,7 @@ public class User implements Cloneable{
 
 
     //getters
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -174,7 +174,7 @@ public class User implements Cloneable{
     }
 
     //setters
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

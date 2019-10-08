@@ -2,13 +2,13 @@ package com.studybuddy.models;
 
 import java.util.List;
 
-public class Professor extends User{
+public class Professor extends User {
 
     private List<ParticularCourse> currentCourses;
     private List<ParticularCourse> pastCourses;
 
     public Professor(int id, String name, Calendar cal) {
-        super(id, name, cal);
+        super(id, name);
     }
 
     public void scheduleOfficeHours() {

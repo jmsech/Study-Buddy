@@ -1,7 +1,7 @@
 package com.studybuddy.models;
 
-import javax.xml.stream.Location;
-import java.util.Date;
+// import javax.xml.stream.Location;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -9,18 +9,17 @@ import static java.lang.Double.compare;
 
 public class StudyEvent extends Event{
 
-    private Location place;
     private List<User> peopleAttending;
     private List<User> pendingInvitations;
+    private String location;
     private double importance;
 
-    public StudyEvent(Date date, String description, int id, Location place,
-                      List<User> peopleAttending, List<User> pendingInvitations,
-                      Set<Integer> hosts, double importance) {
-        super(date, description, id, hosts);
-        this.place = place;
-        this.peopleAttending = peopleAttending;
+    public StudyEvent(LocalDateTime startTime, LocalDateTime endTime, String location, String description,
+                      List<User> hosts, List<User> pendingInvitations, double importance) {
+        super(startTime, endTime, description, hosts);
+        this.peopleAttending = null;
         this.pendingInvitations = pendingInvitations;
+        this.location = location;
         this.importance = importance;
     }
 
@@ -42,22 +41,14 @@ public class StudyEvent extends Event{
         return compare(this.importance, e.getImportance());
     }
 
-    public boolean deleteStudyEvent(int id) {
-        if (this.isHost(id)) {
+    public boolean deleteStudyEvent(User user) {
+        if (this.isHost(user)) {
             this.peopleAttending.clear();
             this.pendingInvitations.clear();
             // TODO notify users?
             return true;
         }
         return false;
-    }
-
-    public Location getPlace() {
-        return place;
-    }
-
-    public void setPlace(Location place) {
-        this.place = place;
     }
 
     public List<User> getPeopleAttending() {
@@ -74,6 +65,14 @@ public class StudyEvent extends Event{
 
     public void setPendingInvitations(List<User> pendingInvitations) {
         this.pendingInvitations = pendingInvitations;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public double getImportance() {

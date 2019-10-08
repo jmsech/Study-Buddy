@@ -1,5 +1,6 @@
 package com.studybuddy.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -12,10 +13,12 @@ public class AssessmentEvent extends Event{
     private ParticularCourse course;
     private List<Event> studyEvents;
 
-    public AssessmentEvent(Date date, String description, int id, Set<Integer> hosts, double weight, ParticularCourse course) {
-        super(date, description, id, hosts);
+    public AssessmentEvent(LocalDateTime startTime, LocalDateTime endTime, String description,
+                           List<User> hosts, double weight, ParticularCourse course, List<Event> studyEvents) {
+        super(startTime, endTime, description, hosts);
         this.weight = weight;
         this.course = course;
+        this.studyEvents = studyEvents;
     }
 
     public void remind() { /*TODO*/ }
@@ -48,8 +51,8 @@ public class AssessmentEvent extends Event{
         this.studyEvents = studyEvents;
     }
 
-    public void deleteStudyEvents(int id, Event e1) {
-        if (this.isHost(id)) {
+    public void deleteStudyEvents(User user, Event e1) {
+        if (this.isHost(user)) {
             studyEvents.remove(e1);
         }
         return;
