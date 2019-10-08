@@ -1,7 +1,8 @@
 package com.studybuddy.models;
 
 import java.time.LocalDateTime;
-// import java.util.Comparator;
+import java.lang.*;
+//import java.util.Comparator;
 import java.util.List;
 
 public class Event {
@@ -45,10 +46,10 @@ public class Event {
 
     public void setHosts(List<User> hosts) { this.hosts = hosts; }
 
-    // TODO? Implement comparator interface
-//    public int compareTo(Event e) {
-//        return this.date.compareTo(e.getDate());
-//    }
+
+   public int compareTo(Event e) {
+        return Long.compare(this.id, e.getId());
+    }
 
     public boolean equals(Event e) {
         return this.id == e.getId();
