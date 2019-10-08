@@ -4,16 +4,19 @@ import com.studybuddy.controllers.StudentController;
 import com.studybuddy.models.Student;
 import io.javalin.Javalin;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class Server {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         int id = 0;
         String studentId = "ABC123";
         String studentName = "Leandro Facchinetti";
         var student = new Student(id, studentName, studentId, null);
         var StudentController = new StudentController(student);
-        Javalin.create(/* ~~TODO put this back when we have frontend~~ config -> { config.addStaticFiles("/public"); }*/)
+        Javalin.create(config -> { config.addStaticFiles("/public"); })
                 .routes(() -> {
                     path(":id/events", () -> {
                         get(StudentController::getEvents);
