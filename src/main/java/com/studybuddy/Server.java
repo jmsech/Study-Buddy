@@ -16,7 +16,7 @@ public class Server {
         String studentId = "ABC123";
         String studentName = "Leandro Facchinetti";
         var student = new Student(id, studentName, studentId, null);
-        var StudentController = new StudentController(student);
+        var StudentController = new StudentController(student, connection);
         Javalin.create(config -> { config.addStaticFiles("/public"); })
                 .routes(() -> {
                     path("events", () -> {
