@@ -7,7 +7,9 @@ import io.javalin.http.Context;
 import java.time.LocalDateTime;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class StudentController {
     private Student student;
@@ -43,10 +45,17 @@ public class StudentController {
     }
 
     public void createEvent(Context ctx) throws SQLException {
-        var statement = connection.createStatement();
-        statement.execute("INSERT INTO events (startTime, endTime, description, hosts) VALUES (CURRENT_TIMESTAMP , CURRENT_TIMESTAMP ,\"\", \"\")");
-        statement.close();
+        var title = ctx.formParam("title", "");
+        // convert form data of format yyyy-mm-ddT00:00 to LocalDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
+        LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
+        // LocalDateTime endTime = ctx.formParam("endTime", LocalDateTime.class).get();
+        var location = ctx.formParam("location", "");
+        var description = ctx.formParam("description", "");
         // TODO change call to consider inviteList and importance
+        //Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
+        student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         ctx.status(201);
     }
 }

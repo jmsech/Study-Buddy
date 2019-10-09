@@ -21,7 +21,12 @@ class NewEventForm extends React.Component {
 
     handleSubmit(event) {
         this.props.flip();
-        const formData = new FormData(event.target);
+        const formData = new FormData();
+        formData.append("title", event.target.title.value)
+        // combine tim/date into the format yyyy-mm-ddT00:00
+        formData.append("startTime", event.target.startDate.value + "T" + event.target.startTime.value)
+        formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
+        fetch(`/events/`, {method: "POST", body: formData})
         alert('Your event was created!');
         event.preventDefault();
     }
@@ -38,13 +43,13 @@ class NewEventForm extends React.Component {
                 <input id="description" name="description" type="text" />
                 <br/>
                 <label htmlFor="startDate">Start date: </label>
-                <input id="startDate" name="startDate" type="date" />
+                <input id="startDate" name="startDate" type="date"/>
                 <br/>
                 <label htmlFor="startTime">Start time: </label>
                 <input id="startTime" name="startTime" type="time" />
                 <br/>
                 <label htmlFor="endDate">End date: </label>
-                <input id="endDate" name="endDate" type="date" />
+                <input id="endDate" name="endDate" type="date"/>
                 <br/>
                 <label htmlFor="endTime">End time: </label>
                 <input id="endTime" name="endTime" type="time" />
