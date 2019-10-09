@@ -28,7 +28,7 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
         formData.append("description", event.target.description.value)
         event.target.reset(); // clear the form entries
-        fetch(`/events/`, {method: "POST", body: formData})
+        fetch(`/events`, {method: "POST", body: formData})
         alert('Your event was created!');
         event.preventDefault();
     }

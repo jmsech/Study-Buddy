@@ -19,7 +19,7 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT INTEGER, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER)");
         statement.close();
     }
 
@@ -57,7 +57,7 @@ public class StudentController {
         student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         //TODO add actual values to the insert
         var statement = connection.createStatement();
-        statement.execute("INSERT INTO events (title,startTime,endTime,description,hosts) VALUES (title,startTime, endTime, description, 1");
+        statement.execute("INSERT INTO events (title,startTime,endTime,description) VALUES (title,startTime, endTime, description");
         statement.close();
         ctx.status(201);
     }
