@@ -2,10 +2,10 @@ class Application extends React.Component {
     render() {
         return (
             <div>
-            <PlusButton className="plus-at-the-top"/>
-            <Header/>
-            <EventList/>
-            <PlusButton className="plus-at-the-bottom"/>
+                <PlusButton className="plus-at-the-top"/>
+                <Header/>
+                <EventList/>
+                <PlusButton className="plus-at-the-bottom"/>
             </div>
     );
     }
