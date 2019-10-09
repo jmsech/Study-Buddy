@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "3dbe46b6-710b-4c02-92dc-09d98de2a62c",
+		"name": "StuddyBuddy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Events",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "37ff3b57-239f-480e-9828-032406ddd234",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8ba983e9-398a-43df-ae52-45d350082a4a",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});",
+							"pm.test(\"Items have identifier and description\", () => {",
+							"    pm.response.json().forEach(item => {",
+							"        pm.expect(item).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\");",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": "[\n\t{\"id\": 1,\"title\": \"study\", \"startTime\": \"2019-10-09T10:30:00\" ,\"endTime\": \"2019-10-09T11:30:00\",\"description\": \"Event 1\"},\n\t{\"id\": 2, \"title\": \"homework\", \"startTime\": \"2019-10-11T11:30:00\" ,\"endTime\": \"2019-10-11T12:30:00\" ,\"description\": \"Event 2\"},\n\t{\"id\": 3, \"title\": \"review\", \"startTime\": \"2019-10-13T16:30:00\" ,\"endTime\": \"2019-10-13T18:00:00\" ,\"description\": \"Event 3\"},\n\t{\"id\": 4, \"title\": \"study 2\", \"startTime\": \"2019-10-16T12:30:00\" ,\"endTime\": \"2019-10-16T14:30:00\" ,\"description\": \"Event 4\"}\n]"
+				}
+			]
+		},
+		{
+			"name": "Create Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7d529064-1984-4211-b193-63455e5163c3",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e58af215-e065-4b0c-857c-66a3299395ad",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Identifiers are always increasing\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/items\", (err, response) => {",
+							"        const identifiers = response.json().map(item => item.identifier).reverse();",
+							"        pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	],
+	"protocolProfileBehavior": {}
+}
