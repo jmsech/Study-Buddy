@@ -66,6 +66,7 @@ public class ParticularCourse implements Cloneable{
      */
     public HashMap<String, Double> getDistribution() {
         //TODO
+        return null;
     }
 
     /** Looks through schedules of students and TA's and determines when best time for office hours are.
