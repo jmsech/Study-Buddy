@@ -18,7 +18,7 @@ public class Server {
         var StudentController = new StudentController(student);
         Javalin.create(config -> { config.addStaticFiles("/public"); })
                 .routes(() -> {
-                    path(":id/events", () -> {
+                    path("events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);
                     });

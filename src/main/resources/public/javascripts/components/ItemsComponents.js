@@ -4,7 +4,7 @@ class PlusButton extends React.Component {
     }
 
     render() {
-        return <button className={this.props.className} onClick={() => { this.handleClick(); }}>+</button>;
+        return <button className={this.props.className} onClick={() => { this.handleClick(); }}>New Event</button>;
     }
 }
 
@@ -24,7 +24,10 @@ class EventList extends React.Component {
     }
 
     render() {
-        return <ul>{this.state.events.map(event => <Event key={event.id} event={event}/>)}</ul>;
+        return <div>
+            <h3>Here are your events:</h3>
+            <ul>{this.state.events.map(event => <Event key={event.id} event={event}/>)}</ul>
+        </div>;
     }
 }
 
