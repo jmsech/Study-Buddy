@@ -19,7 +19,7 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts  Student)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT INTEGER, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER)");
         statement.close();
     }
 
@@ -45,7 +45,7 @@ public class StudentController {
     }
 
     public void createEvent(Context ctx) throws SQLException {
-        var title = ctx.formParam("title", "");
+        var title = ctx.formParam("title", ctx.formParam("title", String.class).get());
         // convert form data of format yyyy-mm-ddT00:00 to LocalDateTime
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
@@ -56,10 +56,9 @@ public class StudentController {
         // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
         student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         //TODO add actual values to the insert
-//        var statement = connection.createStatement();
-//
-//        statement.execute("INSERT INTO events (title,startTime,endTime,description,hosts) VALUES (title,startTime, endTime, description, NULL ");
-//        statement.close();
+        var statement = connection.createStatement();
+        statement.execute("INSERT INTO events (title,startTime,endTime,description,hosts) VALUES (title,startTime, endTime, description, 1");
+        statement.close();
         ctx.status(201);
     }
 }
