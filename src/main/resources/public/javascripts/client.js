@@ -12,8 +12,8 @@ class Application extends React.Component {
         return (
             <div>
                 <Header/>
-                <NewEventButton className="plus-at-the-bottom" flip = {this.flipFormState.bind(this)}/>
-                <NewEventForm showForm = {this.state.showForm} flip = {this.flipFormState.bind(this)}/>
+                <NewEventButton className="plus-at-the-bottom" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                <NewEventForm showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
                 <EventList/>
 
             </div>

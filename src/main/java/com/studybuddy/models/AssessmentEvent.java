@@ -13,9 +13,9 @@ public class AssessmentEvent extends Event{
     private ParticularCourse course;
     private List<Event> studyEvents;
 
-    public AssessmentEvent(LocalDateTime startTime, LocalDateTime endTime, String description,
+    public AssessmentEvent(String title, LocalDateTime startTime, LocalDateTime endTime, String description,
                            List<User> hosts, double weight, ParticularCourse course, List<Event> studyEvents) {
-        super(startTime, endTime, description, hosts);
+        super(title, startTime, endTime, description, hosts);
         this.weight = weight;
         this.course = course;
         this.studyEvents = studyEvents;

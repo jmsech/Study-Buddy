@@ -1,7 +1,8 @@
 class NewEventButton extends React.Component {
     render() {
-        // return <button className={this.props.className} onClick={() => { this.handleClick(); }}>New Event</button>;
-        return <button className={this.props.className} onClick={() => { this.props.flip() }}>New Event</button>;
+        let title = "New Event";
+        if (this.props.showForm) { title = "Cancel" };
+        return <button className={this.props.className} onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
 
@@ -20,7 +21,8 @@ class NewEventForm extends React.Component {
 
     handleSubmit(event) {
         this.props.flip();
-        alert('A name was submitted: ' + this.state.value);
+        const formData = new FormData(event.target);
+        alert('Your event was created!');
         event.preventDefault();
     }
 
@@ -29,14 +31,23 @@ class NewEventForm extends React.Component {
         if (this.props.showForm) { style = {display: "block"}};
         return (
             <form onSubmit={this.handleSubmit} style={style}>
-                <label htmlFor="eventname">Event Name</label>
-                <input id="eventname" name="evnetname" type="text" />
+                <label htmlFor="title">Event name: </label>
+                <input id="title" name="title" type="text" />
                 <br/>
-                <label htmlFor="startdate">Enter start date</label>
-                <input id="startdate" name="startdate" type="date" />
+                <label htmlFor="description">Event description: </label>
+                <input id="description" name="description" type="text" />
                 <br/>
-                <label htmlFor="enddate">Enter end date</label>
-                <input id="enddate" name="enddate" type="date" />
+                <label htmlFor="startDate">Start date: </label>
+                <input id="startDate" name="startDate" type="date" />
+                <br/>
+                <label htmlFor="startTime">Start time: </label>
+                <input id="startTime" name="startTime" type="time" />
+                <br/>
+                <label htmlFor="endDate">End date: </label>
+                <input id="endDate" name="endDate" type="date" />
+                <br/>
+                <label htmlFor="endTime">End time: </label>
+                <input id="endTime" name="endTime" type="time" />
                 <br/>
                 <button>Save Event</button>
             </form>

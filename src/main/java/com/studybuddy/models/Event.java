@@ -8,14 +8,16 @@ import java.util.List;
 public class Event {
 
     private long id;
+    private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String description;
     private List<User> hosts;
     private static long idCounter = 0;
 
-    public Event(LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
+    public Event(String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
         this.id = this.idCounter++;
+        this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
