@@ -17,12 +17,13 @@ public class StudentController {
     }
 
     public void createEvent(Context ctx) {
+        var title = ctx.formParam("title", "");
         LocalDateTime startTime = ctx.formParam("startTime", LocalDateTime.class).get();
         LocalDateTime endTime = ctx.formParam("endTime", LocalDateTime.class).get();
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", "");
         // TODO change call to consider inviteList and importance
-        student.createStudyEvent(startTime, endTime, location, description, null, 1);
+        student.createStudyEvent(title, startTime, endTime, location, description, null, 1);
         ctx.status(201);
     }
 }

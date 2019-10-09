@@ -14,9 +14,9 @@ public class StudyEvent extends Event{
     private String location;
     private double importance;
 
-    public StudyEvent(LocalDateTime startTime, LocalDateTime endTime, String location, String description,
+    public StudyEvent(String title, LocalDateTime startTime, LocalDateTime endTime, String location, String description,
                       List<User> hosts, List<User> pendingInvitations, double importance) {
-        super(startTime, endTime, description, hosts);
+        super(title, startTime, endTime, description, hosts);
         this.peopleAttending = null;
         this.pendingInvitations = pendingInvitations;
         this.location = location;

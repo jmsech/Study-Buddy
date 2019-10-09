@@ -8,9 +8,9 @@ public class ProjectEvent extends AssessmentEvent{
     private List<User> group;
     private List<Event> meetings;
 
-    public ProjectEvent(LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts, double weight,
+    public ProjectEvent(String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts, double weight,
                         ParticularCourse course, List<Event> studyEvents, List<User> group, List<Event> meetings) {
-        super(startTime, endTime, description, hosts, weight, course, studyEvents);
+        super(title, startTime, endTime, description, hosts, weight, course, studyEvents);
         this.group = group;
         this.meetings = meetings;
     }
