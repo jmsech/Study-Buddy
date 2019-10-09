@@ -1,11 +1,42 @@
 class NewEventButton extends React.Component {
-    handleClick() {
-        fetch("/events", { method: "POST" });
+    render() {
+        // return <button className={this.props.className} onClick={() => { this.handleClick(); }}>New Event</button>;
+        return <button className={this.props.className} onClick={() => { this.props.flip() }}>New Event</button>;
+    }
+}
+
+class NewEventForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+        this.props.flip();
+        alert('A name was submitted: ' + this.state.value);
+        event.preventDefault();
     }
 
     render() {
-        return <button className={this.props.className} onClick={() => { this.handleClick(); }}>New Event</button>;
-    }
+        let style = {display: "none"};
+        if (this.props.showForm) { style = {display: "block"}};
+        return (
+            <form onSubmit={this.handleSubmit} style={style}>
+                <label>
+                    Title:
+                    <input type="text" value={this.state.value} onChange={this.handleChange}/>
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
+        );
+        }
 }
 
 class EventList extends React.Component {
