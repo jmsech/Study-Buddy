@@ -4,7 +4,7 @@ class Application extends React.Component {
             <div>
                 <Header/>
                 <EventList/>
-                <PlusButton className="plus-at-the-bottom"/>
+                <NewEventButton className="plus-at-the-bottom"/>
             </div>
         );
     }

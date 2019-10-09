@@ -1,4 +1,4 @@
-class PlusButton extends React.Component {
+class NewEventButton extends React.Component {
     handleClick() {
         fetch("/events", { method: "POST" });
     }
