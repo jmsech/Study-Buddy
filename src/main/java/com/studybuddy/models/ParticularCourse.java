@@ -1,5 +1,7 @@
 package com.studybuddy.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ParticularCourse implements Cloneable{
@@ -18,10 +20,69 @@ public class ParticularCourse implements Cloneable{
         this.active = active;
         this.students = students;
         this.TAs = TAs;
-        Instructor = instructor;
+        this.Instructor = instructor;
         this.classEvents = classEvents;
     }
-    /*
+
+    /** Initialize the roster of students for a ParticularCourse
+     *
+     * @param stu - students that will be enrolled in class. Let List be null if now students in roster yet.
+     */
+    public void initializeRoster(List<User> stu) {
+        if (stu == null) {
+            this.students = new ArrayList<User>();
+        } else {
+            this.students = stu;
+        }
+    }
+
+    /** Add students to roster
+     *
+     * @param stu - students to be added to roster
+     */
+    public void addToRoster(List<User> stu) {
+        this.students.addAll(stu);
+    }
+
+    /** Add students to roster
+     *
+     * @param stu - students to be added to roster
+     */
+    public void removeFromRoster(List<User> stu) {
+        this.students.removeAll(stu);
+    }
+
+    /** Create a group of students (likely for a group project)
+     *
+     * @param stu - students to be added to roster
+     */
+    public void createGroup(List<User> stu) {
+        //TODO
+    }
+
+    /** Returns grade distribution of course in the form of a HashMap
+     *
+     * @return - HashMap maps from grades to percentage of students in each grade range.
+     */
+    public HashMap<String, Double> getDistribution() {
+        //TODO
+    }
+
+    /** Looks through schedules of students and TA's and determines when best time for office hours are.
+     *
+     */
+    public void generateOfficeHours() {
+        //TODO
+    }
+
+    ///////////////////////////////
+    // Getters and Setters Below //
+    ///////////////////////////////
+
+    public boolean isActive() {
+        return active;
+    }
+
     public Course getCourse() {
         return course;
     }
@@ -72,25 +133,5 @@ public class ParticularCourse implements Cloneable{
 
     public void setClassEvents(List<Event> classEvents) {
         this.classEvents = classEvents;
-    }
-    */
-    public void initializeRoster() {
-        //TODO
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void createGroup() {
-        //TODO
-    }
-
-    public void getDistribution() {
-        //TODO
-    }
-
-    public void generateOfficeHours() {
-        //TODO
     }
 }
