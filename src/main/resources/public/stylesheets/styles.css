@@ -1,0 +1,32 @@
+body {
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.plus-at-the-top {
+    float: right;
+}
+
+.plus-at-the-bottom {
+    margin: 0 auto;
+    display: block;
+}
+
+ul {
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    line-height: 25px;
+}
+
+input[type=text] {
+    width: 90%;
+    font-size: 13px;
+    border: none;
+    border-bottom: 1px solid #dedede;
+    outline: none;
+    margin-left: 10px;
+}
