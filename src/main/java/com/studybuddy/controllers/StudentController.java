@@ -29,6 +29,7 @@ public class StudentController {
         while (result.next()) {
             events.add(
                     new Event(
+                            result.getString("title"),
                             result.getTimestamp("startTime").toLocalDateTime(),
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
