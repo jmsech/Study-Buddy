@@ -26,6 +26,8 @@ class NewEventForm extends React.Component {
         // combine tim/date into the format yyyy-mm-ddT00:00
         formData.append("startTime", event.target.startDate.value + "T" + event.target.startTime.value)
         formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
+        formData.append("description", event.target.description.value)
+        event.target.reset(); // clear the form entries
         fetch(`/events/`, {method: "POST", body: formData})
         alert('Your event was created!');
         event.preventDefault();
@@ -35,7 +37,7 @@ class NewEventForm extends React.Component {
         let style = {display: "none"};
         if (this.props.showForm) { style = {display: "block"}};
         return (
-            <form onSubmit={this.handleSubmit} style={style}>
+            <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <label htmlFor="title">Event name: </label>
                 <input id="title" name="title" type="text" />
                 <br/>
@@ -49,7 +51,7 @@ class NewEventForm extends React.Component {
                 <input id="startTime" name="startTime" type="time" />
                 <br/>
                 <label htmlFor="endDate">End date: </label>
-                <input id="endDate" name="endDate" type="date"/>
+                <input id="endDate" name="endDate" type="date" />
                 <br/>
                 <label htmlFor="endTime">End time: </label>
                 <input id="endTime" name="endTime" type="time" />

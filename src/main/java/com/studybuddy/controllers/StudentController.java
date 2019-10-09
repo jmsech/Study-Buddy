@@ -50,11 +50,10 @@ public class StudentController {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
-        // LocalDateTime endTime = ctx.formParam("endTime", LocalDateTime.class).get();
         var location = ctx.formParam("location", "");
-        var description = ctx.formParam("description", "");
+        var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
         // TODO change call to consider inviteList and importance
-        //Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
+        // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
         student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         ctx.status(201);
     }
