@@ -29,11 +29,16 @@ class NewEventForm extends React.Component {
         if (this.props.showForm) { style = {display: "block"}};
         return (
             <form onSubmit={this.handleSubmit} style={style}>
-                <label>
-                    Title:
-                    <input type="text" value={this.state.value} onChange={this.handleChange}/>
-                </label>
-                <input type="submit" value="Submit"/>
+                <label htmlFor="eventname">Event Name</label>
+                <input id="eventname" name="evnetname" type="text" />
+                <br/>
+                <label htmlFor="startdate">Enter start date</label>
+                <input id="startdate" name="startdate" type="date" />
+                <br/>
+                <label htmlFor="enddate">Enter end date</label>
+                <input id="enddate" name="enddate" type="date" />
+                <br/>
+                <button>Save Event</button>
             </form>
         );
         }
