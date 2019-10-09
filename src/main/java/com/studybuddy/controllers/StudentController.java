@@ -19,14 +19,14 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,startTime DATETIME, endTime DATETIME, description TEXT, hosts TEXT)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts  Student)");
         statement.close();
     }
 
     public void getEvents(Context ctx) throws SQLException {
         var events = new ArrayList<Event>();
         var statement = connection.createStatement();
-        var result = statement.executeQuery("SELECT id, startTime, endTime, description, hosts FROM events");
+        var result = statement.executeQuery("SELECT title, startTime, endTime, description FROM events");
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             events.add(
@@ -55,6 +55,11 @@ public class StudentController {
         // TODO change call to consider inviteList and importance
         // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
         student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
+        //TODO add actual values to the insert
+//        var statement = connection.createStatement();
+//
+//        statement.execute("INSERT INTO events (title,startTime,endTime,description,hosts) VALUES (title,startTime, endTime, description, NULL ");
+//        statement.close();
         ctx.status(201);
     }
 }

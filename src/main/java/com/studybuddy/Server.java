@@ -22,6 +22,7 @@ public class Server {
                     path("events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);
+                        put(StudentController::getEvents);
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));
