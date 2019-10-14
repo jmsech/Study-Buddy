@@ -88,7 +88,7 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <li>
+            <li class="event-card">
                 <EventTitle event={this.props.event}/>
                 <EventDescription event={this.props.event}/>
                 <EventDateTime event={this.props.event}/>

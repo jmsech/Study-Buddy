@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3dbe46b6-710b-4c02-92dc-09d98de2a62c",
+		"_postman_id": "4c2cfa26-a649-4456-b22e-6483b95501da",
 		"name": "StuddyBuddy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -65,8 +65,8 @@
 					},
 					"status": "OK",
 					"code": 200,
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
 					"body": "[\n\t{\"id\": 1,\"title\": \"study\", \"startTime\": \"2019-10-09T10:30:00\" ,\"endTime\": \"2019-10-09T11:30:00\",\"description\": \"Event 1\"},\n\t{\"id\": 2, \"title\": \"homework\", \"startTime\": \"2019-10-11T11:30:00\" ,\"endTime\": \"2019-10-11T12:30:00\" ,\"description\": \"Event 2\"},\n\t{\"id\": 3, \"title\": \"review\", \"startTime\": \"2019-10-13T16:30:00\" ,\"endTime\": \"2019-10-13T18:00:00\" ,\"description\": \"Event 3\"},\n\t{\"id\": 4, \"title\": \"study 2\", \"startTime\": \"2019-10-16T12:30:00\" ,\"endTime\": \"2019-10-16T14:30:00\" ,\"description\": \"Event 4\"}\n]"
 				}
@@ -130,10 +130,10 @@
 					},
 					"status": "Created",
 					"code": 201,
-					"_postman_previewlanguage": null,
-					"header": null,
+					"_postman_previewlanguage": "Text",
+					"header": [],
 					"cookie": [],
-					"body": null
+					"body": ""
 				}
 			]
 		}
