@@ -18,6 +18,9 @@ public class Server {
         var student = new Student(id, studentName, studentId, null);
         var StudentController = new StudentController(student, connection);
         Javalin.create(config -> { config.addStaticFiles("/public"); })
+                .events(event -> {
+                    event.serverStopped(() -> { connection.close(); });
+                })
                 .routes(() -> {
                     path("events", () -> {
                         get(StudentController::getEvents);
