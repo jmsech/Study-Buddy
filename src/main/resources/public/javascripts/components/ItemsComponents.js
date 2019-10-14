@@ -88,11 +88,11 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <div>
+            <li>
+                <EventTitle event={this.props.event}/>
                 <EventDescription event={this.props.event}/>
-                <EventStartTime event={this.props.event}/>
-                <EventEndTime event={this.props.event}/>
-            </div>
+                <EventDateTime event={this.props.event}/>
+            </li>
         );
     }
 }
@@ -103,38 +103,18 @@ class EventTitle extends React.Component {
         this.state = null;
     }
 
-    handleFocus() {
-        this.setState({ description: this.props.event.title });
-    }
-
-    handleChange(event) {
-        this.setState({ description: event.target.value });
-    }
-
-    async handleBlur() {
-        const formData = new FormData();
-        formData.append("title", this.state.title);
-        await fetch(`/events/${this.props.event.id}`, { method: "PUT", body: formData });
-        this.setState(null);
-    }
-
     render() {
         return (
-            <input
-                type="text"
-                name="title"
-                autoComplete="off"
-                //value={this.state === null ? this.props.event.title : this.state.title}
-                value={this.props.event.title}
-                onFocus={() => { this.handleFocus(); }}
-                onChange={event => { this.handleChange(event); }}
-                onBlur={() => { this.handleBlur(); }}
-            />
+            <h3>{this.props.event.title}</h3>
         );
     }
 }
 
-class EventStartTime extends React.Component {
+function titleCase(str) {
+    return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
+}
+
+class EventDateTime extends React.Component {
     constructor(props) {
         super(props);
         this.state = null;
@@ -142,41 +122,14 @@ class EventStartTime extends React.Component {
 
     render() {
         return (
-            <p>Start time: {this.props.event.startTime.hour}:{this.props.event.startTime.minute}:{this.props.event.startTime.minute}</p>
-        );
-    }
-}
-class EventEndTime extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = null;
-    }
-
-    handleFocus() {
-        this.setState({endTime: this.props.event.endTime });
-    }
-    handleChange(event) {
-        this.setState({ endTime: event.target.value });
-    }
-
-    async handleBlur() {
-        const formData = new FormData();
-        formData.append("endTime", this.state.endTime);
-        await fetch(`/events/${this.props.event.id}`, { method: "PUT", body: formData });
-        this.setState(null);
-    }
-
-    render() {
-        return (
-            <input
-                type="text"
-                name="endTime"
-                autoComplete="off"
-                value={this.state === null ? this.props.event.endTime : this.state.endTime}
-                onFocus={() => { this.handleFocus(); }}
-                onChange={event => { this.handleChange(event); }}
-                onBlur={() => { this.handleBlur(); }}
-            />
+            <div id="EventDateTime">
+                <p>
+                    {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+                    {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
+                    {this.props.event.startTime.hour}:{("0" + this.props.event.startTime.minute).slice(-2)} -&nbsp;
+                    {this.props.event.endTime.hour}:{("0" + this.props.event.endTime.minute).slice(-2)}
+                </p>
+            </div>
         );
     }
 }
