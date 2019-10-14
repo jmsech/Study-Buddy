@@ -88,10 +88,11 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <li class="event-card">
+            <li className="event-card">
                 <EventTitle event={this.props.event}/>
                 <EventDescription event={this.props.event}/>
                 <EventDateTime event={this.props.event}/>
+                <DeleteButton event={this.props.event}/>
             </li>
         );
     }
@@ -144,5 +145,20 @@ class EventDateTime extends React.Component {
                 </p>
             </div>
         );
+    }
+}
+
+class DeleteButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        const basePath = "/events/";
+        const path = basePath.concat(this.props.event.id);
+        return (
+            <button onClick={() => { fetch(path, {method: "DELETE"}) }}>Delete event</button>
+        )
     }
 }

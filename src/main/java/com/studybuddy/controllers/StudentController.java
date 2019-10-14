@@ -67,4 +67,13 @@ public class StudentController {
         statement.close();
         ctx.status(201);
     }
+
+    public void deleteEvent(Context ctx) throws SQLException {
+        var id = ctx.pathParam("id");
+        var statement = connection.prepareStatement("DELETE FROM events WHERE id = ?");
+        statement.setInt(1, Integer.parseInt(id));
+        statement.executeUpdate();
+        statement.close();
+        ctx.status(200);
+    }
 }

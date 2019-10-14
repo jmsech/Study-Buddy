@@ -19,7 +19,8 @@ ul {
     border: 1px solid black;
     border-radius: 5px;
     padding-left: 5%;
-    padding-right: 5%;
+    padding-rigth: 5%;
+    padding-bottom: 5%;
     margin-top: 10px;
     margin-bottom: 10px;
 }

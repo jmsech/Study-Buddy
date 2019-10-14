@@ -25,6 +25,9 @@ public class Server {
                     path("events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);
+                        path(":id", () -> {
+                            delete(StudentController::deleteEvent);
+                        });
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));
