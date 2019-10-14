@@ -13,10 +13,9 @@ public class Event {
     private LocalDateTime endTime;
     private String description;
     private List<User> hosts;
-    private static long idCounter = 0;
 
-    public Event(String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
-        this.id = this.idCounter++;
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
+        this.id = id;
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;

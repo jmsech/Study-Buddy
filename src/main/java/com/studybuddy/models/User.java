@@ -57,19 +57,19 @@ public class User implements Cloneable {
      * @param EndTime - Time which the event ends. LocalDateTime will be set to EST
      * @param inviteList - List of Users to invite to event.
      */
-    public void createStudyEvent(String title, LocalDateTime StartTime, LocalDateTime EndTime, String location, String description,
-                                 List<User> inviteList, double importance) {
-        // TODO - FIX THIS
-        // int id = generateID();
-        ArrayList<User> hosts = new ArrayList<>();
-        hosts.add(this);
-        // User can create a study event
-        var userEvent = new StudyEvent(title, StartTime, EndTime, location, description, hosts, inviteList, importance);
-        //add it to their own calendar
-        this.attendStudyEvent(userEvent);  //do we want to automatically attend events we create? // TODO (optional)
-        //invite the list of other buddies
-        this.inviteBuddies(userEvent, inviteList);
-    }
+//    public void createStudyEvent(String title, LocalDateTime StartTime, LocalDateTime EndTime, String location, String description,
+//                                 List<User> inviteList, double importance) {
+//        // TODO - FIX THIS
+//        // int id = generateID();
+//        ArrayList<User> hosts = new ArrayList<>();
+//        hosts.add(this);
+//        // User can create a study event
+//        var userEvent = new StudyEvent(id, title, StartTime, EndTime, location, description, hosts, inviteList, importance);
+//        //add it to their own calendar
+//        this.attendStudyEvent(userEvent);  //do we want to automatically attend events we create? // TODO (optional)
+//        //invite the list of other buddies
+//        this.inviteBuddies(userEvent, inviteList);
+//    }
 
     /** User decides that they will attend a StudyEvent
      *

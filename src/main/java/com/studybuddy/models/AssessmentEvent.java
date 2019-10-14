@@ -7,15 +7,15 @@ import java.util.Set;
 
 import static java.lang.Double.compare;
 
-public class AssessmentEvent extends Event{
+public class AssessmentEvent extends Event {
 
     private double weight;
     private ParticularCourse course;
     private List<Event> studyEvents;
 
-    public AssessmentEvent(String title, LocalDateTime startTime, LocalDateTime endTime, String description,
+    public AssessmentEvent(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description,
                            List<User> hosts, double weight, ParticularCourse course, List<Event> studyEvents) {
-        super(title, startTime, endTime, description, hosts);
+        super(id, title, startTime, endTime, description, hosts);
         this.weight = weight;
         this.course = course;
         this.studyEvents = studyEvents;

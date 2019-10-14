@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class StudentController {
     private Student student;
@@ -26,11 +25,12 @@ public class StudentController {
     public void getEvents(Context ctx) throws SQLException {
         var events = new ArrayList<Event>();
         var statement = connection.createStatement();
-        var result = statement.executeQuery("SELECT title, startTime, endTime, description FROM events");
+        var result = statement.executeQuery("SELECT id, title, startTime, endTime, description FROM events");
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             events.add(
                     new Event(
+                            result.getInt("id"),
                             result.getString("title"),
                             result.getTimestamp("startTime").toLocalDateTime(),
                             result.getTimestamp("endTime").toLocalDateTime(),
@@ -49,15 +49,21 @@ public class StudentController {
         // convert form data of format yyyy-mm-ddT00:00 to LocalDateTime
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
+        java.sql.Date sqlStartDate = java.sql.Date.valueOf(startTime.toLocalDate());
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
+        java.sql.Date sqlEndDate = java.sql.Date.valueOf(endTime.toLocalDate());
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
         // TODO change call to consider inviteList and importance
         // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
-        student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
+        // student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         //TODO add actual values to the insert
-        var statement = connection.createStatement();
-        statement.execute("INSERT INTO events (title,startTime,endTime,description) VALUES (title,startTime, endTime, description");
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description) VALUES (?, ?, ?, ?)");
+        statement.setString(1, title);
+        statement.setDate(2, sqlStartDate);
+        statement.setDate(3, sqlEndDate);
+        statement.setString(4, description);
+        statement.executeUpdate();
         statement.close();
         ctx.status(201);
     }

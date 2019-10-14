@@ -28,8 +28,8 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
         formData.append("description", event.target.description.value)
         event.target.reset(); // clear the form entries
-        fetch(`/events`, {method: "POST", body: formData})
-        alert('Your event was created!');
+        fetch("/events", {method: "POST", body: formData})
+        //alert("Your event was created!");
         event.preventDefault();
     }
 
@@ -110,6 +110,19 @@ class EventTitle extends React.Component {
     }
 }
 
+class EventDescription extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <p>{this.props.event.description}</p>
+        );
+    }
+}
+
 function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
 }
@@ -130,19 +143,6 @@ class EventDateTime extends React.Component {
                     {this.props.event.endTime.hour}:{("0" + this.props.event.endTime.minute).slice(-2)}
                 </p>
             </div>
-        );
-    }
-}
-
-class EventDescription extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = null;
-    }
-
-    render() {
-        return (
-            <p>{this.props.event.description}</p>
         );
     }
 }

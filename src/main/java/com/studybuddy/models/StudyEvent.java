@@ -7,16 +7,16 @@ import java.util.Set;
 
 import static java.lang.Double.compare;
 
-public class StudyEvent extends Event{
+public class StudyEvent extends Event {
 
     private List<User> peopleAttending;
     private List<User> pendingInvitations;
     private String location;
     private double importance;
 
-    public StudyEvent(String title, LocalDateTime startTime, LocalDateTime endTime, String location, String description,
+    public StudyEvent(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String location, String description,
                       List<User> hosts, List<User> pendingInvitations, double importance) {
-        super(title, startTime, endTime, description, hosts);
+        super(id, title, startTime, endTime, description, hosts);
         this.peopleAttending = null;
         this.pendingInvitations = pendingInvitations;
         this.location = location;
