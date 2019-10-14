@@ -88,30 +88,32 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <li>
-                <EventStartTime event={this.props.event}/>
-                <EventEndTime   event={this.props.event}/>
+            <div>
                 <EventDescription event={this.props.event}/>
-            </li>
+                <EventStartTime event={this.props.event}/>
+                <EventEndTime event={this.props.event}/>
+            </div>
         );
     }
 }
-class EventStartTime extends React.Component {
+
+class EventTitle extends React.Component {
     constructor(props) {
         super(props);
         this.state = null;
     }
 
     handleFocus() {
-        this.setState({startTime: this.props.event.startTime });
+        this.setState({ description: this.props.event.title });
     }
+
     handleChange(event) {
-        this.setState({ startTime: event.target.value });
+        this.setState({ description: event.target.value });
     }
 
     async handleBlur() {
         const formData = new FormData();
-        formData.append("startTime", this.state.startTime);
+        formData.append("title", this.state.title);
         await fetch(`/events/${this.props.event.id}`, { method: "PUT", body: formData });
         this.setState(null);
     }
@@ -120,13 +122,27 @@ class EventStartTime extends React.Component {
         return (
             <input
                 type="text"
-                name="startTime"
+                name="title"
                 autoComplete="off"
-                value={this.state === null ? this.props.event.startTime : this.state.startTime}
+                //value={this.state === null ? this.props.event.title : this.state.title}
+                value={this.props.event.title}
                 onFocus={() => { this.handleFocus(); }}
                 onChange={event => { this.handleChange(event); }}
                 onBlur={() => { this.handleBlur(); }}
             />
+        );
+    }
+}
+
+class EventStartTime extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <p>Start time: {this.props.event.startTime.hour}:{this.props.event.startTime.minute}:{this.props.event.startTime.minute}</p>
         );
     }
 }
@@ -171,32 +187,9 @@ class EventDescription extends React.Component {
         this.state = null;
     }
 
-    handleFocus() {
-        this.setState({ description: this.props.event.description });
-    }
-
-    handleChange(event) {
-        this.setState({ description: event.target.value });
-    }
-
-    async handleBlur() {
-        const formData = new FormData();
-        formData.append("description", this.state.description);
-        await fetch(`/events/${this.props.event.id}`, { method: "PUT", body: formData });
-        this.setState(null);
-    }
-
     render() {
         return (
-            <input
-                type="text"
-                name="description"
-                autoComplete="off"
-                value={this.state === null ? this.props.event.description : this.state.description}
-                onFocus={() => { this.handleFocus(); }}
-                onChange={event => { this.handleChange(event); }}
-                onBlur={() => { this.handleBlur(); }}
-            />
+            <p>{this.props.event.description}</p>
         );
     }
 }
