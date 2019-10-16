@@ -24,13 +24,18 @@ class NewEventForm extends React.Component {
         const formData = new FormData();
         formData.append("title", event.target.title.value)
         // combine tim/date into the format yyyy-mm-ddT00:00
+        let startDate = new Date (event.target.startDate.value);
         formData.append("startTime", event.target.startDate.value + "T" + event.target.startTime.value)
         formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
         formData.append("description", event.target.description.value)
         event.target.reset(); // clear the form entries
         fetch("/events", {method: "POST", body: formData})
-        //alert("Your event was created!");
         event.preventDefault();
+    }
+
+    componentDidMount() {
+        M.Datepicker.init(document.querySelectorAll('.datepicker'));
+        M.Timepicker.init(document.querySelectorAll('.timepicker'));
     }
 
     render() {
@@ -38,23 +43,35 @@ class NewEventForm extends React.Component {
         if (this.props.showForm) { style = {display: "block"}};
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
-                <label htmlFor="title">Event name: </label>
-                <input id="title" name="title" type="text" />
+                <div className="input-field">
+                    <label htmlFor="title">Event name</label>
+                    <input id="title" name="title" type="text" />
+                </div>
                 <br/>
-                <label htmlFor="description">Event description: </label>
-                <input id="description" name="description" type="text" />
+                <div className="input-field">
+                    <label htmlFor="description">Event description</label>
+                    <input id="description" name="description" type="text" />
+                </div>
                 <br/>
-                <label htmlFor="startDate">Start date: </label>
-                <input id="startDate" name="startDate" type="date"/>
+                <div className="input-field">
+                    <label htmlFor="startDate">Start date</label>
+                    <input id="startDate" type="text" className="datepicker"/>
+                </div>
                 <br/>
-                <label htmlFor="startTime">Start time: </label>
-                <input id="startTime" name="startTime" type="time" />
+                <div className="input-field">
+                    <label htmlFor="startTime">Start time</label>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" />
+                </div>
                 <br/>
-                <label htmlFor="endDate">End date: </label>
-                <input id="endDate" name="endDate" type="date" />
+                <div className="input-field">
+                    <label htmlFor="endDate">End date</label>
+                    <input id="endDate" name="endDate" type="text" className="datepicker" />
+                </div>
                 <br/>
-                <label htmlFor="endTime">End time: </label>
-                <input id="endTime" name="endTime" type="time" />
+                <div className="input-field">
+                    <label htmlFor="endTime">End time</label>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" />
+                </div>
                 <br/>
                 <button>Save Event</button>
             </form>
@@ -88,7 +105,7 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <li className="event-card">
+            <li className="card-panel hoverable teal lighten-2">
                 <EventTitle event={this.props.event}/>
                 <EventDescription event={this.props.event}/>
                 <EventDateTime event={this.props.event}/>

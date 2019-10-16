@@ -5,7 +5,7 @@ class Application extends React.Component {
     }
 
     flipFormState() {
-        this.setState({showForm: !this.state.showForm})
+        this.setState({showForm: !this.state.showForm});
     }
 
     render() {
@@ -29,3 +29,5 @@ const Header = () => (
 );
 
 ReactDOM.render(<Application/>, document.querySelector("#application"));
+
+
