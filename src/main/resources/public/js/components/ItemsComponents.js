@@ -24,9 +24,8 @@ class NewEventForm extends React.Component {
         const formData = new FormData();
         formData.append("title", event.target.title.value)
         // combine tim/date into the format yyyy-mm-ddT00:00
-        let startDate = new Date (event.target.startDate.value);
-        formData.append("startTime", event.target.startDate.value + "T" + event.target.startTime.value)
-        formData.append("endTime", event.target.endDate.value + "T" + event.target.endTime.value)
+        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value)
+        formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value)
         formData.append("description", event.target.description.value)
         event.target.reset(); // clear the form entries
         fetch("/events", {method: "POST", body: formData})
@@ -34,8 +33,14 @@ class NewEventForm extends React.Component {
     }
 
     componentDidMount() {
-        M.Datepicker.init(document.querySelectorAll('.datepicker'));
-        M.Timepicker.init(document.querySelectorAll('.timepicker'));
+        M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+            autoClose: true,
+            showClearBtn: true,
+            format: "yyyy-mm-dd"
+        });
+        M.Timepicker.init(document.querySelectorAll('.timepicker'), {
+            showClearBtn: true
+        });
     }
 
     render() {
@@ -145,6 +150,17 @@ function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
 }
 
+function convertTo12HourFormat(hour, minute) {
+    let ampm = "AM";
+    if (hour > 12) {
+        hour -= 12;
+        ampm = "PM";
+    } else if (hour == 0) {
+        hour = 12;
+    }
+    return ("" + hour + ":" + (("0" + minute).slice(-2)) + " " +  ampm);
+}
+
 class EventDateTime extends React.Component {
     constructor(props) {
         super(props);
@@ -152,13 +168,24 @@ class EventDateTime extends React.Component {
     }
 
     render() {
+        // return (
+        //     <div id="EventDateTime">
+        //         <p>
+        //             {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+        //             {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
+        //             {this.props.event.startTime.hour}:{("0" + this.props.event.startTime.minute).slice(-2)} {startTimeAMPM} -&nbsp;
+        //             {this.props.event.endTime.hour}:{("0" + this.props.event.endTime.minute).slice(-2)}
+        //         </p>
+        //     </div>
+        // );
+
         return (
             <div id="EventDateTime">
                 <p>
                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
-                    {this.props.event.startTime.hour}:{("0" + this.props.event.startTime.minute).slice(-2)} -&nbsp;
-                    {this.props.event.endTime.hour}:{("0" + this.props.event.endTime.minute).slice(-2)}
+                    {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} -&nbsp;
+                    {convertTo12HourFormat(this.props.event.endTime.hour, this.props.event.endTime.minute)}
                 </p>
             </div>
         );

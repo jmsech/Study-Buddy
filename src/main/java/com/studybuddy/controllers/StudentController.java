@@ -47,11 +47,14 @@ public class StudentController {
     public void createEvent(Context ctx) throws SQLException {
         var title = ctx.formParam("title", ctx.formParam("title", String.class).get());
         // convert form data of format yyyy-mm-ddT00:00 to LocalDateTime
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        // DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
-        java.sql.Date sqlStartDate = java.sql.Date.valueOf(startTime.toLocalDate());
+        //java.sql.Date sqlStartDate = java.sql.Date.valueOf(startTime.toLocalDate());
+        java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
-        java.sql.Date sqlEndDate = java.sql.Date.valueOf(endTime.toLocalDate());
+        //java.sql.Date sqlEndDate = java.sql.Date.valueOf(endTime.toLocalDate());
+        java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
         // TODO change call to consider inviteList and importance
@@ -60,8 +63,8 @@ public class StudentController {
         //TODO add actual values to the insert
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description) VALUES (?, ?, ?, ?)");
         statement.setString(1, title);
-        statement.setDate(2, sqlStartDate);
-        statement.setDate(3, sqlEndDate);
+        statement.setTimestamp(2, sqlStartDate);
+        statement.setTimestamp(3, sqlEndDate);
         statement.setString(4, description);
         statement.executeUpdate();
         statement.close();
