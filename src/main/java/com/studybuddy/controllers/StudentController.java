@@ -18,14 +18,16 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER, userID INTEGER)");
         statement.close();
     }
 
     public void getEvents(Context ctx) throws SQLException {
         var events = new ArrayList<Event>();
-        var statement = connection.createStatement();
-        var result = statement.executeQuery("SELECT id, title, startTime, endTime, description FROM events");
+        var userid = ctx.pathParam("userID", Integer.class).get();
+        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description FROM events WHERE userID = ?");
+        statement.setInt(1, userid);
+        var result = statement.executeQuery();
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             events.add(
@@ -57,15 +59,17 @@ public class StudentController {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
+
         // TODO change call to consider inviteList and importance
         // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
         // student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         //TODO add actual values to the insert
-        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description) VALUES (?, ?, ?, ?)");
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);
         statement.setString(4, description);
+        statement.setInt(5, 1);
         statement.executeUpdate();
         statement.close();
         ctx.status(201);
