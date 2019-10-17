@@ -1,0 +1,6 @@
+language: java
+jdk: openjdk12
+script:
+  - ./gradlew assemble
+  - ./gradlew check
+  - ./gradlew run & sleep 5 && npx newman run docs/StudyBuddy.postman_collection.json && kill %1
