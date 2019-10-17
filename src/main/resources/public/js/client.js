@@ -13,8 +13,7 @@ class Application extends React.Component {
             <div>
                 <Header/>
                 <NewEventButton className="new-event-button btn" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                <NewEventForm showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                <User/>
+                <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
 
             </div>
         );

@@ -22,6 +22,7 @@ class NewEventForm extends React.Component {
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
+        formData.append("userID", this.props.userID)
         formData.append("title", event.target.title.value)
         // combine tim/date into the format yyyy-mm-ddT00:00
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value)
@@ -92,7 +93,7 @@ class EventList extends React.Component {
     }
 
     async getDataFromServer() {
-        this.setState({ events: await (await fetch("/events")).json() });
+        this.setState({ events: await (await fetch(`/events${this.props.userID}`)).json() });
         window.setTimeout(() => { this.getDataFromServer(); }, 200);
     }
 
