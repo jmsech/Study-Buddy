@@ -79,7 +79,7 @@ class NewEventForm extends React.Component {
                     <input id="endTime" name="endTime" type="text" className="timepicker" />
                 </div>
                 <br/>
-                <button className="btn black-text">Save Event</button>
+                <button className="btn white-text">Save Event</button>
             </form>
         );
         }
