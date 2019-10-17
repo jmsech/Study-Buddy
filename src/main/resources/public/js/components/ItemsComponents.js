@@ -36,7 +36,8 @@ class NewEventForm extends React.Component {
         M.Datepicker.init(document.querySelectorAll('.datepicker'), {
             autoClose: true,
             showClearBtn: true,
-            format: "yyyy-mm-dd"
+            format: "yyyy-mm-dd",
+            minDate: (new Date())
         });
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
@@ -168,17 +169,6 @@ class EventDateTime extends React.Component {
     }
 
     render() {
-        // return (
-        //     <div id="EventDateTime">
-        //         <p>
-        //             {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
-        //             {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
-        //             {this.props.event.startTime.hour}:{("0" + this.props.event.startTime.minute).slice(-2)} {startTimeAMPM} -&nbsp;
-        //             {this.props.event.endTime.hour}:{("0" + this.props.event.endTime.minute).slice(-2)}
-        //         </p>
-        //     </div>
-        // );
-
         return (
             <div id="EventDateTime">
                 <p>
