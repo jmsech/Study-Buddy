@@ -13,9 +13,7 @@ class Application extends React.Component {
             <div>
                 <Header/>
                 <NewEventButton className="new-event-button btn white-text" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                <NewEventForm showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                <EventList/>
-
+                <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
             </div>
         );
     }
@@ -24,7 +22,7 @@ class Application extends React.Component {
 const Header = () => (
     <header>
     <h1>StudyBuddy</h1>
-    <p><small>A <a href="https://github.com/jhu-oose/2019-group-jhuoosers">Class Scheduling Application</a> for <a href="https://www.jhu-oose.com">OOSE</a></small></p>
+    <p><small>A <a href="https://github.com/jhu-oose/2019-group-jhuoosers">Study Scheduling Application</a> for <a href="https://www.jhu-oose.com">OOSE</a></small></p>
 </header>
 );
 

@@ -12,6 +12,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 public class Server {
     public static void main(String[] args) throws SQLException {
         var connection = DriverManager.getConnection("jdbc:sqlite:studyBuddy.db");
+//        var userCon = DriverManager.getConnection("jdbc:sqlite:Users.db");
         int id = 0;
         String studentId = "ABC123";
         String studentName = "Leandro Facchinetti";
@@ -22,7 +23,7 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
-                    path("events", () -> {
+                    path(":userID/events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);
                         path(":id", () -> {
