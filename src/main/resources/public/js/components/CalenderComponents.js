@@ -104,7 +104,7 @@ class EventList extends React.Component {
     render() {
         return <div>
             <h3>Here are your events:</h3>
-            <ul>{this.state.events.map(event => <Event key={event.id} event={event}/>)}</ul>
+            <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID = {this.props.userID}/>)}</ul>
         </div>;
     }
 }
@@ -119,7 +119,7 @@ class Event extends React.Component {
                     <EventDateTime event={this.props.event}/>
                 </div>
                 <div className="card-action right-align">
-                    <DeleteButton event={this.props.event}/>
+                    <DeleteButton event={this.props.event} userID = {this.props.userID}/>
                 </div>
             </li>
         );
@@ -194,7 +194,7 @@ class DeleteButton extends React.Component {
     }
 
     render() {
-        const basePath = "/events/";
+        const basePath = `${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
         return (
             <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
