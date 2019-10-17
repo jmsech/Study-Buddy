@@ -79,7 +79,7 @@ class NewEventForm extends React.Component {
                     <input id="endTime" name="endTime" type="text" className="timepicker" />
                 </div>
                 <br/>
-                <button>Save Event</button>
+                <button className="btn black-text">Save Event</button>
             </form>
         );
         }
@@ -133,7 +133,7 @@ class EventTitle extends React.Component {
 
     render() {
         return (
-            <h3>{this.props.event.title}</h3>
+            <h4>{this.props.event.title}</h4>
         );
     }
 }
