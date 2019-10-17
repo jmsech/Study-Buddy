@@ -29,7 +29,7 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value)
         formData.append("description", event.target.description.value)
         event.target.reset(); // clear the form entries
-        fetch("/events", {method: "POST", body: formData})
+        fetch(`${this.props.userID}/events`, {method: "POST", body: formData})
         event.preventDefault();
     }
 
@@ -93,7 +93,7 @@ class EventList extends React.Component {
     }
 
     async getDataFromServer() {
-        this.setState({ events: await (await fetch(`/events${this.props.userID}`)).json() });
+        this.setState({ events: await (await fetch(`/${this.props.userID}/events`)).json() });
         window.setTimeout(() => { this.getDataFromServer(); }, 200);
     }
 
