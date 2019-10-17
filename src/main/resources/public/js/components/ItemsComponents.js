@@ -111,11 +111,15 @@ class EventList extends React.Component {
 class Event extends React.Component {
     render() {
         return (
-            <li className="card-panel hoverable teal lighten-2">
-                <EventTitle event={this.props.event}/>
-                <EventDescription event={this.props.event}/>
-                <EventDateTime event={this.props.event}/>
-                <DeleteButton event={this.props.event}/>
+            <li className="card hoverable teal lighten-2">
+                <div className="card-content black-text">
+                    <span className="card-title"> <EventTitle event={this.props.event}/></span>
+                    <EventDescription event={this.props.event}/>
+                    <EventDateTime event={this.props.event}/>
+                </div>
+                <div className="card-action right-align">
+                    <DeleteButton event={this.props.event}/>
+                </div>
             </li>
         );
     }
@@ -192,7 +196,7 @@ class DeleteButton extends React.Component {
         const basePath = "/events/";
         const path = basePath.concat(this.props.event.id);
         return (
-            <button onClick={() => { fetch(path, {method: "DELETE"}) }}>Delete event</button>
+            <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
         )
     }
 }
