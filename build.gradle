@@ -2,7 +2,6 @@ plugins {
     id 'java'
 }
 apply plugin: 'application'
-mainClassName = 'CalendarQuickstart'
 
 group 'StudyBuddy'
 version '1.0'
@@ -33,3 +32,7 @@ test {
 }
 
 task stage(dependsOn: 'assemble')
+
+application {
+    mainClassName = 'com.studybuddy.Server'
+}
