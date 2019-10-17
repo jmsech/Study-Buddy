@@ -59,26 +59,38 @@ public class University {
     }*/
 
     public void addStudent(Student student) {
-        //TODO
+        if (this.students.indexOf(student) == -1) {
+            this.students.add(student);
+        }
+        return;
     }
 
     public void removeStudent(Student student) {
-        //TODO
+        students.remove(student);
+        return;
     }
 
     public void addCourse(Course course) {
-        //TODO
+        if (this.coursesOffered.indexOf(course) == -1) {
+            this.coursesOffered.add(course);
+        }
+        return;
     }
 
     public void removeCourse(Course course) {
-        //TODO
+        this.coursesOffered.remove(course);
+        return;
     }
 
-    public void addProfessor(Course course) {
-        //TODO
+    public void addProfessor(Professor professor) {
+        if (professors.indexOf(professor) == -1) {
+            this.professors.add(professor);
+        }
+        return;
     }
 
-    public void removeProfessor(Course course) {
-        //TODO
+    public void removeProfessor(Professor professor) {
+        this.professors.remove(professor);
+        return;
     }
 }
