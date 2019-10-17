@@ -29,9 +29,9 @@
 							"pm.test(\"Response JSON is a list\", () => {",
 							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
 							"});",
-							"pm.test(\"Items have identifier and description\", () => {",
+							"pm.test(\"Items have identifier, title, start and end times, description, and hosts\", () => {",
 							"    pm.response.json().forEach(item => {",
-							"        pm.expect(item).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\");",
+							"        pm.expect(item).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\", \"hosts\");",
 							"    });",
 							"});"
 						],
@@ -43,7 +43,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:7000/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"events"
+					]
 				}
 			},
 			"response": [
@@ -94,9 +102,15 @@
 							"    pm.response.to.have.status(201);",
 							"});",
 							"pm.test(\"Identifiers are always increasing\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/items\", (err, response) => {",
-							"        const identifiers = response.json().map(item => item.identifier).reverse();",
+							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"        const identifiers = response.json().map(event => event.id).reverse();",
 							"        pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
+							"    });",
+							"});",
+							"pm.test(\"Data inserted is valid\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
+							"        pm.expect(response.json().last().description).to.equal(\"This is an event for our postman POST test\");",
 							"    });",
 							"});"
 						],
@@ -107,8 +121,41 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Postman title",
+							"type": "text"
+						},
+						{
+							"key": "startTime",
+							"value": "2019-10-20T05:30:00",
+							"type": "text"
+						},
+						{
+							"key": "endTime",
+							"value": "2019-10-20T07:30:00",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is an event for our postman POST test",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:7000/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"events"
+					]
 				}
 			},
 			"response": [
@@ -136,6 +183,75 @@
 					"body": ""
 				}
 			]
+		},
+		{
+			"name": "Delete Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a0994837-5634-4c18-a9e5-06eb82f0abdd",
+						"exec": [
+							"pm.sendRequest({",
+							"    url: \"http://localhost:7000/events\",",
+							"    method: \"POST\",",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({title: \"Test event\", startTime: \"2019-10-14T06:30\", endTime: \"2019-10-14T07:30\", description: \"Test description\"})",
+							"    }}, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"        pm.environment.set(\"id\", response.json().last().id);",
+							"        console.log(pm.environment.get(\"id\"));",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3ff270f0-c428-409a-aff7-525cb1acd9a6",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Event is deleted\"), () => {",
+							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"        pm.expect(",
+							"            response.json().map(item => event.id)",
+							"        ).to.not.include(parseInt(pm.environment.get(\"id\")));",
+							"    });",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:7000/events/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"events",
+						"{{id}}"
+					]
+				},
+				"description": "This request deletes a specific event"
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
