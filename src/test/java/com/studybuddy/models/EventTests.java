@@ -30,23 +30,31 @@ public class EventTests {
 
     @Test
     void testGetters() {
+        int id = 1;
+        String eventTitle = "Calc Study Session";
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusHours(2);
+        String eventDescritpion = "This is a description";
         User host1 = new User(1, "John Smith");
         List<User> testHosts = new ArrayList<User>();
         testHosts.add(host1);
 
-        var event = new Event(startTime, endTime, "Calc Study Session", testHosts);
+        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts);
+        assertEquals(id, event.getId());
+        assertEquals(eventTitle, event.getTitle());
         assertEquals(startTime, event.getStartTime());
         assertEquals(endTime, event.getEndTime());
-        assertEquals("Calc Study Session", event.getDescription());
+        assertEquals(eventDescritpion, event.getDescription());
         assertEquals(testHosts, event.getHosts());
     }
 
     @Test
     void testSetters() {
+        int id = 1;
+        String eventTitle = "Calc Study Session";
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusHours(2);
+        String eventDescritpion = "This is a description";
         User host1 = new User(1, "John Smith");
         List<User> testHosts = new ArrayList<User>();
         testHosts.add(host1);
@@ -56,7 +64,7 @@ public class EventTests {
         User host2 = new User(2, "Joe Johnson");
 
 
-        var event = new Event(startTime, endTime, "Calc Study Session", testHosts);
+        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts);
 
         event.setStartTime(newStartTime);
         event.setEndTime(newEndTime);
