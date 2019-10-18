@@ -23,6 +23,9 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
+                    path(":userId/recs", () -> {
+                        get(StudentController::getRec);
+                    });
                     path(":userID/events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);

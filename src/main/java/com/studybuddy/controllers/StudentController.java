@@ -83,4 +83,60 @@ public class StudentController {
         statement.close();
         ctx.status(200);
     }
+
+    public void getRec(Context ctx) throws SQLException {
+
+        //right now this is hardcoded to just look for common free times between user '1' and '2'; later we'd make it loop over list of users
+        //or something like that
+        var user1events = new ArrayList<Event>();
+        var user2events = new ArrayList<Event>();
+
+        //var user1id = ctx.pathParam("userID", Integer.class).get();
+        //again, temporarily hardcoded
+        var user1id = 1;
+        var user2id = 2;
+        //get events with user id 1
+        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description FROM events WHERE userID = ?");
+        statement.setInt(1, user1id);
+
+        var result1 = statement.executeQuery();
+        ArrayList<User> stu1 = new ArrayList<>();
+        while (result1.next()) {
+            user1events.add(
+                    new Event(
+                            result1.getInt("id"),
+                            result1.getString("title"),
+                            result1.getTimestamp("startTime").toLocalDateTime(),
+                            result1.getTimestamp("endTime").toLocalDateTime(),
+                            result1.getString("description"),
+                            stu1
+                    )
+            );
+        }
+
+        //get events with user id 2
+        statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description FROM events WHERE userID = ?");
+        statement.setInt(1, user2id);
+
+        var result2 = statement.executeQuery();
+        ArrayList<User> stu2 = new ArrayList<>();
+        while (result1.next()) {
+            user2events.add(
+                    new Event(
+                            result2.getInt("id"),
+                            result2.getString("title"),
+                            result2.getTimestamp("startTime").toLocalDateTime(),
+                            result2.getTimestamp("endTime").toLocalDateTime(),
+                            result2.getString("description"),
+                            stu2
+                    )
+            );
+        }
+
+        result1.close();
+        result2.close();
+        statement.close();
+        ctx.json(user1events);
+        ctx.json(user2events);
+    }
 }
