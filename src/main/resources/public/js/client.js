@@ -11,13 +11,20 @@ class Application extends React.Component {
     render() {
         return (
             <div>
-                <Header/>
-                <NewEventButton className="new-event-button btn white-text" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                <div className="right-align logout-button"><LogoutButton/></div>
+                <div className="centralized-body">
+                    <Header/>
+                    <NewEventButton className="new-event-button btn white-text" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                    <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                </div>
             </div>
         );
     }
 }
+
+const LogoutButton = () => (
+    <a className="btn" href="index.html">Logout</a>
+)
 
 const Header = () => (
     <header>

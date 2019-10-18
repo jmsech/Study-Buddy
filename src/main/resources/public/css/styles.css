@@ -5,10 +5,9 @@
     src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
 }
 
-body {
+.centralized-body {
     max-width: 400px;
     margin: 0 auto;
-    /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
     font-family: "Product Sans";
 }
 
@@ -19,7 +18,6 @@ h4 {
 .new-event-button {
     margin: 0 auto;
     display: block;
-    color: black;
 }
 
 ul {
@@ -28,4 +26,8 @@ ul {
 
 .btn {
     font-family: "Product Sans";
+}
+
+.logout-button {
+    margin: 20px;
 }
