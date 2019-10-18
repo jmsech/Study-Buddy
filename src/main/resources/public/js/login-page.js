@@ -27,7 +27,7 @@ class LoginForm extends React.Component {
     handleSubmit(event) {
         const formData = new FormData();
         formData.append("username", event.target.username.value);
-        formData.append("password", event.target.username.password);
+        formData.append("password", event.target.password.value);
         event.target.reset();
         // TODO Validate username and password
         if (true) {
