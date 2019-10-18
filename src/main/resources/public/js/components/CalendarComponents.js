@@ -1,7 +1,9 @@
 class NewEventButton extends React.Component {
     render() {
         let title = "New Event";
-        if (this.props.showForm) { title = "Cancel" };
+        if (this.props.showForm) {
+            title = "Cancel";
+        }
         return <button className={this.props.className} onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
@@ -20,17 +22,33 @@ class NewEventForm extends React.Component {
     }
 
     handleSubmit(event) {
-        this.props.flip();
-        const formData = new FormData();
-        formData.append("userID", this.props.userID)
-        formData.append("title", event.target.title.value)
-        // combine tim/date into the format yyyy-mm-ddT00:00
-        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value)
-        formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value)
-        formData.append("description", event.target.description.value)
-        event.target.reset(); // clear the form entries
-        fetch(`${this.props.userID}/events`, {method: "POST", body: formData})
+        if (event.target.title.value == "") {
+            alert("Please give your event a name.");
+        } else if (event.target.description.value == "") {
+            alert("Please give your event a description.");
+        } else if (event.target.startDate.value == "") {
+            alert("Please give your even a start date.");
+        } else if (event.target.startTime.value == "") {
+            alert("Please give you event a start time.");
+        } else if (event.target.endDate.value == "") {
+            alert("Please give your event an end date.");
+        } else if (event.target.endTime.value == "") {
+            alert("Please give your event an end time.");
+        } else {
+            const formData = new FormData();
+            formData.append("userID", this.props.userID)
+            formData.append("title", event.target.title.value)
+            // combine tim/date into the format yyyy-mm-ddT00:00
+            formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value)
+            formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value)
+            formData.append("description", event.target.description.value)
+            event.target.reset(); // clear the form entries
+            fetch(`${this.props.userID}/events`, {method: "POST", body: formData})
+            this.props.flip();
+        }
         event.preventDefault();
+
+
     }
 
     componentDidMount() {
