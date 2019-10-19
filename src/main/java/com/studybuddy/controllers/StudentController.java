@@ -18,6 +18,7 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
+        statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT)");
         statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER, userID INTEGER)");
         statement.close();
     }
@@ -82,5 +83,21 @@ public class StudentController {
         statement.executeUpdate();
         statement.close();
         ctx.status(200);
+    }
+
+    public void createUser(Context ctx) throws SQLException {
+        var email = ctx.formParam("email");
+        var password = ctx.formParam("password");
+        var firstName = ctx.formParam("firstName");
+        var lastName = ctx.formParam("lastName");
+        // TODO - Check if user already exists (email)
+        var statement = connection.prepareStatement("INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?)");
+        statement.setString(1, email);
+        statement.setString(2, password);
+        statement.setString(3, firstName);
+        statement.setString(4, lastName);
+        statement.executeUpdate();
+        statement.close();
+        ctx.status(201);
     }
 }

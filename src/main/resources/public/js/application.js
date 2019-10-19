@@ -23,13 +23,13 @@ class Application extends React.Component {
 }
 
 const LogoutButton = () => (
-    <a className="btn" href="index.html">Logout</a>
+    // TODO make this actually log out of a user
+    <a className="btn" href="index.html">Log Out</a>
 )
 
 const Header = () => (
     <header>
     <h1>StudyBuddy</h1>
-    <p><small>A <a href="https://github.com/jhu-oose/2019-group-jhuoosers">Study Scheduling Application</a> for <a href="https://www.jhu-oose.com">OOSE</a></small></p>
 </header>
 );
 

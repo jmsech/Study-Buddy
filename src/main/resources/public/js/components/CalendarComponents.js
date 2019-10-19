@@ -22,14 +22,14 @@ class NewEventForm extends React.Component {
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
-        formData.append("userID", this.props.userID)
-        formData.append("title", event.target.title.value)
+        formData.append("userID", this.props.userID);
+        formData.append("title", event.target.title.value);
         // combine tim/date into the format yyyy-mm-ddT00:00
-        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value)
-        formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value)
-        formData.append("description", event.target.description.value)
+        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
+        formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
+        formData.append("description", event.target.description.value);
         event.target.reset(); // clear the form entries
-        fetch(`${this.props.userID}/events`, {method: "POST", body: formData})
+        fetch(`${this.props.userID}/events`, {method: "POST", body: formData});
         event.preventDefault();
     }
 
@@ -54,32 +54,26 @@ class NewEventForm extends React.Component {
                     <label htmlFor="title">Event name</label>
                     <input id="title" name="title" type="text" />
                 </div>
-                <br/>
                 <div className="input-field">
                     <label htmlFor="description">Event description</label>
                     <input id="description" name="description" type="text" />
                 </div>
-                <br/>
                 <div className="input-field">
                     <label htmlFor="startDate">Start date</label>
                     <input id="startDate" type="text" className="datepicker"/>
                 </div>
-                <br/>
                 <div className="input-field">
                     <label htmlFor="startTime">Start time</label>
                     <input id="startTime" name="startTime" type="text" className="timepicker" />
                 </div>
-                <br/>
                 <div className="input-field">
                     <label htmlFor="endDate">End date</label>
                     <input id="endDate" name="endDate" type="text" className="datepicker" />
                 </div>
-                <br/>
                 <div className="input-field">
                     <label htmlFor="endTime">End time</label>
                     <input id="endTime" name="endTime" type="text" className="timepicker" />
                 </div>
-                <br/>
                 <button className="btn white-text">Save Event</button>
             </form>
         );

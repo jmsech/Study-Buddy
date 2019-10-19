@@ -9,6 +9,7 @@ class LoginPage extends React.Component {
             <div className="centralized-body">
                 <h1>Welcome to StudyBuddy!</h1>
                 <LoginForm/>
+                <div className="right-align"><a href="./signup.html">Sign up</a></div>
             </div>
         )
     }
@@ -20,33 +21,29 @@ class LoginForm extends React.Component {
         this.state = {};
     }
 
-    openApplication() {
-        location.href="./application.html";
-    }
-
     handleSubmit(event) {
         const formData = new FormData();
-        formData.append("username", event.target.username.value);
+        formData.append("email", event.target.email.value);
         formData.append("password", event.target.password.value);
         event.target.reset();
-        // TODO Validate username and password
+        // Validate username and password
         if (true) {
-            this.openApplication();
+            open("/application.html", "_self");
         }
     }
 
     render() {
         return (
-            <form id="loginForm">
+            <form id="loginForm" onSubmit={this.handleSubmit}>
                 <div className="input-field">
-                    <label htmlFor="username">Username</label>
-                    <input id="username" name="username" type="text"/>
+                    <label htmlFor="email">Email</label>
+                    <input id="email" name="email" type="text"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="password">Password</label>
                     <input id="password" name="password" type="password"/>
                 </div>
-                <div className="center-align"><a className="btn" href="application.html">Login</a></div>
+                <div className="center-align"><button className="btn">Log In</button></div>
             </form>
         )
     }

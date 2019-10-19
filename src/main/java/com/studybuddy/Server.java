@@ -30,6 +30,11 @@ public class Server {
                             delete(StudentController::deleteEvent);
                         });
                     });
+                    path("users", () -> {
+                        // TODO - authenticate user based on email and password
+                        // get(...)
+                        post(StudentController::createUser);
+                    });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));
     }
