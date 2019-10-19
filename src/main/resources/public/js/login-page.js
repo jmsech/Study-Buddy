@@ -18,18 +18,25 @@ class LoginPage extends React.Component {
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { id: -1 };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(event) {
-        const formData = new FormData();
-        formData.append("email", event.target.email.value);
-        formData.append("password", event.target.password.value);
+    async handleSubmit(event) {
+        const email = event.target.email.value;
+        const password = event.target.password.value;
         event.target.reset();
+        event.preventDefault();
         // Validate username and password
-        const response = fetch("/users/authenticate", {body: formData}).json();
-        if (true) {
+        // const response = fetch(`/users/authenticate/${email}/${password}`)
+        //     .then((response) => (response.json()));
+        const response = await (await fetch(`/users/authenticate/${email}/${password}`)).json();
+        console.log(response);
+        if (response !== 0) {
             open("/application.html", "_self");
+        } else {
+            alert("Invalid email/password combination");
         }
     }
 

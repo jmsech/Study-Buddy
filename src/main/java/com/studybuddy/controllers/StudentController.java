@@ -102,22 +102,27 @@ public class StudentController {
     }
 
     public void authenticateUser(Context ctx) throws SQLException {
-        var email = ctx.formParam("email");
-        var password = ctx.formParam("password");
-        var sqlString = "SELECT password FROM users WHERE EXISTS (SELECT 1 FROM users WHERE email = ?)";
+        var email = ctx.pathParam("email");
+        var password = ctx.pathParam("password");
+        // Search for the user based on their email
+        var sqlString = "SELECT id, password FROM users WHERE email = ?";
         var statement = connection.prepareStatement(sqlString);
         statement.setString(1, email);
         var result = statement.executeQuery();
         boolean userFound = false;
         String storedPassword = "";
+        var id = 0;
         while (result.next()) {
             storedPassword = result.getString("password");
+            id = result.getInt("id");
             userFound = true;
         }
+        // If user is not found or password doesn't match, return 0 (indicates no user)
         if (!userFound || (!password.equals(storedPassword))) {
-            ctx.json(false);
+            ctx.json(0);
         } else {
-            ctx.json(true);
+            // Return the user's id to access their events
+            ctx.json(id);
         }
         result.close();
         statement.close();
