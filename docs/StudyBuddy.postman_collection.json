@@ -13,6 +13,7 @@
 					"script": {
 						"id": "37ff3b57-239f-480e-9828-032406ddd234",
 						"exec": [
+							"pm.environment.set(\"id\", \"1\");",
 							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
 						],
 						"type": "text/javascript"
@@ -43,13 +44,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:7000/events",
+					"raw": "http://localhost:7000/{{id}}/events",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "7000",
 					"path": [
+						"{{id}}",
 						"events"
 					]
 				}
@@ -88,6 +90,7 @@
 					"script": {
 						"id": "7d529064-1984-4211-b193-63455e5163c3",
 						"exec": [
+							"pm.environment.set(\"id\", \"1\");",
 							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
 						],
 						"type": "text/javascript"
@@ -102,13 +105,13 @@
 							"    pm.response.to.have.status(201);",
 							"});",
 							"pm.test(\"Identifiers are always increasing\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
 							"        const identifiers = response.json().map(event => event.id).reverse();",
 							"        pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
 							"    });",
 							"});",
 							"pm.test(\"Data inserted is valid\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
 							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
 							"        pm.expect(response.json().last().description).to.equal(\"This is an event for our postman POST test\");",
 							"    });",
@@ -131,12 +134,12 @@
 						},
 						{
 							"key": "startTime",
-							"value": "2019-10-20T05:30:00",
+							"value": "2019-10-20 05:30 PM",
 							"type": "text"
 						},
 						{
 							"key": "endTime",
-							"value": "2019-10-20T07:30:00",
+							"value": "2019-10-20 07:30 PM",
 							"type": "text"
 						},
 						{
@@ -147,13 +150,14 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:7000/events",
+					"raw": "http://localhost:7000/{{id}}/events",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "7000",
 					"path": [
+						"{{id}}",
 						"events"
 					]
 				}
@@ -250,6 +254,186 @@
 					]
 				},
 				"description": "This request deletes a specific event"
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2cf5a75f-88ea-4808-b636-f730d31fcf81",
+						"exec": [
+							"pm.sendRequest({ url: \"http://localhost:7000/users\", method: \"POST\" });"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "39d3acf2-8368-488e-9c5c-bc1b908ad70d",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test@test.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "First",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "Last",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "test@test.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "firstName",
+									"value": "First",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "Last",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:7000/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7000",
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Oct 2019 02:55:32 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Javalin"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain"
+						},
+						{
+							"key": "Content-Length",
+							"value": "0"
+						}
+					],
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Authenticate User",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "test@test.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/users/authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"authenticate"
+					]
+				}
 			},
 			"response": []
 		}

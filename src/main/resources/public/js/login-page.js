@@ -27,6 +27,7 @@ class LoginForm extends React.Component {
         formData.append("password", event.target.password.value);
         event.target.reset();
         // Validate username and password
+        const response = fetch("/users/authenticate", {body: formData}).json();
         if (true) {
             open("/application.html", "_self");
         }
