@@ -60,6 +60,7 @@ public class StudentController {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
+        var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
         // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
@@ -70,7 +71,7 @@ public class StudentController {
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);
         statement.setString(4, description);
-        statement.setInt(5, 1);
+        statement.setInt(5, userID);
         statement.executeUpdate();
         statement.close();
         ctx.status(201);

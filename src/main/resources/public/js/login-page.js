@@ -9,7 +9,7 @@ class LoginPage extends React.Component {
             <div className="centralized-body">
                 <h1>Welcome to StudyBuddy!</h1>
                 <LoginForm/>
-                <div className="right-align"><a href="./signup.html">Sign up</a></div>
+                <div className="right-align"><a href="/signup/signup.html">Sign up</a></div>
             </div>
         )
     }
@@ -34,7 +34,9 @@ class LoginForm extends React.Component {
         const response = await (await fetch(`/users/authenticate/${email}/${password}`)).json();
         console.log(response);
         if (response !== 0) {
-            open("/application.html", "_self");
+            const baseUrl = "/application/application.html?id=";
+            const url = baseUrl.concat(response);
+            open(url, "_self");
         } else {
             alert("Invalid email/password combination");
         }

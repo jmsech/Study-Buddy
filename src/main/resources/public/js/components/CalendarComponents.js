@@ -29,7 +29,7 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
         event.target.reset(); // clear the form entries
-        fetch(`${this.props.userID}/events`, {method: "POST", body: formData});
+        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
         event.preventDefault();
     }
 
@@ -98,7 +98,7 @@ class EventList extends React.Component {
     render() {
         return <div>
             <h3>Here are your events:</h3>
-            <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID = {this.props.userID}/>)}</ul>
+            <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID={this.props.userID}/>)}</ul>
         </div>;
     }
 }

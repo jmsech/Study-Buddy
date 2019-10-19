@@ -24,7 +24,7 @@ class Application extends React.Component {
 
 const LogoutButton = () => (
     // TODO make this actually log out of a user
-    <a className="btn" href="index.html">Log Out</a>
+    <a className="btn" href="/../index.html">Log Out</a>
 )
 
 const Header = () => (

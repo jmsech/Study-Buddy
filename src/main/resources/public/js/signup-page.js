@@ -33,7 +33,7 @@ class SignUpForm extends React.Component {
         fetch("/users", {method: "POST", body: formData});
         // TODO - handle case where user wasn't created (case where it already exists, for example)
         alert("User successfully created!");
-        open("/index.html", "_self");
+        open("/../index.html", "_self");
         event.preventDefault();
     }
 
