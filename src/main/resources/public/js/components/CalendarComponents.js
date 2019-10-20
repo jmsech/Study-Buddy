@@ -188,7 +188,7 @@ class DeleteButton extends React.Component {
     }
 
     render() {
-        const basePath = `${this.props.userID}/events/`;
+        const basePath = `../${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
         return (
             <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
