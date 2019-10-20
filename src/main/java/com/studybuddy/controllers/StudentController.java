@@ -4,13 +4,25 @@ import com.studybuddy.models.Event;
 import com.studybuddy.models.Student;
 import com.studybuddy.models.User;
 import io.javalin.http.Context;
+
+// Password security classes
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+
+// Database handling
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class StudentController {
+    private static int hashingIterationCount = 65536;
+    private static int hashingKeyLength = 128;
     private Student student;
     private Connection connection;
 
@@ -18,7 +30,7 @@ public class StudentController {
         this.student = student;
         this.connection = connection;
         var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, firstName TEXT, lastName TEXT)");
+        statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
         statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER, userID INTEGER)");
         statement.close();
     }
@@ -86,7 +98,7 @@ public class StudentController {
         ctx.status(200);
     }
 
-    public void createUser(Context ctx) throws SQLException {
+    public void createUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");
         var firstName = ctx.formParam("firstName");
@@ -97,13 +109,24 @@ public class StudentController {
         var result = checkStatement.executeQuery();
         if (result.next()) { // If the query returns something, the user already exists
             ctx.json(false);
-        } else {
-            // If user doesn't exist, add to the database
-            var statement = connection.prepareStatement("INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?)");
+        } else { // If user doesn't exist, add to the database
+            // Hash password using PBKDF2 before storing
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+            assert password != null;
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hashedPassword = factory.generateSecret(spec).getEncoded();
+            String hashedPasswordStr = new String(hashedPassword);
+            String hashSaltStr = new String(salt);
+            // Insert into database
+            var statement = connection.prepareStatement("INSERT INTO users (email, hashedPassword, hashSalt, firstName, lastName) VALUES (?, ?, ?, ?, ?)");
             statement.setString(1, email);
-            statement.setString(2, password);
-            statement.setString(3, firstName);
-            statement.setString(4, lastName);
+            statement.setString(2, hashedPasswordStr);
+            statement.setString(3, hashSaltStr);
+            statement.setString(4, firstName);
+            statement.setString(5, lastName);
             statement.executeUpdate();
             statement.close();
             ctx.json(true);
@@ -111,23 +134,30 @@ public class StudentController {
         ctx.status(201);
     }
 
-    public void authenticateUser(Context ctx) throws SQLException {
+    public void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.pathParam("email");
         var password = ctx.pathParam("password");
         // Search for the user based on their email
-        var statement = connection.prepareStatement("SELECT id, password FROM users WHERE email = ?");
+        var statement = connection.prepareStatement("SELECT id, hashedPassword, hashSalt FROM users WHERE email = ?");
         statement.setString(1, email);
         var result = statement.executeQuery();
         boolean userFound = false;
-        String storedPassword = "";
+        String storedHashedPassword = "";
+        String hashedPassword = "";
         var id = 0;
         while (result.next()) {
-            storedPassword = result.getString("password");
+            storedHashedPassword = result.getString("hashedPassword");
+            var salt = result.getString("hashSalt").getBytes();
+            // Hash password an compare to stored value
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+            hashedPassword = new String(hash);
             id = result.getInt("id");
             userFound = true;
         }
         // If user is not found or password doesn't match, return 0 (indicates no user)
-        if (!userFound || (!password.equals(storedPassword))) {
+        if (!userFound || (!hashedPassword.equals(storedHashedPassword))) {
             ctx.json(0);
         } else {
             // Return the user's id to access their events
