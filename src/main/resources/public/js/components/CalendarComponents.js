@@ -1,7 +1,9 @@
 class NewEventButton extends React.Component {
     render() {
         let title = "New Event";
-        if (this.props.showForm) { title = "Cancel" };
+        if (this.props.showForm) {
+            title = "Cancel";
+        }
         return <button className={this.props.className} onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
