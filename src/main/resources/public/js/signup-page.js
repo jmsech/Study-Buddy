@@ -23,18 +23,21 @@ class SignUpForm extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
         const formData = new FormData();
         formData.append("firstName", event.target.firstName.value);
         formData.append("lastName", event.target.lastName.value);
         formData.append("email", event.target.email.value);
         formData.append("password", event.target.password.value);
         event.target.reset();
-        fetch("/users", {method: "POST", body: formData});
-        // TODO - handle case where user wasn't created (case where it already exists, for example)
-        alert("User successfully created!");
-        open("/../index.html", "_self");
         event.preventDefault();
+        const response = await (await fetch("/users", {method: "POST", body: formData})).json();
+        if (response) { // If response is true, user was created
+            alert("User successfully created!");
+            open("/../index.html", "_self");
+        } else {
+            alert("This email is already associated with a user");
+        }
     }
 
     render() {

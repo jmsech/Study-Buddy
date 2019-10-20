@@ -91,14 +91,23 @@ public class StudentController {
         var password = ctx.formParam("password");
         var firstName = ctx.formParam("firstName");
         var lastName = ctx.formParam("lastName");
-        // TODO - Check if user already exists (email)
-        var statement = connection.prepareStatement("INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?)");
-        statement.setString(1, email);
-        statement.setString(2, password);
-        statement.setString(3, firstName);
-        statement.setString(4, lastName);
-        statement.executeUpdate();
-        statement.close();
+        // Check if user already exists (email)
+        var checkStatement = connection.prepareStatement("SELECT 1 FROM users WHERE email = ?");
+        checkStatement.setString(1, email);
+        var result = checkStatement.executeQuery();
+        if (result.next()) { // If the query returns something, the user already exists
+            ctx.json(false);
+        } else {
+            // If user doesn't exist, add to the database
+            var statement = connection.prepareStatement("INSERT INTO users (email, password, firstName, lastName) VALUES (?, ?, ?, ?)");
+            statement.setString(1, email);
+            statement.setString(2, password);
+            statement.setString(3, firstName);
+            statement.setString(4, lastName);
+            statement.executeUpdate();
+            statement.close();
+            ctx.json(true);
+        }
         ctx.status(201);
     }
 
@@ -106,8 +115,7 @@ public class StudentController {
         var email = ctx.pathParam("email");
         var password = ctx.pathParam("password");
         // Search for the user based on their email
-        var sqlString = "SELECT id, password FROM users WHERE email = ?";
-        var statement = connection.prepareStatement(sqlString);
+        var statement = connection.prepareStatement("SELECT id, password FROM users WHERE email = ?");
         statement.setString(1, email);
         var result = statement.executeQuery();
         boolean userFound = false;

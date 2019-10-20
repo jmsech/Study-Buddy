@@ -32,7 +32,6 @@ class LoginForm extends React.Component {
         // const response = fetch(`/users/authenticate/${email}/${password}`)
         //     .then((response) => (response.json()));
         const response = await (await fetch(`/users/authenticate/${email}/${password}`)).json();
-        console.log(response);
         if (response !== 0) {
             const baseUrl = "/application/application.html?id=";
             const url = baseUrl.concat(response);
