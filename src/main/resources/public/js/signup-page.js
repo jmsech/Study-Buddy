@@ -9,7 +9,7 @@ class SignUpPage extends React.Component {
             <div className="centralized-body">
                 <h1>Welcome to StudyBuddy!</h1>
                 <SignUpForm/>
-                <div className="right-align"><a href="./index.html">Sign in</a></div>
+                <div className="right-align"><a href="/../index.html">Sign in</a></div>
             </div>
         )
     }
