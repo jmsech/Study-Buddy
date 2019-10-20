@@ -24,7 +24,7 @@ class LoginForm extends React.Component {
     }
 
     async handleSubmit(event) {
-        const email = event.target.email.value;
+        const email = String(event.target.email.value).toLowerCase();
         const password = event.target.password.value;
         event.target.reset();
         event.preventDefault();
@@ -46,11 +46,11 @@ class LoginForm extends React.Component {
             <form id="loginForm" onSubmit={this.handleSubmit}>
                 <div className="input-field">
                     <label htmlFor="email">Email</label>
-                    <input id="email" name="email" type="text"/>
+                    <input id="email" name="email" type="text" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="password">Password</label>
-                    <input id="password" name="password" type="password"/>
+                    <input id="password" name="password" type="password" required/>
                 </div>
                 <div className="center-align"><button className="btn">Log In</button></div>
             </form>

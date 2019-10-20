@@ -52,7 +52,7 @@ class NewEventForm extends React.Component {
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="title">Event name</label>
-                    <input id="title" name="title" type="text" />
+                    <input id="title" name="title" type="text" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="description">Event description</label>
@@ -60,19 +60,19 @@ class NewEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate">Start date</label>
-                    <input id="startDate" type="text" className="datepicker"/>
+                    <input id="startDate" type="text" className="datepicker" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startTime">Start time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" />
+                    <input id="startTime" name="startTime" type="text" className="timepicker" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endDate">End date</label>
-                    <input id="endDate" name="endDate" type="text" className="datepicker" />
+                    <input id="endDate" name="endDate" type="text" className="datepicker" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endTime">End time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" />
+                    <input id="endTime" name="endTime" type="text" className="timepicker" required/>
                 </div>
                 <button className="btn white-text">Save Event</button>
             </form>
