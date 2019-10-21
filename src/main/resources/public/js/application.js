@@ -29,8 +29,8 @@ const LogoutButton = () => (
 
 const Header = () => (
     <header>
-    <h1>StudyBuddy</h1>
-</header>
+        <img className="logo" src="../images/logo-full.png"/>
+    </header>
 );
 
 ReactDOM.render(<Application/>, document.querySelector("#application"));
