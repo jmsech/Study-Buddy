@@ -98,19 +98,24 @@ class EventList extends React.Component {
     }
 
     render() {
-        return <div>
+        return (
+        <div>
             <h3>Here are your events:</h3>
             <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID={this.props.userID}/>)}</ul>
-        </div>;
+        </div>
+        );
     }
 }
+
 
 class Event extends React.Component {
     render() {
         return (
             <li className="card hoverable teal lighten-2">
                 <div className="card-content black-text">
-                    <span className="card-title"> <EventTitle event={this.props.event}/></span>
+                    <span className="card-title">
+                        <EventTitle event={this.props.event}/>
+                    </span>
                     <EventDescription event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
                 </div>

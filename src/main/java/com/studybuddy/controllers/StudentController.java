@@ -216,13 +216,13 @@ public class StudentController {
         statement.close();
     }
 
-    public Event getRec(Context ctx) throws SQLException {
+    public void getRec(Context ctx) throws SQLException {
         int userid = 1;
         var statement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
         statement.setInt(1, userid);
         var result = statement.executeQuery();
 
-        List<TimeChunk> busyTimes = new ArrayList();
+        List<TimeChunk> busyTimes = new ArrayList<>();
         while(result.next()) {
             TimeChunk chunk = new TimeChunk(
                     result.getTimestamp("startTime").toLocalDateTime(),
@@ -255,12 +255,12 @@ public class StudentController {
 
         while(!found) {
             addTime = false;
-            for (int i = 0; i < busyTimes.size(); i++){
-                if (busyTimes.get(i).isOverlapping(suggested) || sleepTimeChunk.isOverlapping(suggested)) {
+            for (TimeChunk busyTime : busyTimes) {
+                if (busyTime.isOverlapping(suggested) || sleepTimeChunk.isOverlapping(suggested)) {
                     addTime = true;
                 }
             }
-            if(addTime) {
+            if (addTime) {
                 suggested.setStartTime(suggested.getStartTime().plusMinutes(15));
                 suggested.setEndTime(suggested.getEndTime().plusMinutes(15));
             } else {
@@ -268,6 +268,6 @@ public class StudentController {
             }
         }
 
-        return new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"I think that you should study during this time", stu);
+        ctx.json(new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"I think that you should study during this time", stu));
     }
 }
