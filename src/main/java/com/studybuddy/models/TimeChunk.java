@@ -29,8 +29,8 @@ public class TimeChunk {
     }
 
     public boolean isOverlapping(TimeChunk comp) {
-        return (this.endTime.isAfter(comp.getStartTime()) && this.endTime.isBefore(comp.getEndTime())) ||
-                (this.startTime.isAfter(comp.getStartTime()) && this.startTime.isBefore(comp.getEndTime()));
+        return ((this.endTime.isAfter(comp.getStartTime()) || this.endTime.isEqual(comp.getStartTime())) && ( this.endTime.isBefore(comp.getEndTime())) || this.endTime.isEqual(comp.getEndTime()) ) ||
+                ((this.startTime.isAfter(comp.getStartTime()) || this.startTime.isEqual(comp.getStartTime())) && (this.endTime.isEqual(comp.getStartTime()) || this.startTime.isBefore(comp.getEndTime())));
     }
 
     public void merge(TimeChunk newChunk) {
