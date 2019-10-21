@@ -257,8 +257,6 @@ public class StudentController {
             addTime = false;
             for (int i = 0; i < busyTimes.size(); i++){
                 if (busyTimes.get(i).isOverlapping(suggested) || sleepTimeChunk.isOverlapping(suggested)) {
-                    suggested.setStartTime(suggested.getStartTime().plusMinutes(15));
-                    suggested.setEndTime(suggested.getEndTime().plusMinutes(15));
                     addTime = true;
                 }
             }
