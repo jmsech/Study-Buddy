@@ -7,6 +7,11 @@ public class TimeChunk {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
+    public TimeChunk(LocalDateTime start, LocalDateTime end) {
+        this.startTime = start;
+        this.endTime = end;
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -23,7 +28,7 @@ public class TimeChunk {
         this.endTime = endTime;
     }
 
-    boolean isOverlapping(TimeChunk comp) {
+    public boolean isOverlapping(TimeChunk comp) {
         if ((this.endTime.compareTo(comp.getStartTime()) >= 0 && this.endTime.compareTo(comp.getEndTime()) <= 0) ||
                 (this.startTime.compareTo(comp.getStartTime()) >= 0 && this.startTime.compareTo(comp.getEndTime()) <= 0)) {
             return true;
@@ -32,7 +37,7 @@ public class TimeChunk {
         }
     }
 
-    void merge(TimeChunk newChunk) {
+    public void merge(TimeChunk newChunk) {
         if (this.endTime.compareTo(newChunk.getEndTime()) < 0) {
             this.endTime = newChunk.getEndTime();
         }
