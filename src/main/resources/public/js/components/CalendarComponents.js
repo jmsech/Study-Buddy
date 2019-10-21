@@ -66,12 +66,12 @@ class NewEventForm extends React.Component {
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="title" className="active">Event name</label>
-                    <input id="title" name="title" type="text" defaultValue = ":)" required/>
+                    <label htmlFor="title">Event name</label>
+                    <input id="title" name="title" type="text" required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="description" className="active">Event description</label>
-                    <input id="description" name="description" type="text" defaultValue = ";)"/>
+                    <label htmlFor="description">Event description</label>
+                    <input id="description" name="description" type="text"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
