@@ -6,7 +6,7 @@ class SignUpPage extends React.Component {
 
     render() {
         return(
-            <div className="centralized-body">
+            <div className="login-body">
                 <h1>Welcome to StudyBuddy!</h1>
                 <SignUpForm/>
                 <div className="right-align"><a href="/../index.html">Sign in</a></div>

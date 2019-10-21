@@ -15,6 +15,11 @@ body {
     font-family: "Product Sans";
 }
 
+.login-body {
+    max-width: 600px;
+    margin: auto;
+}
+
 h4 {
     margin: 0 auto 5px;
 }
