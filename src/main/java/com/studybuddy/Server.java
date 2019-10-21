@@ -32,8 +32,8 @@ public class Server {
                     });
                     path("users", () -> {
                         post(StudentController::createUser);
-                        path("authenticate/:email/:password", () -> {
-                            get(StudentController::authenticateUser);
+                        path("authenticate/", () -> {
+                            post(StudentController::authenticateUser);
                         });
                     });
                 })
