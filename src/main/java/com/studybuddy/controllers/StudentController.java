@@ -64,22 +64,16 @@ public class StudentController {
 
     public void createEvent(Context ctx) throws SQLException {
         var title = ctx.formParam("title", ctx.formParam("title", String.class).get());
-        // convert form data of format yyyy-mm-ddT00:00 to LocalDateTime
-        // DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
-        //java.sql.Date sqlStartDate = java.sql.Date.valueOf(startTime.toLocalDate());
         java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
-        //java.sql.Date sqlEndDate = java.sql.Date.valueOf(endTime.toLocalDate());
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
         var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
-        // Note (Justin): i changed the invite list parameter to emptyList() instead of null, we were getting a null pointer exception
-        // student.createStudyEvent(title, startTime, endTime, location, description, Collections.emptyList(), 1);
         //TODO add actual values to the insert
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
         statement.setString(1, title);
@@ -132,7 +126,7 @@ public class StudentController {
         return bytes;
     }
 
-    public byte hexToByte(String hexString) {
+    private byte hexToByte(String hexString) {
         int firstDigit = toDigit(hexString.charAt(0));
         int secondDigit = toDigit(hexString.charAt(1));
         return (byte) ((firstDigit << 4) + secondDigit);
