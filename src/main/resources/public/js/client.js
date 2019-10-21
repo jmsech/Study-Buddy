@@ -14,7 +14,6 @@ class Application extends React.Component {
                 <Header/>
                 <NewEventButton className="new-event-button btn white-text" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
                 <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                <NewRecButton className="btn white-text" />
             </div>
         );
     }
