@@ -1,7 +1,6 @@
 package com.studybuddy.models;
 
 import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 

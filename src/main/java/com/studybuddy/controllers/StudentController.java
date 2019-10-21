@@ -217,32 +217,34 @@ public class StudentController {
     }
 
     public void getRec(Context ctx) throws SQLException {
-        int userid = 1;
+        var userid = ctx.pathParam("userId");
         var statement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
-        statement.setInt(1, userid);
+        statement.setInt(1, Integer.parseInt(userid));
         var result = statement.executeQuery();
 
         List<TimeChunk> busyTimes = new ArrayList<>();
         while(result.next()) {
-            TimeChunk chunk = new TimeChunk(
-                    result.getTimestamp("startTime").toLocalDateTime(),
-                    result.getTimestamp("endTime").toLocalDateTime()
+            busyTimes.add (
+                    new TimeChunk(
+                            result.getTimestamp("startTime").toLocalDateTime(),
+                            result.getTimestamp("endTime").toLocalDateTime()
+                    )
             );
-            busyTimes.add(chunk);
         }
-        boolean done = false;
-        while (!done) {
-            done = true;
-            for (int i = 0; i < busyTimes.size(); i++) {
-                for (int j = 0; j < busyTimes.size(); j++) {
-                    if (busyTimes.get(i).isOverlapping(busyTimes.get(j))) {
-                        busyTimes.get(i).merge(busyTimes.get(j));
-                        busyTimes.remove(j);
-                        done = false;
-                    }
-                }
-            }
-        }
+
+//        boolean done = false;
+//        while (!done) {
+//            done = true;
+//            for (int i = 0; i < busyTimes.size(); i++) {
+//                for (int j = 0; j < busyTimes.size(); j++) {
+//                    if (busyTimes.get(i).isOverlapping(busyTimes.get(j))) {
+//                        busyTimes.get(i).merge(busyTimes.get(j));
+//                        busyTimes.remove(j);
+//                        done = false;
+//                    }
+//                }
+//            }
+//        }
 
         ArrayList<User> stu = new ArrayList<>();
         LocalDateTime sleepTimeStart = LocalDateTime.of(2019, Month.OCTOBER, 22, 0, 0);
@@ -256,7 +258,7 @@ public class StudentController {
         while(!found) {
             addTime = false;
             for (TimeChunk busyTime : busyTimes) {
-                if (busyTime.isOverlapping(suggested) || sleepTimeChunk.isOverlapping(suggested)) {
+                if (suggested.isOverlapping(busyTime) || sleepTimeChunk.isOverlapping(suggested)) {
                     addTime = true;
                 }
             }
