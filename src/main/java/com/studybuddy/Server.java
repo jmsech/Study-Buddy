@@ -23,6 +23,7 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
+                    // TODO - Postman documentation and tests for everything
                     path(":userID/events", () -> {
                         get(StudentController::getEvents);
                         post(StudentController::createEvent);

@@ -160,8 +160,6 @@ public class StudentController {
             SecureRandom random = new SecureRandom();
             byte[] salt = new byte[16];
             random.nextBytes(salt);
-            System.out.println("Original salt " + salt);
-            System.out.println("Original salt in hex " + this.bytesToHex(salt));
             assert password != null;
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -196,8 +194,6 @@ public class StudentController {
         while (result.next()) {
             storedHashedPassword = result.getString("hashedPassword");
             var salt = this.hexToBytes(result.getString("hashSalt"));
-            System.out.println("Stored salt " + salt);
-            System.out.println("Stored salt in hex " + result.getString("hashSalt"));
             // Hash password an compare to stored value
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -207,8 +203,6 @@ public class StudentController {
             userFound = true;
         }
         // If user is not found or password doesn't match, return 0 (indicates no user)
-        System.out.println("Hashed password " + hashedPassword);
-        System.out.println("Stored password " + storedHashedPassword);
         if (!userFound || (!hashedPassword.equals(storedHashedPassword))) {
             ctx.json(0);
         } else {
