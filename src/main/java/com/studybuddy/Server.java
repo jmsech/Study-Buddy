@@ -1,6 +1,6 @@
 package com.studybuddy;
 
-import com.studybuddy.controllers.*;
+import com.studybuddy.controllers.StudentController;
 
 import com.studybuddy.models.Student;
 import io.javalin.Javalin;
