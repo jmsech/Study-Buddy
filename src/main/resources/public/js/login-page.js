@@ -24,14 +24,13 @@ class LoginForm extends React.Component {
     }
 
     async handleSubmit(event) {
-        const email = String(event.target.email.value).toLowerCase();
-        const password = event.target.password.value;
+        const formData = new FormData();
+        formData.append("email", String(event.target.email.value).toLowerCase());
+        formData.append("password", event.target.password.value);
         event.target.reset();
         event.preventDefault();
         // Validate username and password
-        // const response = fetch(`/users/authenticate/${email}/${password}`)
-        //     .then((response) => (response.json()));
-        const response = await (await fetch(`/users/authenticate/${email}/${password}`)).json();
+        const response = await (await fetch("/users/authenticate/", {method: "POST", body: formData})).json();
         if (response !== 0) {
             const baseUrl = "/application/application.html?id=";
             const url = baseUrl.concat(response);

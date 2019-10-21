@@ -98,6 +98,52 @@ public class StudentController {
         ctx.status(200);
     }
 
+    // Helper to convert individual byte to string
+    private String byteToHex(byte num) {
+        char[] hexDigits = new char[2];
+        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+        hexDigits[1] = Character.forDigit((num & 0xF), 16);
+        return new String(hexDigits);
+    }
+
+    // Helper function to convert byte array to a hex string
+    private String bytesToHex(byte[] byteArray) {
+        StringBuffer hexStringBuffer = new StringBuffer();
+        for (byte b : byteArray) {
+            hexStringBuffer.append(byteToHex(b));
+        }
+        return hexStringBuffer.toString();
+    }
+
+    // Helper function to convert hex string to byte array
+    private byte[] hexToBytes(String hexString) {
+        if (hexString.length() % 2 == 1) {
+            throw new IllegalArgumentException(
+                    "Invalid hexadecimal String supplied.");
+        }
+
+        byte[] bytes = new byte[hexString.length() / 2];
+        for (int i = 0; i < hexString.length(); i += 2) {
+            bytes[i / 2] = hexToByte(hexString.substring(i, i + 2));
+        }
+        return bytes;
+    }
+
+    public byte hexToByte(String hexString) {
+        int firstDigit = toDigit(hexString.charAt(0));
+        int secondDigit = toDigit(hexString.charAt(1));
+        return (byte) ((firstDigit << 4) + secondDigit);
+    }
+
+    private int toDigit(char hexChar) {
+        int digit = Character.digit(hexChar, 16);
+        if(digit == -1) {
+            throw new IllegalArgumentException(
+                    "Invalid Hexadecimal Character: "+ hexChar);
+        }
+        return digit;
+    }
+
     public void createUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");
@@ -118,8 +164,8 @@ public class StudentController {
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] hashedPassword = factory.generateSecret(spec).getEncoded();
-            String hashedPasswordStr = new String(hashedPassword);
-            String hashSaltStr = new String(salt);
+            String hashedPasswordStr = bytesToHex(hashedPassword);
+            String hashSaltStr = bytesToHex(salt);
             // Insert into database
             var statement = connection.prepareStatement("INSERT INTO users (email, hashedPassword, hashSalt, firstName, lastName) VALUES (?, ?, ?, ?, ?)");
             statement.setString(1, email);
@@ -135,8 +181,8 @@ public class StudentController {
     }
 
     public void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
-        var email = ctx.pathParam("email");
-        var password = ctx.pathParam("password");
+        var email = ctx.formParam("email");
+        var password = ctx.formParam("password");
         // Search for the user based on their email
         var statement = connection.prepareStatement("SELECT id, hashedPassword, hashSalt FROM users WHERE email = ?");
         statement.setString(1, email);
@@ -147,12 +193,12 @@ public class StudentController {
         var id = 0;
         while (result.next()) {
             storedHashedPassword = result.getString("hashedPassword");
-            var salt = result.getString("hashSalt").getBytes();
+            var salt = this.hexToBytes(result.getString("hashSalt"));
             // Hash password an compare to stored value
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] hash = factory.generateSecret(spec).getEncoded();
-            hashedPassword = new String(hash);
+            hashedPassword = bytesToHex(hash);
             id = result.getInt("id");
             userFound = true;
         }

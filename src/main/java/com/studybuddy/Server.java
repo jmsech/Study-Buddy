@@ -23,6 +23,7 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
+                    // TODO - Postman documentation and tests for everything
                     path(":userId/recs", () -> {
                         get(StudentController::getRec);
                     });
@@ -35,8 +36,8 @@ public class Server {
                     });
                     path("users", () -> {
                         post(StudentController::createUser);
-                        path("authenticate/:email/:password", () -> {
-                            get(StudentController::authenticateUser);
+                        path("authenticate/", () -> {
+                            post(StudentController::authenticateUser);
                         });
                     });
                 })
