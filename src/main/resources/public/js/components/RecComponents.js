@@ -38,8 +38,9 @@ class Rec extends React.Component {
                     <EventDescription event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
                 </div>
-                <div className="card-action right-align">
-                    <RecDeleteButton event={this.props.event} userID = {this.props.userID} clearRecs={this.props.clearRecs}/>
+                <div id="recommendation-actions" className="card-action">
+                    <RecAcceptButton event={this.props.event} userID={this.props.userID} clearRecs={this.props.clearRecs}/>
+                    <RecDeclineButton clearRecs={this.props.clearRecs}/>
                 </div>
             </li>
         );
@@ -55,7 +56,50 @@ class RecList extends React.Component {
     }
 }
 
-class RecDeleteButton extends React.Component {
+class RecAcceptButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    formatAMPM(hours, minutes) {
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours < 10 ? "0" + hours : hours
+        minutes = minutes < 10 ? '0'+ minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
+    handleClick() {
+        const event = this.props.event;
+        const formData = new FormData();
+        formData.append("userID", this.props.userID);
+        formData.append("title", event.title);
+        let startTime = String(event.startTime.year);
+        startTime = startTime.concat("-").concat(event.startTime.monthValue)
+            .concat("-").concat(event.startTime.dayOfMonth).concat(" ")
+            .concat(this.formatAMPM(event.startTime.hour, event.startTime.minute));
+        let endTime = String(event.startTime.year);
+        endTime = endTime.concat("-").concat(event.endTime.monthValue)
+            .concat("-").concat(event.endTime.dayOfMonth).concat(" ")
+            .concat(this.formatAMPM(event.endTime.hour, event.endTime.minute));
+        formData.append("startTime", startTime);
+        formData.append("endTime", endTime);
+        formData.append("description", event.description);
+        this.props.clearRecs();
+        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
+    }
+
+    render() {
+        return (
+            <button className="btn cyan darken-3" onClick={() => {this.handleClick()}}>Accept</button>
+        )
+    }
+}
+
+class RecDeclineButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = null;
@@ -63,7 +107,7 @@ class RecDeleteButton extends React.Component {
 
     render() {
         return (
-            <button className="btn cyan darken-3" onClick={() => {this.props.clearRecs()}}><i className="material-icons">delete</i></button>
+            <button className="btn cyan darken-3" onClick={() => {this.props.clearRecs()}}>Decline</button>
         )
     }
 }

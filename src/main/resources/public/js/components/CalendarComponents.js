@@ -31,9 +31,9 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
         event.target.reset(); // clear the form entries
+        event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
-        event.preventDefault();
     }
 
     componentDidMount() {
@@ -48,20 +48,21 @@ class NewEventForm extends React.Component {
         });
     }
 
+    formatAMPM(hours, minutes) {
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours < 10 ? "0" + hours : hours
+        minutes = minutes < 10 ? '0'+ minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
     render() {
         let style = {display: "none"};
         if (this.props.showForm) { style = {display: "block"}};
         let today = new Date();
         let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        function formatAMPM(hours, minutes) {
-            var ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            hours = hours < 10 ? "0" + hours : hours
-            minutes = minutes < 10 ? '0'+minutes : minutes;
-            var strTime = hours + ':' + minutes + ' ' + ampm;
-            return strTime;
-        }
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
@@ -78,7 +79,7 @@ class NewEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="startTime" className="active">Start time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {formatAMPM(today.getHours(), today.getMinutes())} required/>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(today.getHours(), today.getMinutes())} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endDate" className="active">End date</label>
@@ -86,7 +87,7 @@ class NewEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="endTime" className="active">End time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {formatAMPM(today.getHours()+1, today.getMinutes())} required/>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(today.getHours()+1, today.getMinutes())} required/>
                 </div>
                 <button className="btn white-text">Save Event</button>
             </form>
@@ -174,7 +175,7 @@ function convertTo12HourFormat(hour, minute) {
     if (hour > 12) {
         hour -= 12;
         ampm = "PM";
-    } else if (hour == 0) {
+    } else if (hour === 0) {
         hour = 12;
     }
     return ("" + hour + ":" + (("0" + minute).slice(-2)) + " " +  ampm);

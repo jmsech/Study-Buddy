@@ -35,3 +35,8 @@ ul {
 .logout-button {
     margin: 20px;
 }
+
+#recommendation-actions {
+    display: flex;
+    justify-content: space-between;
+}
