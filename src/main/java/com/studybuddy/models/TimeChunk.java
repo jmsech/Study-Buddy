@@ -7,9 +7,9 @@ public class TimeChunk {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    public TimeChunk(LocalDateTime start, LocalDateTime end) {
-        this.startTime = start;
-        this.endTime = end;
+    public TimeChunk(LocalDateTime startTime, LocalDateTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public LocalDateTime getStartTime() {

@@ -3,6 +3,7 @@ package com.studybuddy.controllers;
 import com.studybuddy.models.Event;
 import com.studybuddy.models.Student;
 import com.studybuddy.models.User;
+import com.studybuddy.models.TimeChunk;
 import io.javalin.http.Context;
 
 // Password security classes
@@ -15,10 +16,12 @@ import java.security.spec.KeySpec;
 
 // Database handling
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class StudentController {
     private static int hashingIterationCount = 65536;
@@ -160,6 +163,8 @@ public class StudentController {
             SecureRandom random = new SecureRandom();
             byte[] salt = new byte[16];
             random.nextBytes(salt);
+            System.out.println("Original salt " + salt);
+            System.out.println("Original salt in hex " + this.bytesToHex(salt));
             assert password != null;
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -194,6 +199,8 @@ public class StudentController {
         while (result.next()) {
             storedHashedPassword = result.getString("hashedPassword");
             var salt = this.hexToBytes(result.getString("hashSalt"));
+            System.out.println("Stored salt " + salt);
+            System.out.println("Stored salt in hex " + result.getString("hashSalt"));
             // Hash password an compare to stored value
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -203,6 +210,8 @@ public class StudentController {
             userFound = true;
         }
         // If user is not found or password doesn't match, return 0 (indicates no user)
+        System.out.println("Hashed password " + hashedPassword);
+        System.out.println("Stored password " + storedHashedPassword);
         if (!userFound || (!hashedPassword.equals(storedHashedPassword))) {
             ctx.json(0);
         } else {
@@ -213,59 +222,61 @@ public class StudentController {
         statement.close();
     }
 
-    public void getRec(Context ctx) throws SQLException {
+    public Event makeRec(Context ctx) throws SQLException {
+        int userid = 1;
+        var statement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
+        statement.setInt(1, userid);
+        var result = statement.executeQuery();
 
-        //right now this is hardcoded to just look for common free times between user '1' and '2'; later we'd make it loop over list of users
-        //or something like that
-        var user1events = new ArrayList<Event>();
-        var user2events = new ArrayList<Event>();
-
-        //var user1id = ctx.pathParam("userID", Integer.class).get();
-        //again, temporarily hardcoded
-        var user1id = 1;
-        var user2id = 2;
-        //get events with user id 1
-        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description FROM events WHERE userID = ?");
-        statement.setInt(1, user1id);
-
-        var result1 = statement.executeQuery();
-        ArrayList<User> stu1 = new ArrayList<>();
-        while (result1.next()) {
-            user1events.add(
-                    new Event(
-                            result1.getInt("id"),
-                            result1.getString("title"),
-                            result1.getTimestamp("startTime").toLocalDateTime(),
-                            result1.getTimestamp("endTime").toLocalDateTime(),
-                            result1.getString("description"),
-                            stu1
-                    )
+        List<TimeChunk> busyTimes = new ArrayList();
+        while(result.next()) {
+            TimeChunk chunk = new TimeChunk(
+                    result.getTimestamp("startTime").toLocalDateTime(),
+                    result.getTimestamp("endTime").toLocalDateTime()
             );
+            busyTimes.add(chunk);
+        }
+        boolean done = false;
+        while (!done) {
+            done = true;
+            for (int i = 0; i < busyTimes.size(); i++) {
+                for (int j = 0; j < busyTimes.size(); j++) {
+                    if (busyTimes.get(i).isOverlapping(busyTimes.get(j))) {
+                        busyTimes.get(i).merge(busyTimes.get(j));
+                        busyTimes.remove(j);
+                        done = false;
+                    }
+                }
+            }
         }
 
-        //get events with user id 2
-        statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description FROM events WHERE userID = ?");
-        statement.setInt(1, user2id);
+        ArrayList<User> stu = new ArrayList<>();
+        LocalDateTime sleepTimeStart = LocalDateTime.of(2019, Month.OCTOBER, 22, 0, 0);
+        LocalDateTime sleepTimeEnd = LocalDateTime.of(2019, Month.OCTOBER,22,9,0);
+        TimeChunk sleepTimeChunk = new TimeChunk(sleepTimeStart, sleepTimeEnd);
 
-        var result2 = statement.executeQuery();
-        ArrayList<User> stu2 = new ArrayList<>();
-        while (result1.next()) {
-            user2events.add(
-                    new Event(
-                            result2.getInt("id"),
-                            result2.getString("title"),
-                            result2.getTimestamp("startTime").toLocalDateTime(),
-                            result2.getTimestamp("endTime").toLocalDateTime(),
-                            result2.getString("description"),
-                            stu2
-                    )
-            );
+        TimeChunk suggested = new TimeChunk(sleepTimeEnd, sleepTimeEnd.plusHours(1));
+        boolean found = false;
+        boolean addTime;
+
+        while(!found) {
+            addTime = false;
+            for (int i = 0; i < busyTimes.size(); i++){
+                if (busyTimes.get(i).isOverlapping(suggested) || sleepTimeChunk.isOverlapping(suggested)) {
+                    suggested.setStartTime(suggested.getStartTime().plusMinutes(15));
+                    suggested.setEndTime(suggested.getEndTime().plusMinutes(15));
+                    addTime = true;
+                }
+            }
+            if(addTime) {
+                suggested.setStartTime(suggested.getStartTime().plusMinutes(15));
+                suggested.setEndTime(suggested.getEndTime().plusMinutes(15));
+            } else {
+                found = true;
+            }
         }
 
-        result1.close();
-        result2.close();
-        statement.close();
-        ctx.json(user1events);
-        ctx.json(user2events);
+        Event suggestion  = new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"I think that you should study during this time",stu);
+        return suggestion;
     }
 }
