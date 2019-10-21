@@ -192,6 +192,7 @@ public class StudentController {
             storedHashedPassword = result.getString("hashedPassword");
             var salt = this.hexToBytes(result.getString("hashSalt"));
             // Hash password an compare to stored value
+            assert password != null;
             KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, StudentController.hashingIterationCount, StudentController.hashingKeyLength);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] hash = factory.generateSecret(spec).getEncoded();
