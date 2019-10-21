@@ -31,6 +31,7 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
         event.target.reset(); // clear the form entries
+        // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
         event.preventDefault();
     }
@@ -50,31 +51,41 @@ class NewEventForm extends React.Component {
     render() {
         let style = {display: "none"};
         if (this.props.showForm) { style = {display: "block"}};
+        let today = new Date();
+        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        function formatAMPM(hours, minutes) {
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
+        }
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="title">Event name</label>
-                    <input id="title" name="title" type="text" required/>
+                    <label htmlFor="title" className="active">Event name</label>
+                    <input id="title" name="title" type="text" defaultValue = ":)" required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="description">Event description</label>
-                    <input id="description" name="description" type="text" />
+                    <label htmlFor="description" className="active">Event description</label>
+                    <input id="description" name="description" type="text" defaultValue = ";)"/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="startDate">Start date</label>
-                    <input id="startDate" type="text" className="datepicker" required/>
+                    <label htmlFor="startDate" className="active">Start date</label>
+                    <input id="startDate" type="text" className="datepicker" defaultValue = {date} required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="startTime">Start time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" required/>
+                    <label htmlFor="startTime" className="active">Start time</label>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {formatAMPM(today.getHours(), today.getMinutes())} required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="endDate">End date</label>
-                    <input id="endDate" name="endDate" type="text" className="datepicker" required/>
+                    <label htmlFor="endDate" className="active">End date</label>
+                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue = {date} required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="endTime">End time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" required/>
+                    <label htmlFor="endTime" className="active">End time</label>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {formatAMPM(today.getHours()+1, today.getMinutes())} required/>
                 </div>
                 <button className="btn white-text">Save Event</button>
             </form>

@@ -60,7 +60,6 @@ class RecList extends React.Component {
         return <div>
             <NewRecButton className="btn white-text" getRec = {this.addRec.bind(this)}/>
             <h3>Here are your recommendations:</h3>
-            {console.log(this.state.recs)}
             <ul>{this.state.recs.map(rec => <Event key={rec.id} event={rec} userID = {this.props.userID}/>)}</ul>
         </div>;
     }
