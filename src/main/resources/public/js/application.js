@@ -11,11 +11,11 @@ class Application extends React.Component {
     render() {
         return (
             <div>
-                <div className="right-align logout-button"><LogoutButton/></div>
-                <div className="centralized-body">
+                <div>
                     <Header/>
-                    <NewEventButton className="new-event-button btn white-text" flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                    <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                    <div className="centralized-body">
+                        <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                    </div>
                 </div>
             </div>
         );
@@ -30,6 +30,7 @@ const LogoutButton = () => (
 const Header = () => (
     <header>
         <img className="logo" src="../images/logo-full.png"/>
+        <div className="logout-button"><LogoutButton/></div>
     </header>
 );
 

@@ -15,6 +15,7 @@ class Recommendation extends React.Component {
     render() {
         return (
             <div>
+                <h3>Recommendations</h3>
                 <NewRecButton getRec = {this.getRec.bind(this)}/>
                 <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>
             </div>
@@ -25,7 +26,7 @@ class Recommendation extends React.Component {
 class NewRecButton extends React.Component {
     render() {
         let title = "Generate a Recommendation";
-        return <button className="btn" onClick={() => { this.props.getRec() }}>{title}</button>;
+        return <button className="btn centralized-button" onClick={() => { this.props.getRec() }}>{title}</button>;
     }
 }
 
@@ -49,10 +50,11 @@ class Rec extends React.Component {
 
 class RecList extends React.Component {
     render() {
-        return <div>
-            <h3>Here are your recommendations:</h3>
-            <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs}/>)}</ul>
-        </div>;
+        return (
+            <div>
+                <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs}/>)}</ul>
+            </div>
+        );
     }
 }
 
