@@ -1,3 +1,23 @@
+class Recommendation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { recs: [] };
+    }
+
+    async getRec() {
+        this.setState({recs: await (await fetch(`/${this.props.userID}/recs`)).json()});
+    }
+
+    render() {
+        return (
+            <div>
+                <NewRecButton getRec = {this.getRec.bind(this)}/>
+                <RecList userID={this.props.userID} recs = {this.state.recs}/>
+            </div>
+        )
+    }
+}
+
 class NewRecButton extends React.Component {
     render() {
         let title = "Generate a Recommendation";
@@ -23,44 +43,10 @@ class Rec extends React.Component {
 }
 
 class RecList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { recs: [] };
-    }
-
-    // async getDataFromServer() {
-    //     // let jason = {
-    //     //     "id": "5",
-    //     //     "title": "reco",
-    //     //     "startTime": "1571760000000",
-    //     //     "endTime": "1571760000001",
-    //     //     "description": "please work",
-    //     //     "hosts": "null",
-    //     //     "userID": "5"
-    //     // };
-    //
-    //     //hardcoded for now
-    //     this.setState({ recs: await (await fetch(`/${this.props.userID}/events`)).json() });
-    //     // this.setState({ user2events: await (await fetch(`/$2/events`)).json() });
-    //     //now get the union of the times they're unavailable
-    //     //then get the complement of that to find available times
-    //     //subtract out sleeping times (11pm - 8am?)
-    //
-    //     //window.setTimeout(() => { this.getDataFromServer(); }, 200);
-    // }
-
-    async addRec() {
-        this.setState({ recs: await (await fetch(`/${this.props.userID}/events`)).json() });
-
-
-        // this.setState({recs: reco.append()})
-    }
-
     render() {
         return <div>
-            <NewRecButton className="btn white-text" getRec = {this.addRec.bind(this)}/>
             <h3>Here are your recommendations:</h3>
-            <ul>{this.state.recs.map(rec => <Event key={rec.id} event={rec} userID = {this.props.userID}/>)}</ul>
+            <ul>{this.props.recs.map(rec => <Event key={rec.id} event={rec} userID = {this.props.userID}/>)}</ul>
         </div>;
     }
 }
