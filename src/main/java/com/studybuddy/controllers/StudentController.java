@@ -70,9 +70,11 @@ public class StudentController {
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
-        System.out.println("here1");
-        var description = ctx.formParam("description", String.class).get();
-        System.out.println("here2");
+        var description = ctx.formParam("description", String.class).getOrNull();
+        // Set description to empty string if it is null
+        if (description == null) {
+            description = "";
+        }
         var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
