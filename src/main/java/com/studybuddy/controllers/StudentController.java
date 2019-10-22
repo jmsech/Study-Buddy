@@ -63,14 +63,16 @@ public class StudentController {
     }
 
     public void createEvent(Context ctx) throws SQLException {
-        var title = ctx.formParam("title", ctx.formParam("title", String.class).get());
+        var title = ctx.formParam("title", String.class).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
         java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         var location = ctx.formParam("location", "");
-        var description = ctx.formParam("description", ctx.formParam("description", String.class).get());
+        System.out.println("here1");
+        var description = ctx.formParam("description", String.class).get();
+        System.out.println("here2");
         var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
