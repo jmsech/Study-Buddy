@@ -26,7 +26,7 @@ class Recommendation extends React.Component {
 class NewRecButton extends React.Component {
     render() {
         let title = "Generate a Recommendation";
-        return <button className="btn centralized-button" onClick={() => { this.props.getRec() }}>{title}</button>;
+        return <button className="btn cyan darken-3 centralized-button" onClick={() => { this.props.getRec() }}>{title}</button>;
     }
 }
 
