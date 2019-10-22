@@ -7,10 +7,18 @@ class User extends React.Component {
         this.state = {userID: id};
     }
     render () {
-       return <div>
-           <NewEventForm userID={this.state.userID} showForm={this.props.showForm} flip={this.props.flip}/>
-           <EventList userID={this.state.userID}/>
-           <Recommendation userID={this.state.userID}/>
-       </div>
+       return (
+           <div className="content-row">
+               <div className="column">
+                   <h3>Events</h3>
+                   <NewEventButton className="new-event-button btn white-text" flip={this.props.flip} showForm={this.props.showForm}/>
+                   <NewEventForm userID={this.state.userID} showForm={this.props.showForm} flip={this.props.flip}/>
+                   <EventList userID={this.state.userID}/>
+               </div>
+               <div className="column">
+                    <Recommendation userID={this.state.userID}/>
+               </div>
+            </div>
+       );
     }
 }

@@ -4,7 +4,7 @@ class NewEventButton extends React.Component {
         if (this.props.showForm) {
             title = "Cancel";
         }
-        return <button className={this.props.className} onClick={() => { this.props.flip() }}>{title}</button>;
+        return <button className="btn centralized-button" onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
 
@@ -113,7 +113,6 @@ class EventList extends React.Component {
     render() {
         return (
         <div>
-            <h3>Here are your events:</h3>
             <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID={this.props.userID}/>)}</ul>
         </div>
         );
