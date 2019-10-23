@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EventTests {
 
     @Before
-    void init() {
+    public void init() {
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = startTime.plusHours(2);
         User host1 = new User(1, "John Smith");
@@ -24,6 +24,7 @@ public class EventTests {
         LocalDateTime newStartTime = startTime.plusHours(4);
         LocalDateTime newEndTime = endTime.plusHours(4);
         User host2 = new User(2, "Joe Johnson");
+        testHosts.add(host2);
     }
 
 
