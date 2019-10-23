@@ -45,7 +45,8 @@ class LoginForm extends React.Component {
             <form id="loginForm" onSubmit={this.handleSubmit}>
                 <div className="input-field">
                     <label htmlFor="email">Email</label>
-                    <input id="email" name="email" type="text" required/>
+                    <input id="email" name="email" type="email" className="validate" required/>
+                    <span className="helper-text" data-error="Invalid email"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="password">Password</label>

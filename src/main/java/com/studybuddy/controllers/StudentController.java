@@ -69,14 +69,21 @@ public class StudentController {
         java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
+        // Ensure that startTime is before endTime
+        if (!endTime.isAfter(startTime)) {
+            ctx.json("EventPeriodError");
+            return;
+        }
+
         var location = ctx.formParam("location", "");
-        System.out.println("here1");
-        var description = ctx.formParam("description", String.class).get();
-        System.out.println("here2");
+        var description = ctx.formParam("description", String.class).getOrNull();
+        // Set description to empty string if it is null
+        if (description == null) {
+            description = "";
+        }
         var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
-        //TODO add actual values to the insert
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
@@ -107,11 +114,11 @@ public class StudentController {
 
     // Helper function to convert byte array to a hex string
     private String bytesToHex(byte[] byteArray) {
-        StringBuffer hexStringBuffer = new StringBuffer();
+        StringBuilder hexStringBuilder = new StringBuilder();
         for (byte b : byteArray) {
-            hexStringBuffer.append(byteToHex(b));
+            hexStringBuilder.append(byteToHex(b));
         }
-        return hexStringBuffer.toString();
+        return hexStringBuilder.toString();
     }
 
     // Helper function to convert hex string to byte array
