@@ -26,7 +26,7 @@ class NewEventForm extends React.Component {
         const formData = new FormData();
         formData.append("userID", this.props.userID);
         formData.append("title", event.target.title.value);
-        // combine tim/date into the format yyyy-mm-ddT00:00
+        // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);

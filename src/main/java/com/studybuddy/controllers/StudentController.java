@@ -78,7 +78,6 @@ public class StudentController {
         var userID = ctx.formParam("userID", Integer.class).get();
 
         // TODO change call to consider inviteList and importance
-        //TODO add actual values to the insert
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
@@ -109,11 +108,11 @@ public class StudentController {
 
     // Helper function to convert byte array to a hex string
     private String bytesToHex(byte[] byteArray) {
-        StringBuffer hexStringBuffer = new StringBuffer();
+        StringBuilder hexStringBuilder = new StringBuilder();
         for (byte b : byteArray) {
-            hexStringBuffer.append(byteToHex(b));
+            hexStringBuilder.append(byteToHex(b));
         }
-        return hexStringBuffer.toString();
+        return hexStringBuilder.toString();
     }
 
     // Helper function to convert hex string to byte array
