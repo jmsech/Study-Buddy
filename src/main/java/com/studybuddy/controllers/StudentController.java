@@ -251,9 +251,6 @@ public class StudentController {
 //        }
 
         ArrayList<User> stu = new ArrayList<>();
-//        LocalDateTime sleepTimeStart = LocalDateTime.of(2019, Month.OCTOBER,22, 0, 0);
-//        LocalDateTime sleepTimeEnd = LocalDateTime.of(2019, Month.OCTOBER,22,9,0);
-//        TimeChunk sleepTimeChunk = new TimeChunk(sleepTimeStart, sleepTimeEnd);
 
         TimeChunk suggested = new TimeChunk(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         boolean found = false;
