@@ -251,18 +251,18 @@ public class StudentController {
 //        }
 
         ArrayList<User> stu = new ArrayList<>();
-        LocalDateTime sleepTimeStart = LocalDateTime.of(2019, Month.OCTOBER, 22, 0, 0);
-        LocalDateTime sleepTimeEnd = LocalDateTime.of(2019, Month.OCTOBER,22,9,0);
-        TimeChunk sleepTimeChunk = new TimeChunk(sleepTimeStart, sleepTimeEnd);
+//        LocalDateTime sleepTimeStart = LocalDateTime.of(2019, Month.OCTOBER,22, 0, 0);
+//        LocalDateTime sleepTimeEnd = LocalDateTime.of(2019, Month.OCTOBER,22,9,0);
+//        TimeChunk sleepTimeChunk = new TimeChunk(sleepTimeStart, sleepTimeEnd);
 
-        TimeChunk suggested = new TimeChunk(sleepTimeEnd, sleepTimeEnd.plusHours(1));
+        TimeChunk suggested = new TimeChunk(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         boolean found = false;
         boolean addTime;
 
         while(!found) {
             addTime = false;
             for (TimeChunk busyTime : busyTimes) {
-                if (suggested.isOverlapping(busyTime) || sleepTimeChunk.isOverlapping(suggested)) {
+                if (busyTime.isOverlapping(suggested) || (suggested.getStartTime().getHour() < 9 )) {
                     addTime = true;
                 }
             }
@@ -274,6 +274,6 @@ public class StudentController {
             }
         }
 
-        ctx.json(new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"I think that you should study during this time", stu));
+        ctx.json(new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"This would be a good time to study", stu));
     }
 }
