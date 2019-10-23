@@ -21,6 +21,14 @@ class NewEventForm extends React.Component {
         this.setState({value: event.target.value});
     }
 
+    async handleResponse(response) {
+        const msg = await response.json();
+        if (msg === "EventPeriodError") {
+            alert("Invalid event period (start has to be before end)");
+        }
+        return response;
+    }
+
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
@@ -30,10 +38,11 @@ class NewEventForm extends React.Component {
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
-        event.target.reset(); // clear the form entries
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
-        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
+        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
+            .then(this.handleResponse);
+        event.target.reset(); // clear the form entries
     }
 
     componentDidMount() {

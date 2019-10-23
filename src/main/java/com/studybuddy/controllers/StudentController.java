@@ -69,6 +69,12 @@ public class StudentController {
         java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
         LocalDateTime endTime = LocalDateTime.parse(ctx.formParam("endTime", String.class).get(), formatter);
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
+        // Ensure that startTime is before endTime
+        if (!endTime.isAfter(startTime)) {
+            ctx.json("EventPeriodError");
+            return;
+        }
+
         var location = ctx.formParam("location", "");
         var description = ctx.formParam("description", String.class).getOrNull();
         // Set description to empty string if it is null

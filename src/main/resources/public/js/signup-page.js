@@ -107,7 +107,7 @@ class SignUpForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="email">Email</label>
-                    <input id="email" name="email" type="text" required/>
+                    <input id="email" name="email" type="email" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="password">Password</label>
