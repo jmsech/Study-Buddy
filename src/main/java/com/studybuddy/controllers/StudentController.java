@@ -15,8 +15,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
 // Database handling
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -228,27 +230,13 @@ public class StudentController {
 
         List<TimeChunk> busyTimes = new ArrayList<>();
         while(result.next()) {
-            busyTimes.add (
+            busyTimes.add(
                     new TimeChunk(
                             result.getTimestamp("startTime").toLocalDateTime(),
                             result.getTimestamp("endTime").toLocalDateTime()
                     )
             );
         }
-
-//        boolean done = false;
-//        while (!done) {
-//            done = true;
-//            for (int i = 0; i < busyTimes.size(); i++) {
-//                for (int j = 0; j < busyTimes.size(); j++) {
-//                    if (busyTimes.get(i).isOverlapping(busyTimes.get(j))) {
-//                        busyTimes.get(i).merge(busyTimes.get(j));
-//                        busyTimes.remove(j);
-//                        done = false;
-//                    }
-//                }
-//            }
-//        }
 
         ArrayList<User> stu = new ArrayList<>();
 
@@ -272,5 +260,38 @@ public class StudentController {
         }
 
         ctx.json(new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"This would be a good time to study", stu));
+    }
+
+    public ArrayList<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, ArrayList<TimeChunk> unavailable) throws SQLException {
+        long startSec = start.toEpochSecond(ZoneOffset.UTC);
+        long endSec = end.toEpochSecond(ZoneOffset.UTC);
+
+        int lengthInMinutes = (int) (startSec-endSec)/60;
+
+        int[] timeArray = new int[lengthInMinutes];
+
+        // TODO Determine when people are sleeping and set those values to be negative
+
+        for (TimeChunk t : unavailable) {
+            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+
+            int s = (int) (trueS - startSec)/60;
+            int f = (int) (trueF - startSec)/60;
+
+            if (s < 0) {s = 0;}
+            if (f < 0) {f = 0;}
+            if (s >= lengthInMinutes) {s = lengthInMinutes - 1;}
+            if (f >= lengthInMinutes) {f = lengthInMinutes - 1;}
+
+            for (int i = s; i <= f; i++) { timeArray[i]++; }
+        }
+
+        return findStudyTimes(timeArray);
+    }
+
+    private ArrayList<TimeChunk> findStudyTimes(int[] timeArray) {
+
+        return null;
     }
 }
