@@ -35,6 +35,9 @@ public class Server {
                             delete(StudentController::deleteEvent);
                         });
                     });
+                    path(":userID", () -> {
+                        post(StudentController::collectGoogleEvents);
+                    });
                     path("users", () -> {
                         post(StudentController::createUser);
                         path("authenticate/", () -> {

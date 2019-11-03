@@ -9,6 +9,8 @@ import io.javalin.http.Context;
 // Password security classes
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -95,6 +97,11 @@ public class StudentController {
         statement.executeUpdate();
         statement.close();
         ctx.status(201);
+    }
+
+    public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
+        var userID = ctx.formParam("userID", Integer.class).get();
+        CalendarQuickstart.collectEvents(this.connection, userID);
     }
 
     public void deleteEvent(Context ctx) throws SQLException {
