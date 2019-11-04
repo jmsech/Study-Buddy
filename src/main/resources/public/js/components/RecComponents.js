@@ -79,14 +79,23 @@ class RecAcceptButton extends React.Component {
         const formData = new FormData();
         formData.append("userID", this.props.userID);
         formData.append("title", event.title);
-        let startTime = String(event.startTime.year);
-        startTime = startTime.concat("-").concat(event.startTime.monthValue)
-            .concat("-").concat(event.startTime.dayOfMonth).concat(" ")
-            .concat(this.formatAMPM(event.startTime.hour, event.startTime.minute));
-        let endTime = String(event.startTime.year);
-        endTime = endTime.concat("-").concat(event.endTime.monthValue)
-            .concat("-").concat(event.endTime.dayOfMonth).concat(" ")
-            .concat(this.formatAMPM(event.endTime.hour, event.endTime.minute));
+        // Format startTime
+        let startTime = String(event.startTime.year).concat("-").concat(event.startTime.monthValue).concat("-");
+        if (event.startTime.dayOfMonth < 10) {
+            startTime = startTime.concat("0").concat(event.startTime.dayOfMonth);
+        } else {
+            startTime = startTime.concat(event.startTime.dayOfMonth);
+        }
+        startTime = startTime.concat(" ").concat(this.formatAMPM(event.startTime.hour, event.startTime.minute));
+        // Format endTime
+        let endTime = String(event.startTime.year).concat("-").concat(event.endTime.monthValue).concat("-");
+        if (event.endTime.dayOfMonth < 10) {
+            endTime = endTime.concat("0").concat(event.endTime.dayOfMonth);
+        } else {
+            endTime = endTime.concat(event.endTime.dayOfMonth);
+        }
+        endTime = endTime.concat(" ").concat(this.formatAMPM(event.endTime.hour, event.endTime.minute));
+
         formData.append("startTime", startTime);
         formData.append("endTime", endTime);
         formData.append("description", event.description);

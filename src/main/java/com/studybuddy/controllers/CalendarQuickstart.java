@@ -92,7 +92,7 @@ public class CalendarQuickstart {
                 DateTime startDate = event.getStart().getDateTime();
                 if (startDate != null) {
                     Timestamp start = new Timestamp(startDate.getValue());
-                    Timestamp end = new Timestamp(event.getStart().getDateTime().getValue());
+                    Timestamp end = new Timestamp(event.getEnd().getDateTime().getValue());
                     var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
                     statement.setString(1, event.getSummary());
                     statement.setTimestamp(2, start);

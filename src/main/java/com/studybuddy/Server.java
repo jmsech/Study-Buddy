@@ -28,7 +28,7 @@ public class Server {
                         });
                     });
                     path(":userID", () -> {
-                        post(StudentController::collectGoogleEvents);
+                        post(ApplicationController::collectGoogleEvents);
                     });
                     path("users", () -> {
                         post(ApplicationController::createUser);

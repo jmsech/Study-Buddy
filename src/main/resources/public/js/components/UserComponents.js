@@ -10,8 +10,7 @@ class User extends React.Component {
        return (
            <div className="content-row">
                <div className="column">
-                   <h3>Events</h3>
-                   <GetGoogleEvents userID={this.state.userID}/>
+                   <h3>Events <GetGoogleEvents userID={this.state.userID}/> </h3>
                    <NewEventButton className="new-event-button btn white-text" flip={this.props.flip} showForm={this.props.showForm}/>
                    <NewEventForm userID={this.state.userID} showForm={this.props.showForm} flip={this.props.flip}/>
                    <EventList userID={this.state.userID}/>
@@ -31,6 +30,6 @@ class GetGoogleEvents extends React.Component {
         fetch(`../${this.props.userID}`, {method: "POST", body: formData})
     }
     render() {
-        return(<button onClick = {() => this.collectEvents()}>Google Calender</button>)
+        return(<button className="google-calendar-button btn white-text" onClick = {() => this.collectEvents()}></button>)
     }
 }
