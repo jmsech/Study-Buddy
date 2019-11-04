@@ -1,10 +1,6 @@
 package com.studybuddy;
-
-import com.studybuddy.controllers.StudentController;
-
-import com.studybuddy.models.Student;
+import com.studybuddy.controllers.ApplicationController;
 import io.javalin.Javalin;
-
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -13,12 +9,8 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 public class Server {
     public static void main(String[] args) throws SQLException {
         var connection = DriverManager.getConnection("jdbc:sqlite:studyBuddy.db");
-//        var userCon = DriverManager.getConnection("jdbc:sqlite:Users.db");
-        int id = 0;
-        String studentId = "ABC123";
-        String studentName = "Leandro Facchinetti";
-        var student = new Student(id, studentName, studentId, null);
-        var StudentController = new StudentController(student, connection);
+
+        var ApplicationController = new ApplicationController(connection);
         Javalin.create(config -> { config.addStaticFiles("/public"); })
                 .events(event -> {
                     event.serverStopped(() -> { connection.close(); });
@@ -26,22 +18,22 @@ public class Server {
                 .routes(() -> {
                     // TODO - Postman documentation and tests for everything
                     path(":userId/recs", () -> {
-                        get(StudentController::getRec);
+                        get(ApplicationController::getRec);
                     });
                     path(":userID/events", () -> {
-                        get(StudentController::getEvents);
-                        post(StudentController::createEvent);
+                        get(ApplicationController::getEvents);
+                        post(ApplicationController::createEvent);
                         path(":id", () -> {
-                            delete(StudentController::deleteEvent);
+                            delete(ApplicationController::deleteEvent);
                         });
                     });
                     path(":userID", () -> {
                         post(StudentController::collectGoogleEvents);
                     });
                     path("users", () -> {
-                        post(StudentController::createUser);
+                        post(ApplicationController::createUser);
                         path("authenticate/", () -> {
-                            post(StudentController::authenticateUser);
+                            post(ApplicationController::authenticateUser);
                         });
                     });
                 })
