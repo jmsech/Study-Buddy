@@ -71,7 +71,12 @@ class NewEventForm extends React.Component {
         let style = {display: "none"};
         if (this.props.showForm) { style = {display: "block"}};
         let today = new Date();
-        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-';
+        if (today.getDate() < 10) {
+            date = date + "0" + today.getDate();
+        } else {
+            date = date + today.getDate();
+        }
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
