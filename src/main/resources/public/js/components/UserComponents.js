@@ -24,10 +24,10 @@ class User extends React.Component {
 }
 
 class GetGoogleEvents extends React.Component {
-    collectEvents() {
+    async collectEvents() {
         const formData = new FormData();
         formData.append("userID", this.props.userID);
-        fetch(`../${this.props.userID}`, {method: "POST", body: formData})
+        await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
     }
     render() {
         return(<button className="google-calendar-button btn white-text" onClick = {() => this.collectEvents()}></button>)
