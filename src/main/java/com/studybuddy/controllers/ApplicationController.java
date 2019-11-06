@@ -52,7 +52,7 @@ public class ApplicationController {
     }
 
     public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
-        studentController.collectGoogleEvents(ctx);
+        userController.collectGoogleEvents(ctx);
     }
 
 }
