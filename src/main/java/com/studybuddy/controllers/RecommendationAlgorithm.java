@@ -2,9 +2,6 @@ package com.studybuddy.controllers;
 
 import com.studybuddy.models.TimeChunk;
 
-import java.sql.SQLException;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -12,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class barbaricTesting {
+public class RecommendationAlgorithm {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CONSTANTS ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,25 +24,10 @@ public class barbaricTesting {
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // MAIN FUNCTION ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // FUNCTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void main(String[] args) {
-        ArrayList<TimeChunk> list = getTestingList();
-
-        LocalDateTime start = LocalDateTime.of(2020,1,1,0,0); // 01/01/2020 12am
-        LocalDateTime end = LocalDateTime.of(2020,1,7,23,59); // 01/07/2020 11:59pm
-
-        List<TimeChunk> chunks = makeRecommendation(start, end, list, 3);
-
-        printTimeChunks(chunks); // Debugging Print Statement
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // CRITICAL FUNCTIONS //////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction) {
 
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
         long endSec = end.toEpochSecond(ZoneOffset.UTC);
@@ -200,33 +182,7 @@ public class barbaricTesting {
         return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
     }
 
-    private static ArrayList<TimeChunk> getTestingList() {
-        ArrayList<TimeChunk> list = new ArrayList<>();
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,1,0,0),
-                LocalDateTime.of(2020,1,1,12,0))); // 01/01/2020 12am-12pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,1,17,0),
-                LocalDateTime.of(2020,1,1,20,0))); // 01/01/2020 5pm-8pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,2,14,0),
-                LocalDateTime.of(2020,1,2,20,0))); // 01/02/2020 2pm-8pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,2,18,0),
-                LocalDateTime.of(2020,1,2,22,0))); // 01/02/2020 6pm-10pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,3,14,0),
-                LocalDateTime.of(2020,1,3,16,0))); // 01/03/2020 2pm-4pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,3,18,0),
-                LocalDateTime.of(2020,1,3,19,0))); // 01/03/2020 6pm-7pm
-        list.add(new TimeChunk(
-                LocalDateTime.of(2020,1,7,18,0),
-                LocalDateTime.of(2020,1,8,2,0))); // 01/07/2020 6pm - 01/08/2020 2am
-        return list;
-    }
-
-    private static void printTimeChunks(List<TimeChunk> chunks) {
+    public static void printTimeChunks(List<TimeChunk> chunks) {
         for (var chunk : chunks) {
             System.out.println(chunk.getStartTime() + " " + chunk.getEndTime());
         }

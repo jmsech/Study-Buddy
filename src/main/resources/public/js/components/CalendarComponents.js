@@ -58,24 +58,34 @@ class NewEventForm extends React.Component {
     }
 
     formatAMPM(hours, minutes) {
-        var ampm = hours >= 12 ? 'PM' : 'AM';
+        var ampm = (hours >= 12 && hours < 24) ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        hours = hours < 10 ? "0" + hours : hours
+        hours = hours < 10 ? "0" + hours : hours;
         minutes = minutes < 10 ? '0'+ minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
+        return hours + ':' + minutes + ' ' + ampm;
     }
 
     render() {
         let style = {display: "none"};
         if (this.props.showEventForm) { style = {display: "block"}};
-        let today = new Date();
-        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-';
-        if (today.getDate() < 10) {
-            date = date + "0" + today.getDate();
+        let date = new Date();
+        // Define default start date
+        let defaultStartDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
+        if (date.getDate() < 10) {
+            defaultStartDate = defaultStartDate + "0" + date.getDate();
         } else {
-            date = date + today.getDate();
+            defaultStartDate = defaultStartDate + date.getDate();
+        }
+        // Define default end date
+        if (date.getHours() >= 23) {
+            date.setDate(date.getDate() + 1);
+        }
+        let defaultEndDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
+        if (date.getDate() < 10) {
+            defaultEndDate = defaultEndDate + "0" + date.getDate();
+        } else {
+            defaultEndDate = defaultEndDate + date.getDate();
         }
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
@@ -89,19 +99,19 @@ class NewEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
-                    <input id="startDate" type="text" className="datepicker" defaultValue = {date} required/>
+                    <input id="startDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startTime" className="active">Start time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(today.getHours(), today.getMinutes())} required/>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue={this.formatAMPM(date.getHours(), date.getMinutes())} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endDate" className="active">End date</label>
-                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue = {date} required/>
+                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue={defaultEndDate} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endTime" className="active">End time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(today.getHours()+1, today.getMinutes())} required/>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue={this.formatAMPM(date.getHours()+1, date.getMinutes())} required/>
                 </div>
                 <button className="btn white-text">Save Event</button>
             </form>
