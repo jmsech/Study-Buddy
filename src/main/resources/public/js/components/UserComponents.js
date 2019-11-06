@@ -26,7 +26,7 @@ class User extends React.Component {
 
 class GetGoogleEvents extends React.Component {
     async collectEvents() {
-        let daysToCollect = 0
+        let daysToCollect = 0;
         while (daysToCollect < 1) {
             daysToCollect = parseInt(
                 prompt("Enter the number of days you would like to sync", "7")
@@ -35,7 +35,7 @@ class GetGoogleEvents extends React.Component {
         if (daysToCollect) {
             const formData = new FormData();
             formData.append("userID", this.props.userID);
-            formData.append("daysToCollect", daysToCollect)
+            formData.append("daysToCollect", daysToCollect);
             await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
                 .then(this.handleResponse);
         }
@@ -55,6 +55,6 @@ class GetGoogleEvents extends React.Component {
     render() {
         return(
             <button className="google-calendar-button btn white-text" onClick = {() => this.collectEvents()}/>
-            )
+            );
     }
 }
