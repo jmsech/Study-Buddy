@@ -207,10 +207,11 @@ function titleCase(str) {
 
 function convertTo12HourFormat(hour, minute) {
     let ampm = "AM";
-    if (hour > 12) {
+    if (hour >= 12) {
         hour -= 12;
         ampm = "PM";
-    } else if (hour === 0) {
+    }
+    if (hour === 0) {
         hour = 12;
     }
     return ("" + hour + ":" + (("0" + minute).slice(-2)) + " " +  ampm);
