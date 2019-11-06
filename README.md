@@ -53,7 +53,7 @@ login-page.js: Displays the login page and the form in which the user inputs the
 
 signup-page.js: Displays the sign up page and the form that users use to sign up for a StudyBuddy account
 
-RecComponent.js: Handles when the user clicks on the button to get a recommendation.
+RecComponent.js: Displays and handles the buttons and forms the user uses to get a recommendation.
 
 CalendarComponent.js: Displays and handles the buttons and forms that the user uses to create and delete events.
 
