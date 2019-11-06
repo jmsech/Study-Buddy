@@ -8,10 +8,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
+
 
 public class barbaricTesting {
 
-    private int COMPRESSION = 60; //seconds/60 = minutes
+    public static final int SECONDS_PER_MINUTE = 60; //seconds/60 = minutes
+    public static final long SECONDS_PER_DAY = 86400;
+    public static final long SECONDS_OF_SLEEP = 28800;
+    public static final int MINUTES_PER_HOUR = 60;
 
     public static void main(String[] args) {
         ArrayList<TimeChunk> list = new ArrayList<>();
@@ -34,11 +39,9 @@ public class barbaricTesting {
         LocalDateTime start = LocalDateTime.of(2020,1,1,0,0); // 01/01/2020 12am
         LocalDateTime end = LocalDateTime.of(2020,1,7,23,59); // 01/07/2020 11:59pm
         ArrayList<TimeChunk> chunks = makeRecommendation(start, end, list, 3);
-//        for (var chunk : chunks) {
-//            System.out.println(chunk.getStartTime() + " to " + chunk.getEndTime());
-//        }
-        System.out.println(chunks.size());
-        System.out.println("Hello, World!");
+        for (var chunk : chunks) {
+            System.out.println(chunk.getStartTime() + " " + chunk.getEndTime());
+        }
     }
 
     private static LocalDateTime makeTime(long t) {
@@ -49,15 +52,15 @@ public class barbaricTesting {
 
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
         long endSec = end.toEpochSecond(ZoneOffset.UTC);
-        int lengthInMinutes = (int) (endSec-startSec)/60;
+        int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
         int[] timeArray = new int[lengthInMinutes];
 
         for (TimeChunk t : unavailable) {
             long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
             long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
 
-            int s = (int) (trueS - startSec)/60;
-            int f = (int) (trueF - startSec)/60;
+            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
+            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
 
             if (s < 0) {s = 0;}
             if (f < 0) {f = 0;}
@@ -67,28 +70,16 @@ public class barbaricTesting {
             for (int i = s; i <= f; i++) { timeArray[i]++; }
         }
 
-        long SECONDS_PER_DAY = 86400;
-        long MINUTES_PER_DAY = 1440;
-        long MINUTES_OF_SLEEP = 480;
+        long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
+        long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_DAY;
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
-        int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / 60;
+        int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
         int len = timeArray.length;
         for (int i = 0; i < len; i++) {
             if ((i - relativeSleepStart + MINUTES_PER_DAY) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
                 timeArray[i] = -1;
             }
-        }
-
-        int count = 0;
-        for (var i : timeArray) {
-            if (i == -1) {
-                System.out.print("z ");
-            } else {
-                System.out.print(i + " ");
-            }
-            count++;
-            if (count >= MINUTES_PER_DAY) {System.out.println(); count = 0;}
         }
 
         return findStudyTimes(timeArray, startSec, fraction);
@@ -104,69 +95,77 @@ public class barbaricTesting {
             else { freeTime[i] = 0; }
         }
 
-        System.out.println();
-        System.out.println("Hello, World!");
-        int count = 0;
-        for (var i : freeTime) {
-            System.out.print(i + " ");
-            count++;
-            if (count >= 1440) {System.out.println(); count = 0;}
-        }
-
         ArrayList<TimeChunk> chunks = new ArrayList<>();
         int state = -1;
         for (int i=0; i < length; i++) {
             if (freeTime[i] == 1 && state == -1) {
                 state = i;
             } else if (freeTime[i] == 0 && state != -1)  {
-                chunks.add(new TimeChunk(makeTime(startSec + (state)*60), makeTime(startSec + (i)*60)));
+                chunks.add(new TimeChunk(
+                        makeTime(startSec + (state)*SECONDS_PER_MINUTE),
+                        makeTime(startSec + (i)*SECONDS_PER_MINUTE)));
                 state = -1;
             }
         }
-        if (state != -1) { chunks.add(new TimeChunk(makeTime(startSec + state*60), makeTime(startSec + (length - 1)*60))); }
+        if (state != -1) { chunks.add(new TimeChunk(
+                makeTime(startSec + state*SECONDS_PER_MINUTE),
+                makeTime(startSec + (length - 1)*SECONDS_PER_MINUTE))); }
 
-//        return chunks;
         return createStudyChunks(chunks, fraction);
     }
 
     private static ArrayList<TimeChunk> createStudyChunks(ArrayList<TimeChunk> chunks, double fraction) {
 
         ArrayList<TimeChunk> studyChunks = new ArrayList<>();
-        int studyLength = (int) (fraction*60);
+        int studyLength = (int) (fraction*MINUTES_PER_HOUR);
 
         for (var chunk: chunks) {
-            long start = chunk.getStartTime().toEpochSecond(ZoneOffset.UTC)/60;
-            long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/60;
+            long start = chunk.getStartTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
+            long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             int chunkLength = (int) (end - start);
             if (studyLength <= chunkLength) {
                 double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
                 int numSlots = (int) fractionSlots;
-                System.out.println();
-                System.out.println(fractionSlots);
-                System.out.println(numSlots);
                 if (fractionSlots - numSlots >= 0.5) { numSlots++;}
-                System.out.println(numSlots);
                 for (int i = 0; i < numSlots/2; i++) {
                     long forwardBegin = start + i*studyLength;
                     long forwardEnd = start + (i+1)*studyLength;
-                    TimeChunk c = new TimeChunk(makeTime((forwardBegin-1)*60),makeTime((forwardEnd-1)*60));
+                    TimeChunk c = new TimeChunk(
+                            makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
+                            makeTime((forwardEnd-1)*SECONDS_PER_MINUTE));
                     studyChunks.add(c);
-                    System.out.println(c.getStartTime() + " " + c.getEndTime());
 
                     long reverseEnd = end - i*studyLength;
                     long reverseBegin = end - (i+1)*studyLength;
-                    c = new TimeChunk(makeTime(reverseBegin*60), makeTime(reverseEnd*60));
+                    c = new TimeChunk(
+                            makeTime(reverseBegin*SECONDS_PER_MINUTE),
+                            makeTime(reverseEnd*SECONDS_PER_MINUTE));
                     studyChunks.add(c);
-                    System.out.println(c.getStartTime() + " " + c.getEndTime());
                 }
                 if (numSlots % 2 == 1) {
-                    int i = numSlots/2+1;
+                    int i = numSlots/2;
                     long forwardBegin = start + i*studyLength;
                     long forwardEnd = start + (i+1)*studyLength;
-                    studyChunks.add(new TimeChunk(makeTime((forwardBegin-1)*60),makeTime((forwardEnd-1)*60)));
+                    TimeChunk c = new TimeChunk(
+                            makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
+                            makeTime((forwardEnd-1)*SECONDS_PER_MINUTE));
+                    studyChunks.add(c);
                 }
             }
         }
+
+        class TimeChunkComparator implements Comparator<TimeChunk>{
+            @Override
+            public int compare(TimeChunk t1, TimeChunk t2) {
+                long start1 = t1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+                long start2 = t2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+                if (start1 < start2) { return -1; }
+                else if (start1 == start2) {return 0; }
+                else {return 1; }
+            }
+        }
+
+        studyChunks.sort(new TimeChunkComparator());
 
         return studyChunks;
     }
