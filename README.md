@@ -1,5 +1,9 @@
 # This is our README :)
 
+## Deployment
+
+You can find StudyBuddy deployed [here](http://oose-studybuddy.herokuapp.com/)
+
 ## Download
 
 You can download StudyBuddy from our Github [here](https://github.com/jhu-oose/2019-group-jhuoosers).
