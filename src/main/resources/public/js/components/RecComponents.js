@@ -8,12 +8,16 @@ class Recommendations extends React.Component {
         this.setState({recs: []});
     }
 
+    setRecs(recs) {
+        this.setState({recs: recs});
+    }
+
     render() {
         return (
             <div>
                 <NewRecButton className="new-event-button btn white-text" flip={this.props.flipRec} showRecForm={this.props.showRecForm} />
-                <NewRecForm userID={this.props.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec} setRecs={() => {this.setState}}/>
-                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={() => {this.clearRecs}}/>
+                <NewRecForm userID={this.props.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec} setRecs={this.setRecs.bind(this)}/>
+                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>
             </div>
         )
     }
@@ -49,7 +53,8 @@ class NewRecForm extends React.Component {
             alert("Invalid recommendation period (start has to be before end)");
         } else {
             console.log(data);
-            this.props.setRecs({ recs: data });
+            const newState = {recs: data};
+            this.props.setRecs(newState);
         }
         return response;
     }
@@ -163,7 +168,6 @@ class NewRecForm extends React.Component {
 }
 
 class Rec extends React.Component {
-
     render() {
         return (
             <li className="card hoverable cyan darken-2">
