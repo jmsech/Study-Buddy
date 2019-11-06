@@ -41,6 +41,10 @@ public class ApplicationController {
         eventsController.deleteEvent(ctx);
     }
 
+    public void editEvent(Context ctx) throws SQLException {
+        eventsController.editEvent(ctx);
+    }
+
     public void createUser(Context ctx) throws SQLException, InvalidKeySpecException, NoSuchAlgorithmException {
         userController.createUser(ctx);
     }

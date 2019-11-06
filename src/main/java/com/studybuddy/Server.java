@@ -25,6 +25,7 @@ public class Server {
                         post(ApplicationController::createEvent);
                         path(":id", () -> {
                             delete(ApplicationController::deleteEvent);
+                            put(ApplicationController::editEvent);
                         });
                     });
                     path("users", () -> {
