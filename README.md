@@ -1,4 +1,4 @@
-# This is our README :)
+# Welcome to Study Buddy!
 
 ## Deployment
 
