@@ -87,6 +87,10 @@ public class RecsController {
             recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList)));
         }
 
-        ctx.json(recsToDisplay);
+        if (recsToDisplay.isEmpty()) {
+            ctx.json("NoRecsToDisplay");
+        } else {
+            ctx.json(recsToDisplay);
+        }
     }
 }

@@ -51,6 +51,8 @@ class NewRecForm extends React.Component {
         const data = await response.json();
         if (data === "RecPeriodError") {
             alert("Invalid recommendation period (start has to be before end)");
+        } else if (data =="NoRecsToDisplay") {
+            alert("There are no times in the specified time period where everyone is available")
         } else {
             this.props.setRecs(data);
         }
