@@ -22,12 +22,20 @@ what event it is and who created it.
 User: Class used to represent the users who sign up for StudyBuddy. There are two types of users:
 Students and Professors who have different functionality.
 
-StudentController: Class that includes a lot of the functionality of the app. Such as creating, deleting,
-and retrieving events created by the user. It is also used to make recommended events based on users' 
-availability. The creation and authentication of users also takes place here.
+ApplicationController: Class that calls all of the other controllers.
+EventsController: Controls the functionality of creating, displaying, deleting, and editing events.
+RecsController: Controls the functionality of asking for recommendations, calling the recommendation algorithm, and displaying the possible recommended study events.
+UserController: Controls the functionality of managing users signup, login, and authentication, as well as collecting events from the user's google cal.
+
+RecommendationAlgorithm: The main algorithm for this app. It takes in a list of busy times 
+from all of the users it's generating the recommendation for, as well as their desired length
+of study session time, and returns a list of possible study events for the user to choose from.
 
 TimeChunk: Class used to represent chunks of time when the user is busy or free to aid the 
 recommendation algorithm.
+
+CalendarQuickstart: Integrates the Google Calendar API into the application. Allows for the user
+to add their google calendar events into their events list, so they can factor those events into the recommendation algorithm. 
 
 ##Client
 
