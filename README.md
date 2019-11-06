@@ -3,6 +3,7 @@
 ## Deployment
 
 You can find StudyBuddy deployed [here](http://oose-studybuddy.herokuapp.com/)
+NOTE: The Google calender integration button works fully in the local verision of the app but is currently dissabled in the heroku deployment, this is an issue to be resolved in the next iteration. To use StudyBuddy with Google Calendery integration download the project as described below.
 
 ## Download
 
@@ -27,11 +28,8 @@ User: Class used to represent the users who sign up for StudyBuddy. There are tw
 Students and Professors who have different functionality.
 
 ApplicationController: Main controller class, which calls all of the other controllers.
-
 EventsController: Contains the functions for creating, rendering, deleting, and editing events.
-
 RecsController: Contains the functions for asking for recommendations, calling the recommendation algorithm, and displaying the possible recommended study events.
-
 UserController: Contains the functions for managing users signup, login, and authentication, as well as collecting events from the user's google cal.
 
 RecommendationAlgorithm: The main algorithm for this app. It takes in a list of busy times 
