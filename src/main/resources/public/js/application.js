@@ -1,11 +1,15 @@
 class Application extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {showForm: false};
+        this.state = {showEventForm: false, showRecForm: false};
     }
 
-    flipFormState() {
-        this.setState({showForm: !this.state.showForm});
+    flipEventFormState() {
+        this.setState({showEventForm: !this.state.showEventForm});
+    }
+
+    flipRecFormState() {
+        this.setState({showRecForm: !this.state.showRecForm});
     }
 
     render() {
@@ -14,7 +18,7 @@ class Application extends React.Component {
                 <div>
                     <Header/>
                     <div className="centralized-body">
-                        <User showForm = {this.state.showForm} flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                        <User showEventForm = {this.state.showEventForm} flipEvent={this.flipEventFormState.bind(this)} showRecForm={this.state.showRecForm} flipRec={this.flipRecFormState.bind(this)}/>
                     </div>
                 </div>
             </div>

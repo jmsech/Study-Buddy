@@ -1,7 +1,7 @@
 class NewEventButton extends React.Component {
     render() {
         let title = "New Event";
-        if (this.props.showForm) {
+        if (this.props.showEventForm) {
             title = "Cancel";
         }
         return <button className="btn centralized-button" onClick={() => { this.props.flip() }}>{title}</button>;
@@ -69,7 +69,7 @@ class NewEventForm extends React.Component {
 
     render() {
         let style = {display: "none"};
-        if (this.props.showForm) { style = {display: "block"}};
+        if (this.props.showEventForm) { style = {display: "block"}};
         let today = new Date();
         let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-';
         if (today.getDate() < 10) {

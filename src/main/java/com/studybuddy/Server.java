@@ -18,7 +18,7 @@ public class Server {
                 .routes(() -> {
                     // TODO - Postman documentation and tests for everything
                     path(":userId/recs", () -> {
-                        get(ApplicationController::getRec);
+                        post(ApplicationController::getRec);
                     });
                     path(":userID/events", () -> {
                         get(ApplicationController::getEvents);

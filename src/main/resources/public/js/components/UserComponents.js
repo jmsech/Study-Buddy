@@ -11,12 +11,15 @@ class User extends React.Component {
            <div className="content-row">
                <div className="column">
                    <h3>Events</h3>
-                   <NewEventButton className="new-event-button btn white-text" flip={this.props.flip} showForm={this.props.showForm}/>
-                   <NewEventForm userID={this.state.userID} showForm={this.props.showForm} flip={this.props.flip}/>
+                   <NewEventButton className="new-event-button btn white-text" flip={this.props.flipEvent} showEventForm={this.props.showEventForm}/>
+                   <NewEventForm userID={this.state.userID} showEventForm={this.props.showEventForm} flip={this.props.flipEvent}/>
                    <EventList userID={this.state.userID}/>
                </div>
                <div className="column">
-                    <Recommendation userID={this.state.userID}/>
+                   <h3>Recommendations</h3>
+                   <NewRecButton className="new-event-button btn white-text" flip={this.props.flipRec} showRecForm={this.props.showRecForm} />
+                   <NewRecForm userID={this.state.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec}/>
+                    {/*<RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>*/}
                </div>
             </div>
        );
