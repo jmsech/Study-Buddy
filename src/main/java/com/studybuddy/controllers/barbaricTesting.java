@@ -13,10 +13,11 @@ import java.util.Comparator;
 
 public class barbaricTesting {
 
-    public static final int SECONDS_PER_MINUTE = 60; //seconds/60 = minutes
-    public static final long SECONDS_PER_DAY = 86400;
-    public static final long SECONDS_OF_SLEEP = 28800;
-    public static final int MINUTES_PER_HOUR = 60;
+    private static final int COMPRESSION_FACTOR = 5;
+    private static final int SECONDS_PER_MINUTE = 60 * COMPRESSION_FACTOR; //seconds/60 = minutes
+    private static final long SECONDS_PER_DAY = 86400;
+    private static final long SECONDS_OF_SLEEP = 28800;
+    private static final int MINUTES_PER_HOUR = (int) (SECONDS_PER_DAY/SECONDS_PER_MINUTE/24);
 
     public static void main(String[] args) {
         ArrayList<TimeChunk> list = new ArrayList<>();
