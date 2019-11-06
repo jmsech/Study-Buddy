@@ -77,7 +77,7 @@ public class barbaricTesting {
             }
         }
 
-        printTimeArray(timeArray); // Debugging Print Statement
+//        printTimeArray(timeArray); // Debugging Print Statement
 
         return findStudyTimes(timeArray, startSec, fraction);
     }
@@ -92,7 +92,7 @@ public class barbaricTesting {
             else { freeTime[i] = 0; }
         }
 
-        printFreeTimeChunks(freeTime); // Debugging Print Statement
+//        printFreeTimeChunks(freeTime); // Debugging Print Statement
 
         List<TimeChunk> chunks = new ArrayList<>();
         int state = -1;
@@ -104,22 +104,22 @@ public class barbaricTesting {
             } else if (freeTime[i] == 0)  {
                 if (state != -1) {
                     TimeChunk c = new TimeChunk(
-                            makeTime((state) * SECONDS_PER_MINUTE),
-                            makeTime((i) * SECONDS_PER_MINUTE)
+                            makeTime(startSec + (state) * SECONDS_PER_MINUTE),
+                            makeTime(startSec + (i) * SECONDS_PER_MINUTE)
                     );
                     chunks.add(c);
-                    printTimeChunkWithTag(c, "x");
+//                    printTimeChunkWithTag(c, "x");
                     state = -1;
                 }
             }
         }
         if (state != -1) {
             TimeChunk c = new TimeChunk(
-                    makeTime((state)*SECONDS_PER_MINUTE),
-                    makeTime((length-1)*SECONDS_PER_MINUTE)
+                    makeTime(startSec + (state)*SECONDS_PER_MINUTE),
+                    makeTime(startSec + (length-1)*SECONDS_PER_MINUTE)
             );
             chunks.add(c);
-            printTimeChunkWithTag(c, "y");
+//            printTimeChunkWithTag(c, "y");
         }
 
         return createStudyChunks(chunks, fraction);
@@ -135,20 +135,21 @@ public class barbaricTesting {
             long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             int chunkLength = (int) (end - start);
 
-            printTimeChunkWithTag(chunk, "c");
+//            printTimeChunkWithTag(chunk, "c");
 
             if (studyLength <= chunkLength) {
                 double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
                 int numSlots = (int) fractionSlots;
                 if (fractionSlots - numSlots >= 0.5) { numSlots++;}
                 for (int i = 0; i < numSlots/2; i++) {
+
                     long forwardBegin = start + i*studyLength;
                     long forwardEnd = start + (i+1)*studyLength;
                     TimeChunk c = new TimeChunk(
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-                    printTimeChunkWithTag(c, "f");
+//                    printTimeChunkWithTag(c, "f");
                     studyChunks.add(c);
 
                     long reverseEnd = end - i*studyLength;
@@ -157,22 +158,21 @@ public class barbaricTesting {
                             makeTime(reverseBegin*SECONDS_PER_MINUTE),
                             makeTime(reverseEnd*SECONDS_PER_MINUTE)
                     );
-                    printTimeChunkWithTag(c, "r");
+//                    printTimeChunkWithTag(c, "r");
                     studyChunks.add(c);
+
                 }
                 if (numSlots % 2 == 1) {
-                    int i = numSlots/2;
-                    long forwardBegin = start + i*studyLength;
-                    long forwardEnd = start + (i+1)*studyLength;
+                    long forwardBegin = start + numSlots/2*studyLength;
+                    long forwardEnd = start + (numSlots/2)*studyLength;
                     TimeChunk c = new TimeChunk(
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-                    System.out.println(c.getStartTime() + " " + c.getEndTime() + " a");
+//                    printTimeChunkWithTag(c, "a");
                     studyChunks.add(c);
                 }
             }
-            System.out.println();
         }
 
         class TimeChunkComparator implements Comparator<TimeChunk>{
