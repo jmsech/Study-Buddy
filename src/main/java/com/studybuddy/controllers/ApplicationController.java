@@ -1,6 +1,8 @@
 package com.studybuddy.controllers;
 import io.javalin.http.Context;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
@@ -48,4 +50,9 @@ public class ApplicationController {
     public void authenticateUser(Context ctx) throws NoSuchAlgorithmException, SQLException, InvalidKeySpecException {
         userController.authenticateUser(ctx);
     }
+
+    public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
+        studentController.collectGoogleEvents(ctx);
+    }
+
 }
