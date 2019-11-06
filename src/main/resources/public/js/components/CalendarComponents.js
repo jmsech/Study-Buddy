@@ -292,14 +292,21 @@ class EditEventForm extends React.Component {
         return response;
     }
 
+    formatTime(time) {
+        if (time.length < 8) {
+            return "0" + time;
+        }
+        return time;
+    }
+
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
         formData.append("userID", this.props.userID);
         formData.append("title", event.target.title.value);
         // combine tim/date into the format yyyy-mm-dd 00:00
-        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
-        formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
+        formData.append("startTime", event.target.startDate.value + " " + this.formatTime(event.target.startTime.value));
+        formData.append("endTime", event.target.endDate.value + " " + this.formatTime(event.target.endTime.value));
         formData.append("description", event.target.description.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
@@ -346,11 +353,11 @@ class EditEventForm extends React.Component {
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="title">Event name</label>
+                    <label htmlFor="title" className="active">Event name</label>
                     <input id="title" name="title" type="text" defaultValue = {this.props.event.title}required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="description">Event description</label>
+                    <label htmlFor="description" className="active">Event description</label>
                     <input id="description" name="description" type="text" defaultValue={this.props.event.description}/>
                 </div>
                 <div className="input-field">
