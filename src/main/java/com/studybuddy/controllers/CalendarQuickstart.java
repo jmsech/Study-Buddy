@@ -16,6 +16,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
+import io.javalin.http.Context;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +34,8 @@ import java.util.Date;
 import java.util.List;
 
 public class CalendarQuickstart {
-    private static final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
+    private static final String APPLICATION_NAME = "StudyBuddy";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -63,29 +63,38 @@ public class CalendarQuickstart {
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setAccessType("offline")
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static void collectEvents(Connection connection, int userID, String...args) throws IOException, GeneralSecurityException, SQLException {
+    public static void collectEvents(Connection connection, Context ctx) throws IOException, GeneralSecurityException, SQLException {
+        var userID = ctx.formParam("userID", Integer.class).get();
+        var daysToCollect = ctx.formParam("daysToCollect", Integer.class).get();
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        Calendar service;
+        try {
+            service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        } catch (IOException e) {
+            ctx.json("Access Denied");
+            return;
+        }
 
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
+        DateTime nextWeek = (new DateTime(System.currentTimeMillis() + daysToCollect * 24 * 3600 * 1000));
         Events events = service.events().list("primary")
-                .setMaxResults(10)
+//                .setMaxResults(10)
                 .setTimeMin(now)
+                .setTimeMax(nextWeek)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
         if (items.isEmpty()) {
-            // TODO: send this message to front end as alert
-            System.out.println("No upcoming events found.");
+            ctx.json("No Upcoming Events");
         } else {
             for (Event event : items) {
                 DateTime startDate = event.getStart().getDateTime();
@@ -102,6 +111,7 @@ public class CalendarQuickstart {
                     statement.close();
                 }
             }
+            ctx.json("Calender Synced Successfully");
         }
     }
 }
