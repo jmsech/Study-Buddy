@@ -16,6 +16,12 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
+                    path("users", () -> {
+                        post(ApplicationController::createUser);
+                        path("authenticate/", () -> {
+                            post(ApplicationController::authenticateUser);
+                        });
+                    });
                     path(":userId/recs", () -> {
                         post(ApplicationController::getRec);
                     });
@@ -29,12 +35,6 @@ public class Server {
                     });
                     path(":userID", () -> {
                         post(ApplicationController::collectGoogleEvents);
-                    });
-                    path("users", () -> {
-                        post(ApplicationController::createUser);
-                        path("authenticate/", () -> {
-                            post(ApplicationController::authenticateUser);
-                        });
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));
