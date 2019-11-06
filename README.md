@@ -41,7 +41,7 @@ recommendation algorithm.
 CalendarQuickstart: Integrates the Google Calendar API into the application. Allows for the user
 to add their google calendar events into their events list, so they can factor those events into the recommendation algorithm. 
 
-##Client
+## Client
 
 index.html: The part of the Client that sets up the stylesheets and the JavaScript.
 
