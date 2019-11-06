@@ -16,7 +16,6 @@ public class Server {
                     event.serverStopped(() -> { connection.close(); });
                 })
                 .routes(() -> {
-                    // TODO - Postman documentation and tests for everything
                     path(":userId/recs", () -> {
                         get(ApplicationController::getRec);
                     });
