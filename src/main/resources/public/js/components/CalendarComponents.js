@@ -166,8 +166,10 @@ class Event extends React.Component {
                     <EventDateTime event={this.props.event}/>
                 </div>
                 <div className="card-action right-align">
-                    <DeleteButton event={this.props.event} userID = {this.props.userID}/>
-                    <EditButton flip={this.flipFormState.bind(this)}/>
+                    <div id="edit-delete">
+                        <EditButton flip={this.flipFormState.bind(this)}/>
+                        <DeleteButton event={this.props.event} userID = {this.props.userID}/>
+                    </div>
                     <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
                 </div>
             </li>

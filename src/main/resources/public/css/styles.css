@@ -86,3 +86,8 @@ header {
     background: url("../images/google-calendar-logo.jpg");
     background-size: 100%;
 }
+
+#edit-delete {
+    display: flex;
+    justify-content: space-between;
+}
