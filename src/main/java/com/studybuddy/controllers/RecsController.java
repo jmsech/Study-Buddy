@@ -86,66 +86,8 @@ public class RecsController {
         }
         ctx.json(recsToDisplay);
 
-        /*
-        ArrayList<User> stu = new ArrayList<>();
-
-        TimeChunk suggested = new TimeChunk(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        boolean found = false;
-        boolean addTime;
-
-        while(!found) {
-            addTime = false;
-            for (TimeChunk busyTime : busyTimes) {
-                if (busyTime.isOverlapping(suggested) || (suggested.getStartTime().getHour() < 9 )) {
-                    addTime = true;
-                }
-            }
-            if (addTime) {
-                suggested.setStartTime(suggested.getStartTime().plusMinutes(15));
-                suggested.setEndTime(suggested.getEndTime().plusMinutes(15));
-            } else {
-                found = true;
-            }
-        }
-
-        ctx.json(new Event(100, "Suggested Event", suggested.getStartTime(), suggested.getEndTime(),"This would be a good time to study", stu));
-        */
     }
 
-/*
-    public List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double sessionLen) throws SQLException {
-        long startSec = start.toEpochSecond(ZoneOffset.UTC);
-        long endSec = end.toEpochSecond(ZoneOffset.UTC);
-
-        int lengthInMinutes = (int) (startSec-endSec)/60;
-
-        int[] timeArray = new int[lengthInMinutes];
-
-        // TODO Determine when people are sleeping and set those values to be negative
-
-        for (TimeChunk t : unavailable) {
-            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-
-            int s = (int) (trueS - startSec)/60;
-            int f = (int) (trueF - startSec)/60;
-
-            if (s < 0) {s = 0;}
-            if (f < 0) {f = 0;}
-            if (s >= lengthInMinutes) {s = lengthInMinutes - 1;}
-            if (f >= lengthInMinutes) {f = lengthInMinutes - 1;}
-
-            for (int i = s; i <= f; i++) { timeArray[i]++; }
-        }
-
-        return findStudyTimes(timeArray);
-    }
-
-    private ArrayList<TimeChunk> findStudyTimes(int[] timeArray) {
-
-        return null;
-    }
-*/
     private static LocalDateTime makeTime(long t) {
     return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
 }
