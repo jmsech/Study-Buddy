@@ -4,6 +4,8 @@ import io.javalin.http.Context;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -135,5 +137,9 @@ public class UserController {
         }
         result.close();
         statement.close();
+    }
+
+    public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
+        CalendarQuickstart.collectEvents(this.connection, ctx);
     }
 }

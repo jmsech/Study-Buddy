@@ -17,7 +17,7 @@ public class Server {
                 })
                 .routes(() -> {
                     path(":userId/recs", () -> {
-                        get(ApplicationController::getRec);
+                        post(ApplicationController::getRec);
                     });
                     path(":userID/events", () -> {
                         get(ApplicationController::getEvents);
@@ -26,6 +26,9 @@ public class Server {
                             delete(ApplicationController::deleteEvent);
                             put(ApplicationController::editEvent);
                         });
+                    });
+                    path(":userID", () -> {
+                        post(ApplicationController::collectGoogleEvents);
                     });
                     path("users", () -> {
                         post(ApplicationController::createUser);

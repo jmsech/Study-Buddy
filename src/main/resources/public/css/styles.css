@@ -79,3 +79,10 @@ header {
 .content-row {
     display: flex;
 }
+
+.google-calendar-button {
+    height: 79px;
+    width: 168px;
+    background: url("../images/google-calendar-logo.jpg");
+    background-size: 100%;
+}
