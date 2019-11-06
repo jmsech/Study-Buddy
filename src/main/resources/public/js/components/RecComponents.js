@@ -48,6 +48,7 @@ class NewRecForm extends React.Component {
         if (data === "RecPeriodError") {
             alert("Invalid recommendation period (start has to be before end)");
         } else {
+            console.log(data);
             this.props.setRecs({ recs: data });
         }
         return response;

@@ -52,7 +52,7 @@ public class RecsController {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         // Ensure that startTime is before endTime
         if (!endTime.isAfter(startTime)) {
-            ctx.json("EventPeriodError");
+            ctx.json("RecPeriodError");
             return;
         }
 
