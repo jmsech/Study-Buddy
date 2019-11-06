@@ -164,7 +164,7 @@ public class barbaricTesting {
                 }
                 if (numSlots % 2 == 1) {
                     long forwardBegin = start + numSlots/2*studyLength;
-                    long forwardEnd = start + (numSlots/2)*studyLength;
+                    long forwardEnd = start + (numSlots/2+1)*studyLength;
                     TimeChunk c = new TimeChunk(
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
@@ -214,6 +214,12 @@ public class barbaricTesting {
         list.add(new TimeChunk(
                 LocalDateTime.of(2020,1,2,18,0),
                 LocalDateTime.of(2020,1,2,22,0))); // 01/02/2020 6pm-10pm
+        list.add(new TimeChunk(
+                LocalDateTime.of(2020,1,3,14,0),
+                LocalDateTime.of(2020,1,3,16,0))); // 01/03/2020 2pm-4pm
+        list.add(new TimeChunk(
+                LocalDateTime.of(2020,1,3,18,0),
+                LocalDateTime.of(2020,1,3,19,0))); // 01/03/2020 6pm-7pm
         list.add(new TimeChunk(
                 LocalDateTime.of(2020,1,7,18,0),
                 LocalDateTime.of(2020,1,8,2,0))); // 01/07/2020 6pm - 01/08/2020 2am
