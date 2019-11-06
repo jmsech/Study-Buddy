@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 
 public class barbaricTesting {
@@ -17,11 +18,13 @@ public class barbaricTesting {
     // CONSTANTS ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final int COMPRESSION_FACTOR = 5;
+    private static final int COMPRESSION_FACTOR = 1;
     private static final int SECONDS_PER_MINUTE = 60 * COMPRESSION_FACTOR; //seconds/60 = minutes
     private static final long SECONDS_PER_DAY = 86400;
     private static final long SECONDS_OF_SLEEP = 28800;
     private static final int MINUTES_PER_HOUR = (int) (SECONDS_PER_DAY/SECONDS_PER_MINUTE/24);
+    private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
+    private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // MAIN FUNCTION ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,17 +36,16 @@ public class barbaricTesting {
         LocalDateTime start = LocalDateTime.of(2020,1,1,0,0); // 01/01/2020 12am
         LocalDateTime end = LocalDateTime.of(2020,1,7,23,59); // 01/07/2020 11:59pm
 
-        ArrayList<TimeChunk> chunks = makeRecommendation(start, end, list, 3);
-        for (var chunk : chunks) {
-            System.out.println(chunk.getStartTime() + " " + chunk.getEndTime());
-        }
+        List<TimeChunk> chunks = makeRecommendation(start, end, list, 3);
+
+        printTimeChunks(chunks); // Debugging Print Statement
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CRITICAL FUNCTIONS //////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static ArrayList<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, ArrayList<TimeChunk> unavailable, double fraction) {
+    private static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction) {
 
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
         long endSec = end.toEpochSecond(ZoneOffset.UTC);
@@ -65,8 +67,6 @@ public class barbaricTesting {
             for (int i = s; i <= f; i++) { timeArray[i]++; }
         }
 
-        long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
-        long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_DAY;
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
         int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
@@ -77,10 +77,12 @@ public class barbaricTesting {
             }
         }
 
+        printTimeArray(timeArray); // Debugging Print Statement
+
         return findStudyTimes(timeArray, startSec, fraction);
     }
 
-    private static ArrayList<TimeChunk> findStudyTimes(int[] timeArray, long startSec, double fraction) {
+    private static List<TimeChunk> findStudyTimes(int[] timeArray, long startSec, double fraction) {
 
         int length = timeArray.length;
         int[] freeTime = new int[length];
@@ -90,38 +92,51 @@ public class barbaricTesting {
             else { freeTime[i] = 0; }
         }
 
-        ArrayList<TimeChunk> chunks = new ArrayList<>();
+        printFreeTimeChunks(freeTime); // Debugging Print Statement
+
+        List<TimeChunk> chunks = new ArrayList<>();
         int state = -1;
-        for (int i=0; i < length; i++) {
-            if (freeTime[i] == 1 && state == -1) {
-                state = i;
-            } else if (freeTime[i] == 0 && state != -1)  {
-                chunks.add(new TimeChunk(
-                        makeTime(startSec + (state)*SECONDS_PER_MINUTE),
-                        makeTime(startSec + (i)*SECONDS_PER_MINUTE)
-                ));
-                state = -1;
+        for (int i = 0; i < length; i++) {
+            if (freeTime[i] == 1) {
+                if (state == -1) {
+                    state = i;
+                }
+            } else if (freeTime[i] == 0)  {
+                if (state != -1) {
+                    TimeChunk c = new TimeChunk(
+                            makeTime((state) * SECONDS_PER_MINUTE),
+                            makeTime((i) * SECONDS_PER_MINUTE)
+                    );
+                    chunks.add(c);
+                    printTimeChunkWithTag(c, "x");
+                    state = -1;
+                }
             }
         }
         if (state != -1) {
-            chunks.add(new TimeChunk(
-                makeTime(startSec + state*SECONDS_PER_MINUTE),
-                makeTime(startSec + (length - 1)*SECONDS_PER_MINUTE)
-            ));
+            TimeChunk c = new TimeChunk(
+                    makeTime((state)*SECONDS_PER_MINUTE),
+                    makeTime((length-1)*SECONDS_PER_MINUTE)
+            );
+            chunks.add(c);
+            printTimeChunkWithTag(c, "y");
         }
 
         return createStudyChunks(chunks, fraction);
     }
 
-    private static ArrayList<TimeChunk> createStudyChunks(ArrayList<TimeChunk> chunks, double fraction) {
+    private static List<TimeChunk> createStudyChunks(List<TimeChunk> chunks, double fraction) {
 
-        ArrayList<TimeChunk> studyChunks = new ArrayList<>();
+        List<TimeChunk> studyChunks = new ArrayList<>();
         int studyLength = (int) (fraction*MINUTES_PER_HOUR);
 
         for (var chunk: chunks) {
             long start = chunk.getStartTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             int chunkLength = (int) (end - start);
+
+            printTimeChunkWithTag(chunk, "c");
+
             if (studyLength <= chunkLength) {
                 double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
                 int numSlots = (int) fractionSlots;
@@ -133,6 +148,7 @@ public class barbaricTesting {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
+                    printTimeChunkWithTag(c, "f");
                     studyChunks.add(c);
 
                     long reverseEnd = end - i*studyLength;
@@ -141,6 +157,7 @@ public class barbaricTesting {
                             makeTime(reverseBegin*SECONDS_PER_MINUTE),
                             makeTime(reverseEnd*SECONDS_PER_MINUTE)
                     );
+                    printTimeChunkWithTag(c, "r");
                     studyChunks.add(c);
                 }
                 if (numSlots % 2 == 1) {
@@ -151,9 +168,11 @@ public class barbaricTesting {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
+                    System.out.println(c.getStartTime() + " " + c.getEndTime() + " a");
                     studyChunks.add(c);
                 }
             }
+            System.out.println();
         }
 
         class TimeChunkComparator implements Comparator<TimeChunk>{
@@ -181,14 +200,6 @@ public class barbaricTesting {
         return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
     }
 
-    private static long getStartSec(TimeChunk t) {
-        return t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-    }
-
-    private static long getEndSec(TimeChunk t) {
-        return t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-    }
-
     private static ArrayList<TimeChunk> getTestingList() {
         ArrayList<TimeChunk> list = new ArrayList<>();
         list.add(new TimeChunk(
@@ -207,5 +218,46 @@ public class barbaricTesting {
                 LocalDateTime.of(2020,1,7,18,0),
                 LocalDateTime.of(2020,1,8,2,0))); // 01/07/2020 6pm - 01/08/2020 2am
         return list;
+    }
+
+    private static void printTimeChunks(List<TimeChunk> chunks) {
+        for (var chunk : chunks) {
+            System.out.println(chunk.getStartTime() + " " + chunk.getEndTime());
+        }
+    }
+
+    private static void printTimeArray(int[] timeArray) {
+        int count = 0;
+        for (int i = 0; i < timeArray.length; i++) {
+            if (timeArray[i] == -1) {
+                System.out.print("z ");
+            } else {
+                System.out.print(timeArray[i] + " ");
+            }
+            count++;
+            if (count >= MINUTES_PER_DAY) {
+                System.out.println();
+                count = 0;
+            }
+        }
+        System.out.println();
+        System.out.println();
+    }
+
+    private static void printFreeTimeChunks(int[] freeTime) {
+        int count = 0;
+        for (int i = 0; i < freeTime.length; i++) {
+            System.out.print(freeTime[i] + " ");
+            count++;
+            if (count >= MINUTES_PER_DAY) {
+                System.out.println();
+                count = 0;
+            }
+        }
+        System.out.println();
+    }
+
+    private static void printTimeChunkWithTag(TimeChunk c, String tag) {
+        System.out.println(c.getStartTime() + " " + c.getEndTime() + " " + tag);
     }
 }
