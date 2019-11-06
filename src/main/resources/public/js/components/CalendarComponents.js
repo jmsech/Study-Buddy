@@ -310,26 +310,10 @@ class EditEventForm extends React.Component {
         });
     }
 
-    formatAMPM(hours, minutes) {
-        var ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        hours = hours < 10 ? "0" + hours : hours
-        minutes = minutes < 10 ? '0'+ minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
-    }
-
     render() {
         let style = {display: "none"};
         if (this.props.showForm) { style = {display: "block"}};
-        /*let today = new Date();
-        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-';
-        if (today.getDate() < 10) {
-            date = date + "0" + today.getDate();
-        } else {
-            date = date + today.getDate();
-        }*/
+
         let startMonth = convertToMonth(this.props.event.startTime.month);
         let startDay = this.props.event.startTime.dayOfMonth;
         let endMonth = convertToMonth(this.props.event.endTime.month);
