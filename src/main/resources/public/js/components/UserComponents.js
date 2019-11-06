@@ -25,11 +25,35 @@ class User extends React.Component {
 
 class GetGoogleEvents extends React.Component {
     async collectEvents() {
-        const formData = new FormData();
-        formData.append("userID", this.props.userID);
-        await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
+        let daysToCollect = 0
+        while (daysToCollect < 1) {
+            daysToCollect = parseInt(
+                prompt("Enter the number of days you would like to sync", "7")
+            );
+        }
+        if (daysToCollect) {
+            const formData = new FormData();
+            formData.append("userID", this.props.userID);
+            formData.append("daysToCollect", daysToCollect)
+            await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
+                .then(this.handleResponse);
+        }
     }
+
+    async handleResponse(response) {
+        const msg = await response.json();
+        // console.log(msg);
+        if (msg === "Access Denied") {
+            alert("Google Calender Access Denied");
+        } else if (msg === "No Upcoming Events") {
+            alert("Your Google Calender has no upcoming events");
+        }
+        return response;
+    }
+
     render() {
-        return(<button className="google-calendar-button btn white-text" onClick = {() => this.collectEvents()}></button>)
+        return(
+            <button className="google-calendar-button btn white-text" onClick = {() => this.collectEvents()}/>
+            )
     }
 }

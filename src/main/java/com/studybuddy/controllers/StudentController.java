@@ -32,8 +32,7 @@ public class StudentController {
         this.connection = connection;
     }
     public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
-        var userID = ctx.formParam("userID", Integer.class).get();
-        CalendarQuickstart.collectEvents(this.connection, userID);
+        CalendarQuickstart.collectEvents(this.connection, ctx);
     }
 
     public void getRec(Context ctx) throws SQLException {
