@@ -4,6 +4,17 @@ class Recommendations extends React.Component {
         this.state = { recs: [] };
     }
 
+    clearRec(id) {
+        let recToRemove;
+        for (let i = 0; i < this.state.recs.length; i++) {
+            if (this.state.recs[i].id === id) {
+                recToRemove = this.state.recs[i];
+            }
+        }
+        const filteredArray = this.state.recs.filter(function(e) { return e !== recToRemove });
+        this.setState({recs: filteredArray});
+    }
+
     clearRecs() {
         this.setState({recs: []});
     }
@@ -17,7 +28,7 @@ class Recommendations extends React.Component {
             <div>
                 <NewRecButton className="new-event-button btn white-text" flip={this.props.flipRec} showRecForm={this.props.showRecForm} />
                 <NewRecForm userID={this.props.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec} setRecs={this.setRecs.bind(this)}/>
-                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>
+                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)} clearRec={this.clearRec.bind(this)}/>
             </div>
         )
     }
@@ -178,7 +189,7 @@ class Rec extends React.Component {
                 </div>
                 <div id="recommendation-actions" className="card-action">
                     <RecAcceptButton event={this.props.event} userID={this.props.userID} clearRecs={this.props.clearRecs}/>
-                    <RecDeclineButton clearRecs={this.props.clearRecs}/>
+                    <RecDeclineButton clearRec={this.props.clearRec} event={this.props.event}/>
                 </div>
             </li>
         );
@@ -189,7 +200,7 @@ class RecList extends React.Component {
     render() {
         return (
             <div>
-                <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs}/>)}</ul>
+                <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs} clearRec={this.props.clearRec}/>)}</ul>
             </div>
         );
     }
@@ -253,7 +264,7 @@ class RecDeclineButton extends React.Component {
 
     render() {
         return (
-            <button className="btn cyan darken-3" onClick={() => {this.props.clearRecs()}}>Decline</button>
+            <button className="btn cyan darken-3" onClick={() => {this.props.clearRec(this.props.event.id)}}>Decline</button>
         )
     }
 }
