@@ -1,11 +1,7 @@
-/*class Recommendation extends React.Component {
+class Recommendations extends React.Component {
     constructor(props) {
         super(props);
         this.state = { recs: [] };
-    }
-
-    async getRec() {
-        this.setState({recs: [await (await fetch(`/${this.props.userID}/recs`)).json()]});
     }
 
     clearRecs() {
@@ -15,14 +11,13 @@
     render() {
         return (
             <div>
-                <h3>Recommendations</h3>
-                <NewRecButton className="new-event-button btn white-text" flip={this.props.flip} showForm={this.props.showForm} />
-                <NewRecForm userID={this.state.userID} showForm={this.props.showForm} flip={this.props.flip}/>
-                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>
+                <NewRecButton className="new-event-button btn white-text" flip={this.props.flipRec} showRecForm={this.props.showRecForm} />
+                <NewRecForm userID={this.props.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec} setRecs={() => {this.setState}}/>
+                <RecList userID={this.props.userID} recs={this.state.recs} clearRecs={() => {this.clearRecs}}/>
             </div>
         )
     }
-}*/
+}
 
 class NewRecButton extends React.Component {
     render() {
@@ -42,6 +37,7 @@ class NewRecForm extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
 
     handleChange(rec) {
@@ -49,14 +45,16 @@ class NewRecForm extends React.Component {
     }
 
     async handleResponse(response) {
-        const msg = await response.json();
-        if (msg === "RecPeriodError") {
+        const data = await response.json();
+        if (data === "RecPeriodError") {
             alert("Invalid recommendation period (start has to be before end)");
+        } else {
+            this.props.setRecs({ recs: data });
         }
         return response;
     }
 
-    handleSubmit(rec) {
+    async handleSubmit(rec) {
         this.props.flip();
         const formData = new FormData();
         formData.append("userID", this.props.userID);
@@ -70,8 +68,7 @@ class NewRecForm extends React.Component {
         formData.append("sessionLength", rec.target.sessionLength.value);
 
         rec.preventDefault();
-        fetch(`../${this.props.userID}/recs`, {method: "POST", body: formData})
-            .then(this.handleResponse);
+        fetch(`../${this.props.userID}/recs`, {method: "POST", body: formData}).then(this.handleResponse);
         rec.target.reset(); // clear the form entries
     }
 
@@ -91,17 +88,21 @@ class NewRecForm extends React.Component {
         var ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        hours = hours < 10 ? "0" + hours : hours
+        hours = hours < 10 ? "0" + hours : hours;
         minutes = minutes < 10 ? '0'+ minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
+        return hours + ':' + minutes + ' ' + ampm;
     }
 
     render() {
         let style = {display: "none"};
-        if (this.props.showRecForm) { style = {display: "block"}};
+        if (this.props.showRecForm) { style = {display: "block"} }
         let today = new Date();
-        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-';
+        if (today.getDate() < 10) {
+            date = date + "0" + today.getDate();
+        } else {
+            date = date + today.getDate();
+        }
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
@@ -142,7 +143,7 @@ class NewRecForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="sessionLength" className="active">Study for this long (in hours) </label>
-                    <input id="sessionLength" name="sessionLength" type="number"  defaultValue ="1" min="0.5" max="6" required/>
+                    <input id="sessionLength" name="sessionLength" type="number"  defaultValue ="1" min="1" max="6" required/>
                 </div>
                 <button className="btn white-text">Get Recommendation!</button>
             </form>
@@ -170,15 +171,6 @@ class Rec extends React.Component {
 }
 
 class RecList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { recs: [] };
-    }
-
-    clearRecs() {
-        this.setState({recs: []});
-    }
-
     render() {
         return (
             <div>

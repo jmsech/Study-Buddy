@@ -10,14 +10,12 @@ import java.sql.SQLException;
 public class ApplicationController {
     private Connection connection;
     private EventsController eventsController;
-    private StudentController studentController;
     private UserController userController;
     private RecsController recsController;
 
     public ApplicationController(Connection connection) throws SQLException {
         this.connection = connection;
         this.eventsController = new EventsController(connection);
-        this.studentController = new StudentController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);
 

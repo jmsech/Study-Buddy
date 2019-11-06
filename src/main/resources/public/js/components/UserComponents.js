@@ -17,11 +17,7 @@ class User extends React.Component {
                </div>
                <div className="column">
                    <h3>Recommendations</h3>
-                   <NewRecButton className="new-event-button btn white-text" flip={this.props.flipRec} showRecForm={this.props.showRecForm} />
-                   <NewRecForm userID={this.state.userID} showRecForm={this.props.showRecForm} flip={this.props.flipRec}/>
-                   <RecList userID={this.props.userID}/>
-                   {/*<RecList userID={this.props.userID} recs={this.state.recs} clearRecs={this.clearRecs.bind(this)}/>*/}
-
+                   <Recommendations flipRec={this.props.flipRec} showRecForm={this.props.showRecForm} userID={this.state.userID}/>
                </div>
             </div>
        );

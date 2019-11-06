@@ -27,12 +27,14 @@ public class RecsController {
         final int maxBuddies = 5;
         for (int i = 1; i <= maxBuddies; i++) {
             var key = "user" + i;
-            var buddyEmail = ctx.pathParam(key, String.class).getOrNull();
+            var buddyEmail = ctx.formParam(key, String.class).getOrNull();
             if (buddyEmail != null) {
                 var idStatement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
                 idStatement.setString(1, buddyEmail);
-                var result = idStatement.executeQuery();
-                buddyIDs.add(result.getInt("id"));
+                var idResult = idStatement.executeQuery();
+                if (!idResult.isClosed()) {
+                    buddyIDs.add(idResult.getInt("id"));
+                }
             }
         }
 
@@ -40,7 +42,7 @@ public class RecsController {
         buddyIDs.add(Integer.parseInt(ctx.pathParam("userId")));
 
         //get session length
-        var sessionLen = ctx.pathParam("sessionLength", Integer.class).get();
+        var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
 
         //get start and end times
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
@@ -58,15 +60,15 @@ public class RecsController {
         ArrayList<TimeChunk> busyTimes = new ArrayList<>();
 
         for (Integer buddyID : buddyIDs) {
-            var statement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
-            statement.setInt(1, buddyID);
-            var result = statement.executeQuery();
+            var busyStatement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
+            busyStatement.setInt(1, buddyID);
+            var buddyResult = busyStatement.executeQuery();
 
-            while (result.next()) {
+            while (buddyResult.next()) {
                 busyTimes.add(
                         new TimeChunk(
-                                result.getTimestamp("startTime").toLocalDateTime(),
-                                result.getTimestamp("endTime").toLocalDateTime()
+                                buddyResult.getTimestamp("startTime").toLocalDateTime(),
+                                buddyResult.getTimestamp("endTime").toLocalDateTime()
                         )
                 );
             }
