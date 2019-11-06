@@ -3,6 +3,7 @@
 ## Deployment
 
 You can find StudyBuddy deployed [here](http://oose-studybuddy.herokuapp.com/)
+
 NOTE: The Google calender integration button works fully in the local verision of the app but is currently dissabled in the heroku deployment, this is an issue to be resolved in the next iteration. To use StudyBuddy with Google Calendery integration download the project as described below.
 
 ## Download
