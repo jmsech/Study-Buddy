@@ -77,9 +77,12 @@ public class RecsController {
 
         //make the recs an event
         List<User> inviteList = new ArrayList<>();
-        for(TimeChunk recommendation: recTimes) {
-            ctx.json(new Event(100, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(),"This would be a good time to study", inviteList));
+        List<Event> recsToDisplay = new ArrayList<>();
+
+        for (TimeChunk recommendation: recTimes) {
+            recsToDisplay.add((new Event(100, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(),"This would be a good time to study", inviteList)));
         }
+        ctx.json(recsToDisplay);
 
         /*
         ArrayList<User> stu = new ArrayList<>();

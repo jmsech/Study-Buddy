@@ -12,12 +12,14 @@ public class ApplicationController {
     private EventsController eventsController;
     private StudentController studentController;
     private UserController userController;
+    private RecsController recsController;
 
     public ApplicationController(Connection connection) throws SQLException {
         this.connection = connection;
         this.eventsController = new EventsController(connection);
         this.studentController = new StudentController(connection);
         this.userController = new UserController(connection);
+        this.recsController = new RecsController(connection);
 
         var statement = this.connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
@@ -26,7 +28,7 @@ public class ApplicationController {
     }
 
     public void getRec(Context ctx) throws SQLException {
-        studentController.getRec(ctx);
+        recsController.getRec(ctx);
     }
 
     public void getEvents(Context ctx) throws SQLException {
