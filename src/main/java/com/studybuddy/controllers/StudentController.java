@@ -263,6 +263,11 @@ public class StudentController {
     }
 
     public ArrayList<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, ArrayList<TimeChunk> unavailable) throws SQLException {
+        int day = start.getDayOfYear();
+        int hour = start.getHour();
+        int minute = start.getMinute();
+        int second = start.getSecond();
+
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
         long endSec = end.toEpochSecond(ZoneOffset.UTC);
 
@@ -287,6 +292,23 @@ public class StudentController {
             for (int i = s; i <= f; i++) { timeArray[i]++; }
         }
 
+        long SECONDS_PER_DAY = 86400;
+        long MINUTES_PER_DAY = 1440;
+        long MINUTES_OF_SLEEP = 480;
+        long sleepStart = (LocalDateTime.ofEpochSecond(1893474000,0,ZoneOffset.UTC)).toEpochSecond(ZoneOffset.UTC);
+        int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / 60;
+
+        int len = timeArray.length;
+        for (int i = 0; i < len; i++) {
+            if (i >= relativeSleepStart) {
+                if ((i - relativeSleepStart) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
+                    timeArray[i] = -1;
+                }
+            }
+        }
+
+        for (var i : timeArray) { System.out.println(i);}
+        
         return findStudyTimes(timeArray);
     }
 
