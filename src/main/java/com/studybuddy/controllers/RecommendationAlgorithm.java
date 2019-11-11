@@ -2,6 +2,7 @@ package com.studybuddy.controllers;
 
 import com.studybuddy.models.TimeChunk;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -23,8 +24,10 @@ public class RecommendationAlgorithm {
     private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
 
+    private static final double SLEEP_WEIGHT = -1;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // FUNCTIONS ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RECOMMENDATION ALGORITHM 1 //////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction) {
@@ -171,6 +174,109 @@ public class RecommendationAlgorithm {
         studyChunks.sort(new TimeChunkComparator());
 
         return studyChunks;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // RECOMMENDATION ALGORITHM 2 //////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
+
+        // Initialize array of doubles to hold availability of individuals
+        long startSec = start.toEpochSecond(ZoneOffset.UTC);
+        long endSec = end.toEpochSecond(ZoneOffset.UTC);
+        int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
+        double[] available = new double[lengthInMinutes];
+
+        // Time of interval shorter than length of studying time
+        if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
+
+        // Use time chunks to popoluate availability array
+        for (TimeChunk t : unavailable) {
+            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+
+            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
+            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
+
+            if (s < 0) {s = 0;}
+            if (f < 0) {f = 0;}
+            if (s >= lengthInMinutes) {s = lengthInMinutes - 1;}
+            if (f >= lengthInMinutes) {f = lengthInMinutes - 1;}
+
+            for (int i = s; i <= f; i++) { available[i] -= t.getWeight(); }
+        }
+
+        // Find weight of least available time
+        double min = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < lengthInMinutes; i++) {
+            if (available[i] < min) { min = available[i]; }
+        }
+
+        // Make all values positive
+        if (min < 0) {
+            for (int i = 0; i < lengthInMinutes; i++) {
+                available[i] -= min;
+            }
+        }
+
+        // Initialize sleep start time // FIXME This should probably become a constant
+        long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
+        int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
+
+        // Give negative value to times when people are sleeping
+        int len = available.length;
+        for (int i = 0; i < len; i++) {
+            if ((i - relativeSleepStart + MINUTES_PER_DAY) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
+                available[i] = SLEEP_WEIGHT;
+            }
+        }
+
+        ArrayList<TimeChunk> recommendations = new ArrayList<>();
+        int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
+        double[] chunkValues;
+
+        for (int n = 0; n < numRecs; n++) {
+            // Initialize array of values of Studying Chunks
+            chunkValues = new double[lengthInMinutes - lengthStudy];;
+
+            // Calculate first value of first TimeChunk
+            for (int i = 0; i < chunkValues.length; i++) {
+                chunkValues[0] += available[i];
+            }
+
+            // Calculate values of the rest of the TimeChunks
+            for (int i = 1; i < chunkValues.length; i++) {
+                chunkValues[i] = chunkValues[i-1] - available[i-1] + available[i+lengthStudy];
+            }
+
+            // Find most optimal study time of length
+            double max = Double.NEGATIVE_INFINITY;
+            int startIndex = 0;
+            for (int i = 0; i < chunkValues.length; i++) {
+                if (chunkValues[i] > max) {
+                    max = chunkValues[i];
+                    startIndex = i;
+                }
+            }
+
+            if (max >= 0) {
+                int endIndex = startIndex + lengthStudy;
+                // Add TimeChunk starting at this time
+                recommendations.add(new TimeChunk(
+                        makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
+                        makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
+                ));
+
+                // set all values in available to NEGATIVE_INFINITY so that we don't have overlapping chunks
+                for (int i = startIndex; i < endIndex; i++) {
+                    available[i] = Double.NEGATIVE_INFINITY;
+                }
+            }
+        }
+
+        return recommendations;
     }
 
 
