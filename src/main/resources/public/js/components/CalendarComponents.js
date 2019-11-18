@@ -181,13 +181,13 @@ class Event extends React.Component {
                     <EventDateTime event={this.props.event}/>
                     <EventDescription event={this.props.event}/>
                     <EventLocation event={this.props.event}/>
-                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees} />
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
                         <EditButton flip={this.flipFormState.bind(this)}/>
                         <DeleteButton event={this.props.event} userID = {this.props.userID}/>
-                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}/>
+                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees} />
                     </div>
                     <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
                 </div>
@@ -247,7 +247,7 @@ class EventInviteList extends React.Component {
         if (this.props.showAttendees) {
             return (
                 <div>
-                    <ul>{this.props.event.inviteList.map(email => <li>{email}</li>)}</ul>
+                    <ul>{this.props.event.attendees.map(email => <li>{email}</li>)}</ul>
                 </div>
             );
         }
