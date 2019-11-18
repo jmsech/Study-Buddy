@@ -240,24 +240,36 @@ public class RecommendationAlgorithm {
             }
         }
 
-//        for (TimeChunk t : host) {
-//            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-//            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-//
-//            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
-//            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
-//
-//            if (s < 0) {s = 0;}
-//            if (f < 0) {f = 0;}
-//            if (s >= lengthInMinutes) {s = lengthInMinutes;}
-//            if (f >= lengthInMinutes) {f = lengthInMinutes;}
-//
-//            for (int i = s; i < f; i++) { available[i] = HOST_UNAVAILABLE_WEIGHT; }
-//
-//            for (int i = s; i > 0 && ; i--) {
-//
-//            }
-//        }
+        for (TimeChunk t : host) {
+            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+
+            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
+            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
+
+            if (s < 0) {s = 0;}
+            if (f < 0) {f = 0;}
+            if (s >= lengthInMinutes) {s = lengthInMinutes;}
+            if (f >= lengthInMinutes) {f = lengthInMinutes;}
+
+            for (int i = s; i < f; i++) { available[i] = HOST_UNAVAILABLE_WEIGHT; }
+
+            // Add proximity weights to favor recommending events before host event
+            int lower = s - MINUTES_PER_HOUR - 1;
+            double proximityWeight = 0.5;
+            for (int i = s - 1; i >= 0 && i >= lower; i--) {
+                available[i] += proximityWeight;
+                proximityWeight *= 0.5;
+            }
+
+            // Add proximity weights to favor recommending events after host event
+            int upper = f + MINUTES_PER_HOUR;
+            proximityWeight = 0.5;
+            for (int i = f; i < lengthInMinutes && i <= upper; i++) {
+                available[i] += proximityWeight;
+                proximityWeight *= 0.5;
+            }
+        }
 
         ArrayList<TimeChunk> recommendations = new ArrayList<>();
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
