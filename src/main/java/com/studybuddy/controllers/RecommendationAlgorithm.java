@@ -280,8 +280,8 @@ public class RecommendationAlgorithm {
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
         double[] chunkValues;
 
-        printFreeTimeChunks(available); //FIXME
-        System.out.println(); // FIXME
+//        printFreeTimeChunks(available); //FIXME
+//        System.out.println(); // FIXME
 
         for (int n = 0; n < numRecs; n++) {
             // Initialize array of values of Studying Chunks
