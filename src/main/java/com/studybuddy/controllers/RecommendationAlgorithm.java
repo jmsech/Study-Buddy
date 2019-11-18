@@ -196,6 +196,8 @@ public class RecommendationAlgorithm {
         int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
         double[] available = new double[lengthInMinutes];
 
+        for (int i = 0; i < lengthInMinutes; i++) {available[i] = 1;}
+
         // Time of interval shorter than length of studying time
         if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
         if (lengthInMinutes == (int) (fraction * MINUTES_PER_HOUR)) {

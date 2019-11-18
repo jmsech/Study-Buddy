@@ -44,6 +44,8 @@ public class WeightedRecommendationAlgorithm {
         int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
         double[] available = new double[lengthInMinutes];
 
+        for (int i = 0; i < lengthInMinutes; i++) { available[i] = 0.1; }
+
         // Time of interval shorter than length of studying time
         if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
         if (lengthInMinutes == (int) (fraction * MINUTES_PER_HOUR)) {
@@ -130,7 +132,7 @@ public class WeightedRecommendationAlgorithm {
 
         for (int n = 0; n < numRecs; n++) {
             // Initialize array of values of Studying Chunks
-            chunkValues = new double[lengthInMinutes - lengthStudy];
+            chunkValues = new double[lengthInMinutes - lengthStudy + 1];
 
             // Calculate first value of first TimeChunk
             for (int i = 0; i < lengthStudy; i++) {
