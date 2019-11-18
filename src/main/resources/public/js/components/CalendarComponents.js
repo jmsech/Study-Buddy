@@ -160,11 +160,15 @@ class Event extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {showForm: false};
+        this.state = {showForm: false, showAttendees: false};
     }
 
     flipFormState() {
-        this.setState({showForm: !this.state.showForm});
+        this.setState({showForm: !this.state.showForm} );
+    }
+
+    flipAttendeesState() {
+        this.setState({showAttendees: !this.state.showAttendees});
     }
 
     render() {
@@ -174,15 +178,16 @@ class Event extends React.Component {
                     <span className="card-title">
                         <EventTitle event={this.props.event}/>
                     </span>
+                    <EventDateTime event={this.props.event}/>
                     <EventDescription event={this.props.event}/>
                     <EventLocation event={this.props.event}/>
-                    <EventInviteList event={this.props.event}/>
-                    <EventDateTime event={this.props.event}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
                         <EditButton flip={this.flipFormState.bind(this)}/>
                         <DeleteButton event={this.props.event} userID = {this.props.userID}/>
+                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}/>
                     </div>
                     <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
                 </div>
@@ -239,9 +244,14 @@ class EventInviteList extends React.Component {
     }
 
     render() {
-        return (
-            <p>"Invite list here"</p>
-        )
+        if (this.props.showAttendees) {
+            return (
+                <div>
+                    <ul>{this.props.event.inviteList.map(email => <li>{email}</li>)}</ul>
+                </div>
+            );
+        }
+        else return null;
     }
 }
 
@@ -317,6 +327,16 @@ class EditButton extends React.Component {
 function convertToMonth(str) {
     let abv = str.substr(0, 1).toUpperCase() + str.substr(1, 2).toLowerCase();
     return "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(abv) / 3 + 1;
+}
+
+class ShowAttendeesButton extends React.Component {
+    render() {
+        let title = "Show Attendees";
+        if (this.props.showAttendees) {
+            title = "Hide Attendees";
+        }
+        return <button className="btn centralized-button" onClick={() => { this.props.flip() }}>{title}</button>;
+    }
 }
 
 class EditEventForm extends React.Component {
