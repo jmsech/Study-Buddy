@@ -20,27 +20,9 @@ class RecsController {
         this.connection = connection;
     }
 
-    //from studentController
     void getRec(Context ctx) throws SQLException {
-
         //get all the buddies the user requested
-        List<Integer> buddyIDs = new ArrayList<>();
-        final int maxBuddies = 5;
-        for (int i = 1; i <= maxBuddies; i++) {
-            var key = "user" + i;
-            var buddyEmail = ctx.formParam(key, String.class).getOrNull();
-            if (buddyEmail != null) {
-                var idStatement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
-                idStatement.setString(1, buddyEmail);
-                var idResult = idStatement.executeQuery();
-                if (!idResult.isClosed()) {
-                    buddyIDs.add(idResult.getInt("id"));
-                }
-            }
-        }
-
-        //add user requesting rec to the buddy list
-        buddyIDs.add(Integer.parseInt(ctx.pathParam("userId")));
+        List inviteList = ctx.formParam("inviteList", List.class).getOrNull();
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
@@ -60,9 +42,13 @@ class RecsController {
         //make a list of when everyone is busy
         ArrayList<TimeChunk> busyTimes = new ArrayList<>();
 
-        for (Integer buddyID : buddyIDs) {
-            var busyStatement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
-            busyStatement.setInt(1, buddyID);
+        assert inviteList != null;
+        for (Object buddyID : inviteList) {
+            var busyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
+                    "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
+                    "INNER JOIN users as u ON etum.userId = u.id " +
+                    "WHERE u.id = ?");
+            busyStatement.setInt(1, (int) buddyID);
             var buddyResult = busyStatement.executeQuery();
 
             while (buddyResult.next()) {
@@ -79,7 +65,6 @@ class RecsController {
         List<TimeChunk> recTimes = RecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, sessionLen);
 
         //make the recs an event
-        List<User> inviteList = new ArrayList<>();
         List<Event> recsToDisplay = new ArrayList<>();
 
         for (int i = 0; i < recTimes.size(); i++) {

@@ -30,6 +30,7 @@ public class EventsController {
         var result = statement.executeQuery();
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
+            // TODO: get list of attendees for each event
             events.add(
                     new Event(
                             result.getInt("id"),

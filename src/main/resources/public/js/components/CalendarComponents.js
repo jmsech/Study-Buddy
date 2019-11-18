@@ -37,6 +37,7 @@ class NewEventForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
+        // TODO: add invite list (including the event creator
         formData.append("description", event.target.description.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
@@ -310,6 +311,7 @@ class EditEventForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + this.formatTime(event.target.startTime.value));
         formData.append("endTime", event.target.endDate.value + " " + this.formatTime(event.target.endTime.value));
+        // TODO: add invite list (including the event creator
         formData.append("description", event.target.description.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
