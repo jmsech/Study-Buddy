@@ -197,12 +197,50 @@ class Rec extends React.Component {
 }
 
 class RecList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {expanded: false, numRecs: 5};
+    }
+
+    expandCollapse() {
+        if (this.state.expanded == true) {
+            this.setState({expanded: false, numRecs: 5})
+        } else if (this.state.numRecs + 5 < this.props.recs.length) {
+            this.setState({numRecs: this.state.numRecs + 5})
+        } else if (this.state.numRecs + 5 == this.props.recs.length) {
+            this.setState({expanded: true, numRecs: this.state.numRecs + 5})
+        } else {
+            this.setState({expanded: true, numRecs: this.props.recs.length})
+        }
+    }
+
     render() {
-        return (
-            <div>
-                <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs} clearRec={this.props.clearRec}/>)}</ul>
-            </div>
-        );
+        if (this.props.recs.length <= 5) {
+            //display all of recs (less than 5 total so no Show More button)
+            return (
+                <div>
+                    <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs} clearRec={this.props.clearRec}/>)}</ul>
+                </div>
+            );
+        } else if (this.state.expanded == false) {
+            return (
+                <div>
+                    <ul>{this.props.recs.slice(0, this.state.numRecs).map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID}
+                                                                     clearRecs={this.props.clearRecs}
+                                                                     clearRec={this.props.clearRec}/>)}</ul>
+                    <button className="btn white-text" onClick = {() => this.expandCollapse()}>See More Recommendations</button>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID}
+                                                                     clearRecs={this.props.clearRecs}
+                                                                     clearRec={this.props.clearRec}/>)}</ul>
+                    <button className="btn white-text" onClick = {() => this.expandCollapse()}>Collapse Recommendations</button>
+                </div>
+            );
+        }
     }
 }
 
