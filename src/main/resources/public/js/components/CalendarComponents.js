@@ -157,7 +157,6 @@ class EventList extends React.Component {
 
 
 class Event extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {showForm: false, showAttendees: false};
@@ -251,7 +250,7 @@ class EventInviteList extends React.Component {
         if (this.props.showAttendees) {
             return (
                 <div>
-                    <ul>{this.props.event.attendees.map(email => <li>{email}</li>)}</ul>
+                    <ul>{this.props.event.attendees.map(email => <li key={email}>{email}</li>)}</ul>
                 </div>
             );
         }
