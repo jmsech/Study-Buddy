@@ -25,8 +25,8 @@ public class RecommendationAlgorithm {
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
 
-    private static final double SLEEP_WEIGHT = -1;
-    private static final double HOST_UNAVAILABLE_WEIGHT = -2;
+    private static final double SLEEP_WEIGHT = -20; //FIXME
+    private static final double HOST_UNAVAILABLE_WEIGHT = -1000;  //FIXME
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // RECOMMENDATION ALGORITHM 1 //////////////////////////////////////////////////////////////////////////////////////
