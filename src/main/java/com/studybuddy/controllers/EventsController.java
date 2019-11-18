@@ -61,9 +61,10 @@ public class EventsController {
             description = "";
         }
         var userID = ctx.formParam("userID", Integer.class).get();
+        var isGoogleEvent = ctx.formParam("isGoogleEvent", Boolean.class).get();
 
         // TODO change call to consider inviteList and importance
-        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID, isGoogleEvent) VALUES (?, ?, ?, ?, ?, false)");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);

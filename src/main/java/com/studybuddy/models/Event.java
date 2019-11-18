@@ -13,6 +13,7 @@ public class Event {
     private LocalDateTime endTime;
     private String description;
     private List<User> hosts;
+    private boolean isGoogleEvent;
 
     public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
         this.id = id;
@@ -21,6 +22,17 @@ public class Event {
         this.endTime = endTime;
         this.description = description;
         this.hosts = hosts;
+        this.isGoogleEvent = false;
+    }
+
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts, boolean isGoogleEvent) {
+        this.id = id;
+        this.title = title;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.description = description;
+        this.hosts = hosts;
+        this.isGoogleEvent = isGoogleEvent;
     }
 
     public void addToCalendar(String calendarID) {
@@ -71,4 +83,6 @@ public class Event {
     public boolean isHost(User user) {
         return hosts.contains(user);
     }
+
+    public boolean isGoogleEvent() { return isGoogleEvent; }
 }

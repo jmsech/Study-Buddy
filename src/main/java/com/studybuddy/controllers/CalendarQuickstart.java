@@ -82,6 +82,22 @@ public class CalendarQuickstart {
             return;
         }
 
+        /////// Delete Current Google Event////////////
+        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description, isGoogleEvent FROM events WHERE userID = ?");
+        statement.setInt(1, userID);
+        var result = statement.executeQuery();
+        while (result.next()) {
+            //check if current event is a google event, delete from database
+            if (result.getBoolean("isGoogleEvent")) {
+                var curEvent = connection.prepareStatement("DELETE FROM events WHERE id = ?");
+                curEvent.setInt(1, result.getInt("id"));
+                curEvent.executeUpdate();
+                curEvent.close();
+            }
+        }
+        result.close();
+        statement.close();
+
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         DateTime stopDate = (new DateTime(System.currentTimeMillis() + daysToCollect * 24 * 3600 * 1000));
@@ -101,12 +117,13 @@ public class CalendarQuickstart {
                 if (startDate != null) {
                     Timestamp start = new Timestamp(startDate.getValue());
                     Timestamp end = new Timestamp(event.getEnd().getDateTime().getValue());
-                    var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID) VALUES (?, ?, ?, ?, ?)");
+                    statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID, isGoogleEvent) VALUES (?, ?, ?, ?, ?, ?)");
                     statement.setString(1, event.getSummary());
                     statement.setTimestamp(2, start);
                     statement.setTimestamp(3, end);
                     statement.setString(4, " ");
                     statement.setInt(5, userID);
+                    statement.setBoolean(6,true);
                     statement.executeUpdate();
                     statement.close();
                 }
