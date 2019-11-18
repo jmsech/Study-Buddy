@@ -253,7 +253,7 @@ public class RecommendationAlgorithm {
 
             // Add proximity weights to favor recommending events before host event
             int lower = s - MINUTES_PER_HOUR - 1;
-            double proximityWeight = -min;
+            double proximityWeight = 1;
             for (int i = s - 1; i >= 0 && i >= lower; i--) {
                 available[i] += proximityWeight;
                 proximityWeight *= 0.5;
@@ -261,7 +261,7 @@ public class RecommendationAlgorithm {
 
             // Add proximity weights to favor recommending events after host event
             int upper = f + MINUTES_PER_HOUR;
-            proximityWeight = -min;
+            proximityWeight = 1;
             for (int i = f; i < lengthInMinutes && i <= upper; i++) {
                 available[i] += proximityWeight;
                 proximityWeight *= 0.5;
@@ -295,7 +295,7 @@ public class RecommendationAlgorithm {
 
             // Calculate values of the rest of the TimeChunks
             for (int i = 1; i < chunkValues.length; i++) {
-                chunkValues[i] = chunkValues[i-1] - available[i-1] + available[i+lengthStudy];
+                chunkValues[i] = chunkValues[i-1] - available[i-1] + available[i+lengthStudy-1];
             }
 
             // Find most optimal study time of length
