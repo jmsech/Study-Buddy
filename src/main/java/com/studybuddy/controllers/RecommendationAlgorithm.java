@@ -218,7 +218,7 @@ public class RecommendationAlgorithm {
         // Make all values positive
         if (min <= 0) {
             for (int i = 0; i < lengthInMinutes; i++) {
-                available[i] += 1 - min;
+                available[i] += -min;
             }
         }
 
@@ -269,14 +269,13 @@ public class RecommendationAlgorithm {
             if (max >= 0) {
                 int endIndex = startIndex + lengthStudy;
                 // Add TimeChunk starting at this time
-                recommendations.add(
-                        nearest15(
-                            new TimeChunk(
-                            makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
-                            makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
-                        )
+                TimeChunk chunk = nearest15(new TimeChunk(
+                                makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
+                                makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
                 ));
-
+                recommendations.add(chunk);
+                startIndex = (int) ((chunk.getStartTime().toEpochSecond(ZoneOffset.UTC) - startSec)/60);
+                endIndex = startIndex + lengthStudy;
                 // set all values in available to NEGATIVE_INFINITY so that we don't have overlapping chunks
                 for (int i = startIndex; i < endIndex; i++) {
                     available[i] = min - 1;

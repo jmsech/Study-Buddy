@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimeChunkTests {
 
-
     @Test
     void testGetters() {
         LocalDateTime startTime1 = LocalDateTime.now();
