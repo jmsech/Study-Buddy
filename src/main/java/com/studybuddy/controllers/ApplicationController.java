@@ -10,20 +10,19 @@ import java.sql.SQLException;
 
 
 public class ApplicationController {
-    private Connection connection;
     private EventsController eventsController;
     private UserController userController;
     private RecsController recsController;
 
     public ApplicationController(Connection connection) throws SQLException {
-        this.connection = connection;
         this.eventsController = new EventsController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);
 
-        var statement = this.connection.createStatement();
+        var statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, hosts INTEGER, userID INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, eventId INTEGER, userId INTEGER, FOREIGN KEY (eventId) REFERENCES events (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.close();
     }
 

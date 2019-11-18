@@ -25,10 +25,10 @@ public class Server {
                     path(":userId/recs", () -> {
                         post(ApplicationController::getRec);
                     });
-                    path(":userID/events", () -> {
+                    path(":userId/events", () -> {
                         get(ApplicationController::getEvents);
                         post(ApplicationController::createEvent);
-                        path(":id", () -> {
+                        path(":eventId", () -> {
                             delete(ApplicationController::deleteEvent);
                             put(ApplicationController::editEvent);
                         });
