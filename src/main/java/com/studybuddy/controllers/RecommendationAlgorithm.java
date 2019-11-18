@@ -16,7 +16,7 @@ public class RecommendationAlgorithm {
     // CONSTANTS ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final int COMPRESSION_FACTOR = 1;
+    private static final int COMPRESSION_FACTOR = 5;
     private static final int SECONDS_PER_MINUTE = 60 * COMPRESSION_FACTOR; //seconds/60 = minutes
     private static final long SECONDS_PER_DAY = 86400;
     private static final long SECONDS_OF_SLEEP = 28800;
@@ -26,6 +26,7 @@ public class RecommendationAlgorithm {
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
 
     private static final double SLEEP_WEIGHT = -1;
+    private static final double HOST_UNAVAILABLE_WEIGHT = -2;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // RECOMMENDATION ALGORITHM 1 //////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ public class RecommendationAlgorithm {
             }
         }
 
-//        printTimeArray(timeArray); // Debugging Print Statement
+//        printTimeArray(timeArray); // FIXME
 
         return findStudyTimes(timeArray, startSec, fraction);
     }
@@ -78,7 +79,7 @@ public class RecommendationAlgorithm {
             else { freeTime[i] = 0; }
         }
 
-//        printFreeTimeChunks(freeTime); // Debugging Print Statement
+//        printFreeTimeChunks(freeTime); // FIXME
 
         List<TimeChunk> chunks = new ArrayList<>();
         int state = -1;
@@ -94,7 +95,7 @@ public class RecommendationAlgorithm {
                             makeTime(startSec + (i) * SECONDS_PER_MINUTE)
                     );
                     chunks.add(c);
-//                    printTimeChunkWithTag(c, "x");
+//                    printTimeChunkWithTag(c, "x"); //FIXME
                     state = -1;
                 }
             }
@@ -105,7 +106,7 @@ public class RecommendationAlgorithm {
                     makeTime(startSec + (length-1)*SECONDS_PER_MINUTE)
             );
             chunks.add(c);
-//            printTimeChunkWithTag(c, "y");
+//            printTimeChunkWithTag(c, "y"); //FIXME
         }
 
         return createStudyChunks(chunks, fraction);
@@ -121,7 +122,7 @@ public class RecommendationAlgorithm {
             long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             int chunkLength = (int) (end - start);
 
-//            printTimeChunkWithTag(chunk, "c");
+//            printTimeChunkWithTag(chunk, "c"); //FIXME
 
             if (studyLength <= chunkLength) {
                 double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
@@ -135,7 +136,7 @@ public class RecommendationAlgorithm {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "f");
+//                    printTimeChunkWithTag(c, "f"); //FIXME
                     studyChunks.add(c);
 
                     long reverseEnd = end - i*studyLength;
@@ -144,7 +145,7 @@ public class RecommendationAlgorithm {
                             makeTime(reverseBegin*SECONDS_PER_MINUTE),
                             makeTime(reverseEnd*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "r");
+//                    printTimeChunkWithTag(c, "r"); //FIXME
                     studyChunks.add(c);
 
                 }
@@ -155,7 +156,7 @@ public class RecommendationAlgorithm {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "a");
+//                    printTimeChunkWithTag(c, "a"); //FIXME
                     studyChunks.add(c);
                 }
             }
@@ -183,6 +184,11 @@ public class RecommendationAlgorithm {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
+        ArrayList<TimeChunk> arr = new ArrayList<>();
+        return makeBetterRecommendation(start,end,unavailable,arr,fraction,numRecs);
+    }
+
+    public static List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, List<TimeChunk> host, double fraction, int numRecs) {
 
         // Initialize array of doubles to hold availability of individuals
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -234,17 +240,36 @@ public class RecommendationAlgorithm {
             }
         }
 
+//        for (TimeChunk t : host) {
+//            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+//            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+//
+//            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
+//            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
+//
+//            if (s < 0) {s = 0;}
+//            if (f < 0) {f = 0;}
+//            if (s >= lengthInMinutes) {s = lengthInMinutes;}
+//            if (f >= lengthInMinutes) {f = lengthInMinutes;}
+//
+//            for (int i = s; i < f; i++) { available[i] = HOST_UNAVAILABLE_WEIGHT; }
+//
+//            for (int i = s; i > 0 && ; i--) {
+//
+//            }
+//        }
+
         ArrayList<TimeChunk> recommendations = new ArrayList<>();
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
         double[] chunkValues;
 
         for (int n = 0; n < numRecs; n++) {
-//            printFreeTimeChunks(available);
-//            System.out.println();
+//            printFreeTimeChunks(available); //FIXME
+//            System.out.println(); // FIXME
 
             // Initialize array of values of Studying Chunks
             chunkValues = new double[lengthInMinutes - lengthStudy];
-//            chunkValues = new double[available.length - lengthStudy];
+//            chunkValues = new double[available.length - lengthStudy]; //FIXME
 
             // Calculate first value of first TimeChunk
             for (int i = 0; i < lengthStudy; i++) {
@@ -274,15 +299,15 @@ public class RecommendationAlgorithm {
                                 makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
                 ));
                 recommendations.add(chunk);
-                startIndex = (int) ((chunk.getStartTime().toEpochSecond(ZoneOffset.UTC) - startSec)/60);
+                startIndex = (int) ((chunk.getStartTime().toEpochSecond(ZoneOffset.UTC) - startSec)/SECONDS_PER_MINUTE);
                 endIndex = startIndex + lengthStudy;
                 // set all values in available to NEGATIVE_INFINITY so that we don't have overlapping chunks
                 for (int i = startIndex; i < endIndex; i++) {
                     available[i] = min - 1;
                 }
             }
-//            System.out.println(startIndex);
-//            System.out.println(n);
+//            System.out.println(startIndex); //FIXME
+//            System.out.println(n); //FIXME
         }
 
         class TimeChunkComparator implements Comparator<TimeChunk>{

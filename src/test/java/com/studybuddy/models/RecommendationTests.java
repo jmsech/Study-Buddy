@@ -69,9 +69,9 @@ public class RecommendationTests {
     @Test
     public void studyTimesAreCorrectLengthForDecimalFraction() {
         List<TimeChunk> recs = RecommendationAlgorithm.makeBetterRecommendation(jan_1_2019_12_00_AM, jan_2_2019_12_00_AM, new ArrayList<>(), 1.5, 1);
-        assertEquals((int) (1.5*3600/60)*60,recs.get(0).getEndTime().toEpochSecond(ZoneOffset.UTC)-recs.get(0).getStartTime().toEpochSecond(ZoneOffset.UTC));
+        assertEquals((int) (1.5*3600/60/5)*60*5,recs.get(0).getEndTime().toEpochSecond(ZoneOffset.UTC)-recs.get(0).getStartTime().toEpochSecond(ZoneOffset.UTC));
         recs = RecommendationAlgorithm.makeBetterRecommendation(jan_1_2019_12_00_AM, jan_2_2019_12_00_AM, new ArrayList<>(), 3.456789, 1);
-        assertEquals((int) (3.456789*3600/60)*60,recs.get(0).getEndTime().toEpochSecond(ZoneOffset.UTC)-recs.get(0).getStartTime().toEpochSecond(ZoneOffset.UTC));
+        assertEquals((int) (3.456789*3600/60/5)*60*5,recs.get(0).getEndTime().toEpochSecond(ZoneOffset.UTC)-recs.get(0).getStartTime().toEpochSecond(ZoneOffset.UTC));
     }
 
     @Test
