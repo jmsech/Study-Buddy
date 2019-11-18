@@ -181,13 +181,13 @@ class Event extends React.Component {
                     <EventDateTime event={this.props.event}/>
                     <EventDescription event={this.props.event}/>
                     <EventLocation event={this.props.event}/>
-                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees} />
+                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
                         <EditButton flip={this.flipFormState.bind(this)}/>
                         <DeleteButton event={this.props.event} userID = {this.props.userID}/>
-                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees} />
                     </div>
                     <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
                 </div>
@@ -216,9 +216,11 @@ class EventDescription extends React.Component {
     }
 
     render() {
-        return (
-            <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
-        );
+        if (this.props.event.description !== "") {
+            return (
+                <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
+            );
+        } else return null;
     }
 }
 
@@ -229,11 +231,13 @@ class EventLocation extends React.Component {
     }
 
     render() {
-        return (
-            <div>
-                <p><i className="tiny material-icons">location_on</i>{this.props.event.location}</p>
-            </div>
-        );
+        if (this.props.event.location !== ""){
+            return (
+                <div>
+                    <p><i className="tiny material-icons">location_on</i>{this.props.event.location}</p>
+                </div>
+            );
+        } else return null;
     }
 }
 
@@ -335,7 +339,7 @@ class ShowAttendeesButton extends React.Component {
         if (this.props.showAttendees) {
             title = "Hide Attendees";
         }
-        return <button className="btn centralized-button" onClick={() => { this.props.flip() }}>{title}</button>;
+        return <a onClick={() => { this.props.flip() }}>{title}</a>;
     }
 }
 
