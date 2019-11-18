@@ -26,10 +26,18 @@ class Application extends React.Component {
     }
 }
 
-const LogoutButton = () => (
-    // TODO make this actually log out of a user
-    <a className="btn" href="/../index.html">Log&nbsp;Out</a>
-)
+class LogoutButton extends React.Component {
+    render() {
+        return (
+            // TODO make this actually log out of a user
+            <a className="btn" href="/../index.html" onClick = {() => this.logOut()}>Log&nbsp;Out</a>
+        );
+    }
+
+    async logOut() {
+        await fetch(`../${this.props.userID}`, {method: "DELETE"})
+    }
+}
 
 const Header = () => (
     <header>

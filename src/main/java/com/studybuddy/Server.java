@@ -35,6 +35,7 @@ public class Server {
                     });
                     path(":userID", () -> {
                         post(ApplicationController::collectGoogleEvents);
+                        delete(ApplicationController::logOut);
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));

@@ -17,10 +17,8 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
 import io.javalin.http.Context;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,17 +30,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.io.File;
 
 public class CalendarQuickstart {
     private static final String APPLICATION_NAME = "StudyBuddy";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";//"/client_secret_761873610788-8pebe946darosar1fc3l2rtga5dkd4h0.apps.googleusercontent.com.json";
 
     /**
      * Creates an authorized Credential object.
@@ -61,6 +60,7 @@ public class CalendarQuickstart {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().build();
@@ -84,11 +84,11 @@ public class CalendarQuickstart {
 
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
-        DateTime nextWeek = (new DateTime(System.currentTimeMillis() + daysToCollect * 24 * 3600 * 1000));
+        DateTime stopDate = (new DateTime(System.currentTimeMillis() + daysToCollect * 24 * 3600 * 1000));
         Events events = service.events().list("primary")
 //                .setMaxResults(10)
                 .setTimeMin(now)
-                .setTimeMax(nextWeek)
+                .setTimeMax(stopDate)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();

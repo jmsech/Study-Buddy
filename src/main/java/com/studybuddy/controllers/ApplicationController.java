@@ -1,7 +1,10 @@
 package com.studybuddy.controllers;
 import io.javalin.http.Context;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -59,4 +62,8 @@ public class ApplicationController {
         userController.collectGoogleEvents(ctx);
     }
 
+    public void logOut(Context ctx) throws IOException {
+        Files.delete(Paths.get("tokens/StoredCredential"));
+        System.out.println("deleted");
+    }
 }
