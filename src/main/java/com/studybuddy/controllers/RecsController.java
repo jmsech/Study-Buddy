@@ -75,7 +75,8 @@ public class RecsController {
         }
 
         //use algo to get a list of recommended times everyone is free
-        List<TimeChunk> recTimes = RecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, sessionLen);
+//        List<TimeChunk> recTimes = RecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, sessionLen);
+        List<TimeChunk> recTimes = RecommendationAlgorithm.makeBetterRecommendation(startTime, endTime, busyTimes, sessionLen, 24);
 
         //make the recs an event
         List<User> inviteList = new ArrayList<>();

@@ -23,6 +23,7 @@ public class RecommendationAlgorithm {
     private static final int MINUTES_PER_HOUR = (int) (SECONDS_PER_DAY/SECONDS_PER_MINUTE/24);
     private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
+    private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
 
     private static final double SLEEP_WEIGHT = -1;
 
@@ -181,7 +182,7 @@ public class RecommendationAlgorithm {
     // RECOMMENDATION ALGORITHM 2 //////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
+    public static List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
 
         // Initialize array of doubles to hold availability of individuals
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -202,10 +203,10 @@ public class RecommendationAlgorithm {
 
             if (s < 0) {s = 0;}
             if (f < 0) {f = 0;}
-            if (s >= lengthInMinutes) {s = lengthInMinutes - 1;}
-            if (f >= lengthInMinutes) {f = lengthInMinutes - 1;}
+            if (s >= lengthInMinutes) {s = lengthInMinutes;}
+            if (f >= lengthInMinutes) {f = lengthInMinutes;}
 
-            for (int i = s; i <= f; i++) { available[i] -= t.getWeight(); }
+            for (int i = s; i < f; i++) { available[i] = available[i] - t.getWeight(); }
         }
 
         // Find weight of least available time
@@ -215,9 +216,9 @@ public class RecommendationAlgorithm {
         }
 
         // Make all values positive
-        if (min < 0) {
+        if (min <= 0) {
             for (int i = 0; i < lengthInMinutes; i++) {
-                available[i] -= min;
+                available[i] += 1 - min;
             }
         }
 
@@ -238,11 +239,15 @@ public class RecommendationAlgorithm {
         double[] chunkValues;
 
         for (int n = 0; n < numRecs; n++) {
+//            printFreeTimeChunks(available);
+//            System.out.println();
+
             // Initialize array of values of Studying Chunks
-            chunkValues = new double[lengthInMinutes - lengthStudy];;
+            chunkValues = new double[lengthInMinutes - lengthStudy];
+//            chunkValues = new double[available.length - lengthStudy];
 
             // Calculate first value of first TimeChunk
-            for (int i = 0; i < chunkValues.length; i++) {
+            for (int i = 0; i < lengthStudy; i++) {
                 chunkValues[0] += available[i];
             }
 
@@ -264,17 +269,35 @@ public class RecommendationAlgorithm {
             if (max >= 0) {
                 int endIndex = startIndex + lengthStudy;
                 // Add TimeChunk starting at this time
-                recommendations.add(new TimeChunk(
-                        makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
-                        makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
+                recommendations.add(
+                        nearest15(
+                            new TimeChunk(
+                            makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
+                            makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
+                        )
                 ));
 
                 // set all values in available to NEGATIVE_INFINITY so that we don't have overlapping chunks
                 for (int i = startIndex; i < endIndex; i++) {
-                    available[i] = Double.NEGATIVE_INFINITY;
+                    available[i] = min - 1;
                 }
             }
+//            System.out.println(startIndex);
+//            System.out.println(n);
         }
+
+        class TimeChunkComparator implements Comparator<TimeChunk>{
+            @Override
+            public int compare(TimeChunk t1, TimeChunk t2) {
+                long start1 = t1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+                long start2 = t2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+                if (start1 < start2) { return -1; }
+                else if (start1 == start2) {return 0; }
+                else {return 1; }
+            }
+        }
+
+        recommendations.sort(new TimeChunkComparator());
 
         return recommendations;
     }
@@ -325,7 +348,41 @@ public class RecommendationAlgorithm {
         System.out.println();
     }
 
+    private static void printFreeTimeChunks(double[] freeTime) {
+        int count = 0;
+        for (int i = 0; i < freeTime.length; i++) {
+            if (freeTime[i] < 0) {
+                System.out.print("z ");
+            } else {
+                System.out.print((int) freeTime[i] + " ");
+            }
+            count++;
+            if (count >= MINUTES_PER_DAY) {
+                System.out.println();
+                count = 0;
+            }
+        }
+        System.out.println();
+    }
+
     private static void printTimeChunkWithTag(TimeChunk c, String tag) {
         System.out.println(c.getStartTime() + " " + c.getEndTime() + " " + tag);
+    }
+
+    private static TimeChunk nearest15(TimeChunk t) {
+
+        long startSec = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+        long endSec = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+        long mod = startSec % (FIFTEEN_MINUTES);
+
+        if (mod <= FIFTEEN_MINUTES / 2) {
+            startSec = startSec - mod;
+            endSec = endSec - mod;
+        } else {
+            startSec = startSec - mod + (FIFTEEN_MINUTES);
+            endSec = endSec - mod + (FIFTEEN_MINUTES);
+        }
+
+        return new TimeChunk(makeTime(startSec), makeTime(endSec));
     }
 }
