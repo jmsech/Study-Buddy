@@ -198,6 +198,11 @@ public class RecommendationAlgorithm {
 
         // Time of interval shorter than length of studying time
         if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
+        if (lengthInMinutes == (int) (fraction * MINUTES_PER_HOUR)) {
+            ArrayList<TimeChunk> arr = new ArrayList<>();
+            arr.add(nearest15(new TimeChunk(makeTime(startSec), makeTime(endSec))));
+            return arr;
+        }
 
         // Use time chunks to popoluate availability array
         for (TimeChunk t : unavailable) {
@@ -232,14 +237,6 @@ public class RecommendationAlgorithm {
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
         int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
-        // Give negative value to times when people are sleeping
-        int len = available.length;
-        for (int i = 0; i < len; i++) {
-            if ((i - relativeSleepStart + MINUTES_PER_DAY) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
-                available[i] = SLEEP_WEIGHT;
-            }
-        }
-
         for (TimeChunk t : host) {
             long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
             long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
@@ -256,7 +253,7 @@ public class RecommendationAlgorithm {
 
             // Add proximity weights to favor recommending events before host event
             int lower = s - MINUTES_PER_HOUR - 1;
-            double proximityWeight = 0.5;
+            double proximityWeight = -min;
             for (int i = s - 1; i >= 0 && i >= lower; i--) {
                 available[i] += proximityWeight;
                 proximityWeight *= 0.5;
@@ -264,10 +261,18 @@ public class RecommendationAlgorithm {
 
             // Add proximity weights to favor recommending events after host event
             int upper = f + MINUTES_PER_HOUR;
-            proximityWeight = 0.5;
+            proximityWeight = -min;
             for (int i = f; i < lengthInMinutes && i <= upper; i++) {
                 available[i] += proximityWeight;
                 proximityWeight *= 0.5;
+            }
+        }
+
+        // Give negative value to times when people are sleeping
+        int len = available.length;
+        for (int i = 0; i < len; i++) {
+            if ((i - relativeSleepStart + MINUTES_PER_DAY) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
+                available[i] = SLEEP_WEIGHT;
             }
         }
 
@@ -275,10 +280,10 @@ public class RecommendationAlgorithm {
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
         double[] chunkValues;
 
-        for (int n = 0; n < numRecs; n++) {
-//            printFreeTimeChunks(available); //FIXME
-//            System.out.println(); // FIXME
+        printFreeTimeChunks(available); //FIXME
+        System.out.println(); // FIXME
 
+        for (int n = 0; n < numRecs; n++) {
             // Initialize array of values of Studying Chunks
             chunkValues = new double[lengthInMinutes - lengthStudy];
 //            chunkValues = new double[available.length - lengthStudy]; //FIXME
@@ -313,6 +318,9 @@ public class RecommendationAlgorithm {
                 recommendations.add(chunk);
                 startIndex = (int) ((chunk.getStartTime().toEpochSecond(ZoneOffset.UTC) - startSec)/SECONDS_PER_MINUTE);
                 endIndex = startIndex + lengthStudy;
+                if (startIndex < 0) {startIndex = 0;} // Don't access indices out of range.
+                if (endIndex >= lengthInMinutes) {endIndex = lengthInMinutes - 1;}
+
                 // set all values in available to NEGATIVE_INFINITY so that we don't have overlapping chunks
                 for (int i = startIndex; i < endIndex; i++) {
                     available[i] = min - 1;
@@ -390,7 +398,7 @@ public class RecommendationAlgorithm {
             if (freeTime[i] < 0) {
                 System.out.print("z ");
             } else {
-                System.out.print((int) freeTime[i] + " ");
+                System.out.print(freeTime[i] + " ");
             }
             count++;
             if (count >= MINUTES_PER_DAY) {
@@ -411,7 +419,7 @@ public class RecommendationAlgorithm {
         long endSec = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
         long mod = startSec % (FIFTEEN_MINUTES);
 
-        if (mod <= FIFTEEN_MINUTES / 2) {
+        if (mod <= FIFTEEN_MINUTES / 2.0) {
             startSec = startSec - mod;
             endSec = endSec - mod;
         } else {

@@ -39,7 +39,8 @@ public class RecsController {
         }
 
         //add user requesting rec to the buddy list
-        buddyIDs.add(Integer.parseInt(ctx.pathParam("userId")));
+        Integer userID = Integer.parseInt(ctx.pathParam("userId"));
+        buddyIDs.add(userID);
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
@@ -74,9 +75,22 @@ public class RecsController {
             }
         }
 
+        ArrayList<TimeChunk> host = new ArrayList<>();
+        var busyStatement = connection.prepareStatement("SELECT startTime, endTime FROM events WHERE userID = ?");
+        busyStatement.setInt(1, userID);
+        var buddyResult = busyStatement.executeQuery();
+        while (buddyResult.next()) {
+            host.add(
+                    new TimeChunk(
+                            buddyResult.getTimestamp("startTime").toLocalDateTime(),
+                            buddyResult.getTimestamp("endTime").toLocalDateTime()
+                    )
+            );
+        }
+
         //use algo to get a list of recommended times everyone is free
 //        List<TimeChunk> recTimes = RecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, sessionLen);
-        List<TimeChunk> recTimes = RecommendationAlgorithm.makeBetterRecommendation(startTime, endTime, busyTimes, sessionLen, 24);
+        List<TimeChunk> recTimes = RecommendationAlgorithm.makeBetterRecommendation(startTime, endTime, busyTimes, host, sessionLen, 1);
 
         //make the recs an event
         List<User> inviteList = new ArrayList<>();
