@@ -176,6 +176,7 @@ class Event extends React.Component {
                     </span>
                     <EventDescription event={this.props.event}/>
                     <EventLocation event={this.props.event}/>
+                    <EventInviteList event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
                 </div>
                 <div className="card-action right-align">
@@ -211,10 +212,40 @@ class EventDescription extends React.Component {
 
     render() {
         return (
-            <p>{this.props.event.description}</p>
+            <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
         );
     }
 }
+
+class EventLocation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <div>
+                <p><i className="tiny material-icons">location_on</i>{this.props.event.location}</p>
+            </div>
+        );
+    }
+}
+
+class EventInviteList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <p>"Invite list here"</p>
+        )
+    }
+}
+
+
 
 function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
@@ -242,6 +273,7 @@ class EventDateTime extends React.Component {
         return (
             <div id="EventDateTime">
                 <p>
+                    <i className="tiny material-icons">date_range</i>
                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
                     {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} -&nbsp;
