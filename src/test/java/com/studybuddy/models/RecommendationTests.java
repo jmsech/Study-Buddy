@@ -96,7 +96,7 @@ public class RecommendationTests {
     }
 
     @Test
-    public void recommendationsDontScheduleDuringOverSchedul() {
+    public void recommendationsDontScheduleDuringOverSchedule() {
         ArrayList<TimeChunk> list = new ArrayList<>();
         list.add(new TimeChunk(jan_1_2019_10_00_AM, jan_1_2019_12_00_PM));
         list.add(new TimeChunk(jan_1_2019_2_00_PM, jan_1_2019_6_00_PM));
