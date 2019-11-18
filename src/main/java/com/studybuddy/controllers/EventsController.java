@@ -110,6 +110,7 @@ class EventsController {
         var result = lastIdStatement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
         var eventId = result.getInt("eventId");
         insertInviteList(eventId, inviteList);
+        ctx.json("Success");
         ctx.status(201);
     }
 
@@ -206,6 +207,7 @@ class EventsController {
         statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ?");
         statement.setInt(1, eventId);
         insertInviteList(eventId, inviteList);
+        ctx.json("Success");
         ctx.status(201);
     }
 
