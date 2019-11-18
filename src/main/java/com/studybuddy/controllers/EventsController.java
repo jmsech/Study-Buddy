@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsController {
+class EventsController {
     private Connection connection;
 
-    EventsController(Connection connection) throws SQLException {
+    EventsController(Connection connection) {
         this.connection = connection;
     }
 
@@ -72,8 +72,26 @@ public class EventsController {
             location = "";
         }
 
-        List inviteList = ctx.formParam("inviteList", List.class).getOrNull();
+        // Create list of attendees by id
+        String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
         var userID = ctx.formParam("userID", Integer.class).get();
+        List<Integer> inviteList = new ArrayList<>();
+        inviteList.add(userID);
+        // Get ids from email invite list
+        if (inviteListString != null) {
+            var emailInviteList = inviteListString.split("\\s*,\\s*");
+            for (String email : emailInviteList) {
+                var statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
+                statement.setString(1, email);
+                var result = statement.executeQuery();
+                if (result.next()) {
+                    inviteList.add(result.getInt("id"));
+                } else {
+                    ctx.json("InviteListError");
+                    return;
+                }
+            }
+        }
 
         // Create event and insert into events table
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId) VALUES (?, ?, ?, ?, ?, ?);");
@@ -84,12 +102,15 @@ public class EventsController {
         statement.setString(5, location);
         statement.setInt(6, userID);
         statement.executeUpdate();
+        statement.close();
 
         // Create event to users mapping
         // Get most recent event's id
-        var result = statement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
+        var lastIdStatement = connection.createStatement();
+        var result = lastIdStatement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
         var eventId = result.getInt("eventId");
-        insertInviteList(ctx, eventId, statement, inviteList);
+        insertInviteList(eventId, inviteList);
+        ctx.status(201);
     }
 
     void deleteEvent(Context ctx) throws SQLException {
@@ -160,17 +181,36 @@ public class EventsController {
         statement.setInt(6, eventId);
         statement.executeUpdate();
 
-        // Make updates to invite list
-        List inviteList = ctx.formParam("inviteList", List.class).getOrNull();
+        // Create list of attendees by id
+        String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
+        var userID = ctx.formParam("userID", Integer.class).get();
+        List<Integer> inviteList = new ArrayList<>();
+        inviteList.add(userID);
+        // Get ids from email invite list
+        if (inviteListString != null) {
+            var emailInviteList = inviteListString.split("\\s*,\\s*");
+            for (String email : emailInviteList) {
+                statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
+                statement.setString(1, email);
+                var result = statement.executeQuery();
+                if (result.next()) {
+                    inviteList.add(result.getInt("id"));
+                } else {
+                    ctx.json("InviteListError");
+                    return;
+                }
+            }
+        }
 
         // Delete associations from table and reinsert the new list
         statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ?");
         statement.setInt(1, eventId);
-        assert inviteList != null;
-        insertInviteList(ctx, eventId, statement, inviteList);
+        insertInviteList(eventId, inviteList);
+        ctx.status(201);
     }
 
-    private void insertInviteList(Context ctx, int eventId, PreparedStatement statement, List inviteList) throws SQLException {
+    private void insertInviteList(int eventId, List inviteList) throws SQLException {
+        PreparedStatement statement = null;
         assert inviteList != null;
         for (Object id : inviteList) {
             statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
@@ -178,7 +218,7 @@ public class EventsController {
             statement.setInt(2, (int) id);
             statement.executeUpdate();
         }
+        assert statement != null;
         statement.close();
-        ctx.status(201);
     }
 }

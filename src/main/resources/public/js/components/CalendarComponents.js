@@ -25,6 +25,8 @@ class NewEventForm extends React.Component {
         const msg = await response.json();
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
+        } else if (msg === "InviteListError") {
+            alert("Invalid invite list (should be comma separated list of existing user's emails");
         }
         return response;
     }
@@ -37,8 +39,9 @@ class NewEventForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
-        // TODO: add invite list (including the event creator
         formData.append("description", event.target.description.value);
+        formData.append("location", event.target.location.value);
+        formData.append("inviteList", event.target.inviteList.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
@@ -97,6 +100,14 @@ class NewEventForm extends React.Component {
                 <div className="input-field">
                     <label htmlFor="description">Event description</label>
                     <input id="description" name="description" type="text"/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="location">Event location</label>
+                    <input id="location" name="location" type="text"/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="inviteList">Invite list (insert comma-separated emails)</label>
+                    <input id="inviteList" name="inviteList" type="text"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
