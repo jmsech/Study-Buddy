@@ -13,15 +13,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecsController {
+class RecsController {
     private Connection connection;
 
-    public RecsController(Connection connection) throws SQLException {
+    RecsController(Connection connection) throws SQLException {
         this.connection = connection;
     }
 
     //from studentController
-    public void getRec(Context ctx) throws SQLException {
+    void getRec(Context ctx) throws SQLException {
 
         //get all the buddies the user requested
         List<Integer> buddyIDs = new ArrayList<>();

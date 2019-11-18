@@ -14,11 +14,11 @@ import java.util.List;
 public class EventsController {
     private Connection connection;
 
-    public EventsController(Connection connection) throws SQLException {
+    EventsController(Connection connection) throws SQLException {
         this.connection = connection;
     }
 
-    public void getEvents(Context ctx) throws SQLException {
+    void getEvents(Context ctx) throws SQLException {
         var events = new ArrayList<Event>();
         var userId = ctx.pathParam("userId", Integer.class).get();
 
@@ -46,7 +46,7 @@ public class EventsController {
         ctx.json(events);
     }
 
-    public void createEvent(Context ctx) throws SQLException {
+    void createEvent(Context ctx) throws SQLException {
         var title = ctx.formParam("title", String.class).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
         LocalDateTime startTime = LocalDateTime.parse(ctx.formParam("startTime", String.class).get(), formatter);
@@ -91,7 +91,7 @@ public class EventsController {
         insertInviteList(ctx, eventId, statement, inviteList);
     }
 
-    public void deleteEvent(Context ctx) throws SQLException {
+    void deleteEvent(Context ctx) throws SQLException {
         var eventId = Integer.parseInt(ctx.pathParam("eventId"));
         var statement = connection.prepareStatement("SELECT hostId FROM events where id = ?");
         statement.setInt(1, eventId);
@@ -123,7 +123,7 @@ public class EventsController {
         statement.close();
     }
 
-    public void editEvent(Context ctx) throws SQLException {
+    void editEvent(Context ctx) throws SQLException {
         var eventId = Integer.parseInt(ctx.pathParam("eventId"));
         var title = ctx.formParam("title", String.class).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
@@ -142,7 +142,9 @@ public class EventsController {
         if (description == null) {
             description = "";
         }
+
         var location = ctx.formParam("location", String.class).getOrNull();
+        // Set location to empty string if it is null
         if (location == null) {
             location = "";
         }
