@@ -75,7 +75,7 @@ public class User implements Cloneable {
      *
      * @param e - The event which the student will attend
      */
-    public void attendStudyEvent(StudyEvent e) {
+    public void attendStudyEvent(Event e) {
         // they want to attend, so add to calendar
         this.cal.addEvent(e);
         //add user to the event's attending list
@@ -87,7 +87,7 @@ public class User implements Cloneable {
      *
      * @param e - The event which the student will no longer be attending
      */
-    public void unattendStudyEvent(StudyEvent e) {
+    public void unattendStudyEvent(Event e) {
         //if they change their mind & don't want to go anymore
         this.cal.removeEvent(e);
         // TODO
@@ -99,7 +99,7 @@ public class User implements Cloneable {
      *
      * @param e -User decide to not attend event.
      */
-    public void declineStudyEvent(StudyEvent e) {
+    public void declineStudyEvent(Event e) {
         // just remove from personal pending list
         this.pendingEvents.remove(e);
         // TODO remove from event's pending list
@@ -110,7 +110,7 @@ public class User implements Cloneable {
      *
       * @param e - Event which user may or may not attend
      */
-    public void receiveInvite(StudyEvent e) {
+    public void receiveInvite(Event e) {
         //if someone sent you an invite
         this.pendingEvents.add(e);
         //ask user if they want to go
@@ -129,7 +129,7 @@ public class User implements Cloneable {
      * @param e - Event which users are being invited to
      * @param l - list of users to invite event to
      */
-    public void inviteBuddies(StudyEvent e, List<User> l) {
+    public void inviteBuddies(Event e, List<User> l) {
         ArrayList<User> hosts = new ArrayList<>();
         hosts.add(this);
         //invite everyone in the list

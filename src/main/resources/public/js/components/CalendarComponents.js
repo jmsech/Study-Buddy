@@ -175,6 +175,7 @@ class Event extends React.Component {
                         <EventTitle event={this.props.event}/>
                     </span>
                     <EventDescription event={this.props.event}/>
+                    <EventLocation event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
                 </div>
                 <div className="card-action right-align">

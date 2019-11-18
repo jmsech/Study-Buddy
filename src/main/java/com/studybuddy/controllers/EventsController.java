@@ -31,6 +31,15 @@ class EventsController {
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             // TODO: get list of attendees for each event
+            var eventId = result.getInt("id");
+            var mappingStatement = this.connection.prepareStatement("SELECT u.email FROM events_to_users_mapping AS etum " +
+                    "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
+            mappingStatement.setInt(1, eventId);
+            var mappingResult = mappingStatement.executeQuery();
+            List<String> inviteList = new ArrayList<>();
+            while (mappingResult.next()) {
+                inviteList.add(mappingResult.getString("email"));
+            }
             events.add(
                     new Event(
                             result.getInt("id"),
@@ -38,7 +47,8 @@ class EventsController {
                             result.getTimestamp("startTime").toLocalDateTime(),
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
-                            stu
+                            inviteList,
+                            result.getString("location")
                     )
             );
         }

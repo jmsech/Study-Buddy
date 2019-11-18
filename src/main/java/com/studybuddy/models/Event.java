@@ -12,63 +12,85 @@ public class Event {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String description;
-    private List<User> hosts;
+    private List<String> attendees;
+    private String location;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
+    public Event(long id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
-        this.hosts = hosts;
+        this.attendees = attendees;
+        this.location = location;
     }
 
-    public void addToCalendar(String calendarID) {
-        // TODO ?
+    public long getId() {
+        return id;
     }
 
-    public String getTitle() { return title; }
-
-    public void setTitle(String title) { this.title = title; }
-
-    public long getId() { return id; }
-
-    public void setId(long id) { this.id = id; }
-
-    public LocalDateTime getStartTime() { return startTime; }
-
-    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-
-    public LocalDateTime getEndTime() { return endTime; }
-
-    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-
-    public String getDescription() { return description; }
-
-    public void setDescription(String description) { this.description = description; }
-
-    public List<User> getHosts() { return hosts; }
-
-    public void setHosts(List<User> hosts) { this.hosts = hosts; }
-
-
-   public int compareTo(Event e) {
-        return Long.compare(this.id, e.getId());
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public boolean equals(Event e) {
-        return this.id == e.getId();
+    public String getTitle() {
+        return title;
     }
 
-    public void removeHost(int hostid) {
-        this.hosts.remove(hostid);
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void addHost(User user) {
-        this.hosts.add(user);
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public boolean isHost(User user) {
-        return hosts.contains(user);
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(List<String> attendees) {
+        this.attendees = attendees;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", description='" + description + '\'' +
+                ", attendees=" + attendees +
+                ", location='" + location + '\'' +
+                '}';
     }
 }
