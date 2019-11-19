@@ -22,20 +22,20 @@ public class Server {
                             post(ApplicationController::authenticateUser);
                         });
                     });
-                    path(":userId/recs", () -> {
-                        post(ApplicationController::getRec);
-                    });
-                    path(":userID/events", () -> {
-                        get(ApplicationController::getEvents);
-                        post(ApplicationController::createEvent);
-                        path(":id", () -> {
-                            delete(ApplicationController::deleteEvent);
-                            put(ApplicationController::editEvent);
-                        });
-                    });
                     path(":userID", () -> {
                         post(ApplicationController::collectGoogleEvents);
                         delete(ApplicationController::logOut);
+                        path("recs", () -> {
+                            post(ApplicationController::getRec);
+                        });
+                        path("events", () -> {
+                            get(ApplicationController::getEvents);
+                            post(ApplicationController::createEvent);
+                            path(":id", () -> {
+                                delete(ApplicationController::deleteEvent);
+                                put(ApplicationController::editEvent);
+                            });
+                        });
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));

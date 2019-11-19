@@ -39,7 +39,7 @@ public class RecsController {
         }
 
         //add user requesting rec to the buddy list
-        buddyIDs.add(Integer.parseInt(ctx.pathParam("userId")));
+        buddyIDs.add(Integer.parseInt(ctx.pathParam("userID")));
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();

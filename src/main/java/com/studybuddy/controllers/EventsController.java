@@ -61,18 +61,19 @@ public class EventsController {
             description = "";
         }
         var userID = ctx.formParam("userID", Integer.class).get();
-        var isGoogleEvent = ctx.formParam("isGoogleEvent", Boolean.class).get();
 
         // TODO change call to consider inviteList and importance
-        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID, isGoogleEvent) VALUES (?, ?, ?, ?, ?, false)");
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID, isGoogleEvent) VALUES (?, ?, ?, ?, ?, ?)");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);
         statement.setString(4, description);
         statement.setInt(5, userID);
+        statement.setBoolean(6, false);
         statement.executeUpdate();
         statement.close();
         ctx.status(201);
+        ctx.json("Success");
     }
 
     public void deleteEvent(Context ctx) throws SQLException {
@@ -117,5 +118,6 @@ public class EventsController {
         statement.executeUpdate();
         statement.close();
         ctx.status(201);
+        ctx.json("Success");
     }
 }
