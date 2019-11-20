@@ -97,6 +97,7 @@ public class EventsController {
         // Ensure that startTime is before endTime
         if (!endTime.isAfter(startTime)) {
             ctx.json("EventPeriodError");
+            ctx.status(417);
             return;
         }
 

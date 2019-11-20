@@ -23,14 +23,8 @@ import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.io.File;
 
 public class CalendarQuickstart {
     private static final String APPLICATION_NAME = "StudyBuddy";
@@ -128,6 +122,7 @@ public class CalendarQuickstart {
                     statement.close();
                 }
             }
+            ctx.status(201);
             ctx.json("Calender Synced Successfully");
         }
     }
