@@ -24,7 +24,7 @@ public class ApplicationController {
 
         var statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN, expired BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS events_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, eventId INTEGER, userId INTEGER, FOREIGN KEY (eventId) REFERENCES events (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.close();
     }
@@ -43,6 +43,10 @@ public class ApplicationController {
 
     public void deleteEvent(Context ctx) throws SQLException {
         eventsController.deleteEvent(ctx);
+    }
+
+    public void deletePastEvents(Context ctx) throws SQLException {
+        eventsController.deletePastEvents(ctx);
     }
 
     public void editEvent(Context ctx) throws SQLException {

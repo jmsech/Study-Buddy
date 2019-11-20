@@ -2,7 +2,6 @@ package com.studybuddy.models;
 
 import java.time.LocalDateTime;
 import java.lang.*;
-//import java.util.Comparator;
 import java.util.List;
 
 public class Event {
@@ -15,16 +14,18 @@ public class Event {
     private List<String> attendees;
     private String location;
     private boolean isGoogleEvent;
+    private boolean expired;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location, boolean isGoogleEvent) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
         this.description = description;
-        this.isGoogleEvent = isGoogleEvent;
         this.attendees = attendees;
         this.location = location;
+        this.isGoogleEvent = false;
+        this.expired = false;
     }
 
     public long getId() {
@@ -84,4 +85,6 @@ public class Event {
     }
 
     public boolean isGoogleEvent() { return isGoogleEvent; }
+
+    public boolean isExpired() {return expired;}
 }

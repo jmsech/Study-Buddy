@@ -31,6 +31,7 @@ public class Server {
                         path("events", () -> {
                             get(ApplicationController::getEvents);
                             post(ApplicationController::createEvent);
+                            put(ApplicationController::deletePastEvents);
                             path(":eventId", () -> {
                                 delete(ApplicationController::deleteEvent);
                                 put(ApplicationController::editEvent);

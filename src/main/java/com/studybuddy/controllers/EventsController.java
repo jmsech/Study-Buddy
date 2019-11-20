@@ -25,7 +25,7 @@ class EventsController {
         var statement = this.connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
-                "WHERE u.id = ?");
+                "WHERE u.id = ? AND e.expired = false");
         statement.setInt(1, userId);
         var result = statement.executeQuery();
         ArrayList<User> stu = new ArrayList<>();
@@ -48,8 +48,7 @@ class EventsController {
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
                             inviteList,
-                            result.getString("location"),
-                            result.getBoolean("isGoogleEvent")
+                            result.getString("location")
                     )
             );
         }
@@ -105,7 +104,7 @@ class EventsController {
         }
 
         // Create event and insert into events table
-        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent) VALUES (?, ?, ?, ?, ?, ?, ?);");
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);
@@ -113,7 +112,7 @@ class EventsController {
         statement.setString(5, location);
         statement.setInt(6, userID);
         statement.setBoolean(7, false);
-
+        statement.setBoolean(8, false);
         statement.executeUpdate();
         statement.close();
 
@@ -236,5 +235,15 @@ class EventsController {
         }
         assert statement != null;
         statement.close();
+    }
+
+    void deletePastEvents(Context ctx) throws SQLException {
+        LocalDateTime cur = LocalDateTime.now();
+        java.sql.Timestamp sqlCur = java.sql.Timestamp.valueOf(cur);
+        var statement = connection.prepareStatement("UPDATE events SET expired = true WHERE endTime < ?");
+        statement.setTimestamp(1,sqlCur);
+        statement.executeUpdate();
+        statement.close();
+        ctx.status(200);
     }
 }
