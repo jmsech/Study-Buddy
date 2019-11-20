@@ -22,7 +22,7 @@ public class Server {
                             post(ApplicationController::authenticateUser);
                         });
                     });
-                    path(":userID", () -> {
+                    path(":userId", () -> {
                         post(ApplicationController::collectGoogleEvents);
                         delete(ApplicationController::logOut);
                         path("recs", () -> {
@@ -31,7 +31,7 @@ public class Server {
                         path("events", () -> {
                             get(ApplicationController::getEvents);
                             post(ApplicationController::createEvent);
-                            path(":id", () -> {
+                            path(":eventId", () -> {
                                 delete(ApplicationController::deleteEvent);
                                 put(ApplicationController::editEvent);
                             });

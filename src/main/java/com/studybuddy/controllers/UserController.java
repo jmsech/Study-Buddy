@@ -1,5 +1,6 @@
 package com.studybuddy.controllers;
 
+import com.studybuddy.CalendarQuickstart;
 import io.javalin.http.Context;
 
 import javax.crypto.SecretKeyFactory;
@@ -13,12 +14,12 @@ import java.security.spec.KeySpec;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class UserController {
+class UserController {
     private static int hashingIterationCount = 65536;
     private static int hashingKeyLength = 128;
     private Connection connection;
 
-    public UserController(Connection connection) throws SQLException {
+    UserController(Connection connection) throws SQLException {
         this.connection = connection;
     }
 
@@ -69,7 +70,7 @@ public class UserController {
         return digit;
     }
 
-    public void createUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+    void createUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");
         var firstName = ctx.formParam("firstName");
@@ -105,7 +106,7 @@ public class UserController {
         ctx.status(201);
     }
 
-    public void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+    void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");
         // Search for the user based on their email
@@ -139,7 +140,7 @@ public class UserController {
         statement.close();
     }
 
-    public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
+    void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
         CalendarQuickstart.collectEvents(this.connection, ctx);
     }
 }

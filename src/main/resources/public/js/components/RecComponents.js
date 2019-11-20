@@ -62,7 +62,7 @@ class NewRecForm extends React.Component {
         const data = await response.json();
         if (data === "RecPeriodError") {
             alert("Invalid recommendation period (start has to be before end)");
-        } else if (data =="NoRecsToDisplay") {
+        } else if (data ==="NoRecsToDisplay") {
             alert("There are no times in the specified time period where everyone is available")
         } else {
             this.props.setRecs(data);
@@ -73,6 +73,7 @@ class NewRecForm extends React.Component {
     async handleSubmit(rec) {
         this.props.flip();
         const formData = new FormData();
+        // TODO - add caller id to attendee list
         formData.append("userID", this.props.userID);
         formData.append("user1", rec.target.user1.value);
         formData.append("user2", rec.target.user2.value);

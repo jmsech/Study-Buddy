@@ -1,4 +1,4 @@
-package com.studybuddy.controllers;
+package com.studybuddy;
 
 import com.studybuddy.models.TimeChunk;
 

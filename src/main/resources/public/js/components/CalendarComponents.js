@@ -25,6 +25,8 @@ class NewEventForm extends React.Component {
         const msg = await response.json();
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
+        } else if (msg === "InviteListError") {
+            alert("Invalid invite list (should be comma separated list of existing user's emails");
         }
         return response;
     }
@@ -38,6 +40,8 @@ class NewEventForm extends React.Component {
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
+        formData.append("location", event.target.location.value);
+        formData.append("inviteList", event.target.inviteList.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
@@ -98,6 +102,14 @@ class NewEventForm extends React.Component {
                     <input id="description" name="description" type="text"/>
                 </div>
                 <div className="input-field">
+                    <label htmlFor="location">Event location</label>
+                    <input id="location" name="location" type="text"/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="inviteList">Invite list (insert comma-separated emails)</label>
+                    <input id="inviteList" name="inviteList" type="text"/>
+                </div>
+                <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
                     <input id="startDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
                 </div>
@@ -145,14 +157,17 @@ class EventList extends React.Component {
 
 
 class Event extends React.Component {
-
     constructor(props) {
         super(props);
-        this.state = {showForm: false};
+        this.state = {showForm: false, showAttendees: false};
     }
 
     flipFormState() {
-        this.setState({showForm: !this.state.showForm});
+        this.setState({showForm: !this.state.showForm} );
+    }
+
+    flipAttendeesState() {
+        this.setState({showAttendees: !this.state.showAttendees});
     }
 
     render() {
@@ -162,8 +177,11 @@ class Event extends React.Component {
                     <span className="card-title">
                         <EventTitle event={this.props.event}/>
                     </span>
-                    <EventDescription event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
+                    <EventDescription event={this.props.event}/>
+                    <EventLocation event={this.props.event}/>
+                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
@@ -197,11 +215,50 @@ class EventDescription extends React.Component {
     }
 
     render() {
-        return (
-            <p>{this.props.event.description}</p>
-        );
+        if (this.props.event.description !== "") {
+            return (
+                <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
+            );
+        } else return null;
     }
 }
+
+class EventLocation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        if (this.props.event.location !== ""){
+            return (
+                <div>
+                    <p><i className="tiny material-icons">location_on</i>{this.props.event.location}</p>
+                </div>
+            );
+        } else return null;
+    }
+}
+
+class EventInviteList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        if (this.props.showAttendees) {
+            return (
+                <div>
+                    <ul>{this.props.event.attendees.map(email => <li key={email}>{email}</li>)}</ul>
+                </div>
+            );
+        }
+        else return null;
+    }
+}
+
+
 
 function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
@@ -229,6 +286,7 @@ class EventDateTime extends React.Component {
         return (
             <div id="EventDateTime">
                 <p>
+                    <i className="tiny material-icons">date_range</i>
                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
                     {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} -&nbsp;
@@ -274,6 +332,16 @@ function convertToMonth(str) {
     return "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(abv) / 3 + 1;
 }
 
+class ShowAttendeesButton extends React.Component {
+    render() {
+        let title = "Show Attendees";
+        if (this.props.showAttendees) {
+            title = "Hide Attendees";
+        }
+        return <a onClick={() => { this.props.flip() }}>{title}</a>;
+    }
+}
+
 class EditEventForm extends React.Component {
     constructor(props) {
         super(props);
@@ -310,6 +378,7 @@ class EditEventForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + this.formatTime(event.target.startTime.value));
         formData.append("endTime", event.target.endDate.value + " " + this.formatTime(event.target.endTime.value));
+        // TODO: add invite list (including the event creator
         formData.append("description", event.target.description.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form

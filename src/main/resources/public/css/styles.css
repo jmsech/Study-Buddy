@@ -91,3 +91,12 @@ header {
     display: flex;
     justify-content: space-between;
 }
+
+a {
+    color: black;
+    cursor: pointer;
+}
+
+a:hover {
+    text-decoration: underline;
+}
