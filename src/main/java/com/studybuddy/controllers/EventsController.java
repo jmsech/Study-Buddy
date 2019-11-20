@@ -234,7 +234,5 @@ class EventsController {
         }
         assert statement != null;
         statement.close();
-        ctx.status(201);
-        ctx.json("Success");
     }
 }

@@ -93,9 +93,5 @@ public class Event {
         this.location = location;
     }
 
-    public boolean isHost(User user) {
-        return hosts.contains(user);
-    }
-
     public boolean isGoogleEvent() { return isGoogleEvent; }
 }
