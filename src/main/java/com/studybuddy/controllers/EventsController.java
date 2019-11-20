@@ -22,7 +22,7 @@ class EventsController {
         var events = new ArrayList<Event>();
         var userId = ctx.pathParam("userId", Integer.class).get();
 
-        var statement = this.connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location " +
+        var statement = this.connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ?");
@@ -31,13 +31,14 @@ class EventsController {
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             var eventId = result.getInt("id");
-            var mappingStatement = this.connection.prepareStatement("SELECT u.email FROM events_to_users_mapping AS etum " +
+            var mappingStatement = this.connection.prepareStatement("SELECT u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
                     "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
             mappingStatement.setInt(1, eventId);
             var mappingResult = mappingStatement.executeQuery();
             List<String> inviteList = new ArrayList<>();
             while (mappingResult.next()) {
-                inviteList.add(mappingResult.getString("email"));
+                String name = mappingResult.getString("firstName") + " " + mappingResult.getString("lastName");
+                inviteList.add(name);
             }
             events.add(
                     new Event(
@@ -47,7 +48,8 @@ class EventsController {
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
                             inviteList,
-                            result.getString("location")
+                            result.getString("location"),
+                            result.getBoolean("isGoogleEvent")
                     )
             );
         }

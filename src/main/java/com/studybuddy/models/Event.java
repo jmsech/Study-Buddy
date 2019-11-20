@@ -16,17 +16,7 @@ public class Event {
     private String location;
     private boolean isGoogleEvent;
 
-    public Event(long id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location) {
-        this.id = id;
-        this.title = title;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.description = description;
-        this.attendees = attendees;
-        this.isGoogleEvent = false;
-    }
-
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, boolean isGoogleEvent) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location, boolean isGoogleEvent) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
