@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4c2cfa26-a649-4456-b22e-6483b95501da",
+		"_postman_id": "57f6fad1-4bd4-45c2-8f48-bc68953fb8a8",
 		"name": "StudyBuddy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -30,9 +30,9 @@
 							"pm.test(\"Response JSON is a list\", () => {",
 							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
 							"});",
-							"pm.test(\"Items have identifier, title, start and end times, description, and hosts\", () => {",
-							"    pm.response.json().forEach(item => {",
-							"        pm.expect(item).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\", \"hosts\");",
+							"pm.test(\"Items have identifier, title, start and end times, description, hosts, userID, and GoogleCal\", () => {",
+							"    pm.response.json().forEach(event => {",
+							"        pm.expect(event).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\", \"hosts\", \"userID\", \"isGoogleEvent\");",
 							"    });",
 							"});"
 						],
@@ -91,7 +91,8 @@
 						"id": "7d529064-1984-4211-b193-63455e5163c3",
 						"exec": [
 							"pm.environment.set(\"id\", \"1\");",
-							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
+							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" });",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -104,12 +105,14 @@
 							"pm.test(\"Status code is 201\", () => {",
 							"    pm.response.to.have.status(201);",
 							"});",
+							"",
 							"pm.test(\"Identifiers are always increasing\", () => {",
 							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
 							"        const identifiers = response.json().map(event => event.id).reverse();",
 							"        pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
 							"    });",
 							"});",
+							"",
 							"pm.test(\"Data inserted is valid\", () => {",
 							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
 							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
@@ -145,6 +148,11 @@
 						{
 							"key": "description",
 							"value": "This is an event for our postman POST test",
+							"type": "text"
+						},
+						{
+							"key": "userID",
+							"value": "1",
 							"type": "text"
 						}
 					]
@@ -196,18 +204,15 @@
 					"script": {
 						"id": "a0994837-5634-4c18-a9e5-06eb82f0abdd",
 						"exec": [
-							"pm.sendRequest({",
-							"    url: \"http://localhost:7000/events\",",
-							"    method: \"POST\",",
-							"    body: {",
-							"        mode: 'raw',",
-							"        raw: JSON.stringify({title: \"Test event\", startTime: \"2019-10-14T06:30\", endTime: \"2019-10-14T07:30\", description: \"Test description\"})",
-							"    }}, () => {",
-							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"pm.environment.set(\"userID\", \"1\");",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
 							"        pm.environment.set(\"id\", response.json().last().id);",
-							"        console.log(pm.environment.get(\"id\"));",
 							"    });",
-							"});"
+							"});",
+							"",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -220,6 +225,7 @@
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
 							"});",
+							"",
 							"pm.test(\"Event is deleted\"), () => {",
 							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
 							"        pm.expect(",
@@ -227,7 +233,6 @@
 							"        ).to.not.include(parseInt(pm.environment.get(\"id\")));",
 							"    });",
 							"}",
-							"",
 							""
 						],
 						"type": "text/javascript"
@@ -242,13 +247,14 @@
 					"formdata": []
 				},
 				"url": {
-					"raw": "http://localhost:7000/events/{{id}}",
+					"raw": "http://localhost:7000/{{userID}}/events/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "7000",
 					"path": [
+						"{{userID}}",
 						"events",
 						"{{id}}"
 					]
@@ -355,7 +361,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:7000/users",
+							"raw": "http://localhost:7000/users?",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -395,7 +401,7 @@
 						}
 					],
 					"cookie": [],
-					"body": null
+					"body": ""
 				}
 			]
 		},
@@ -432,6 +438,78 @@
 					"path": [
 						"users",
 						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Event",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "title",
+						"value": "",
+						"type": "text"
+					},
+					{
+						"key": "startTime",
+						"value": "",
+						"type": "text"
+					},
+					{
+						"key": "endTime",
+						"value": "",
+						"type": "text"
+					},
+					{
+						"key": "description",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "New Title",
+							"type": "text"
+						},
+						{
+							"key": "startTime",
+							"value": "nwo",
+							"type": "text"
+						},
+						{
+							"key": "endTime",
+							"value": "now",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a changed event",
+							"type": "text"
+						},
+						{
+							"key": "userID",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/1/events/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"1",
+						"events",
+						"{{id}}"
 					]
 				}
 			},
