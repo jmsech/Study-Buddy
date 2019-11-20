@@ -126,6 +126,7 @@ class EventList extends React.Component {
     }
 
     async getDataFromServer() {
+        await fetch(`/${this.props.userID}/events`, {method: "PUT"});
         this.setState({ events: await (await fetch(`/${this.props.userID}/events`)).json() });
         window.setTimeout(() => { this.getDataFromServer(); }, 200);
     }

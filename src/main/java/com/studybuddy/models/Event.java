@@ -14,6 +14,7 @@ public class Event {
     private String description;
     private List<User> hosts;
     private boolean isGoogleEvent;
+    private boolean expired;
 
     public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts) {
         this.id = id;
@@ -23,6 +24,7 @@ public class Event {
         this.description = description;
         this.hosts = hosts;
         this.isGoogleEvent = false;
+        this.expired = false;
     }
 
     public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> hosts, boolean isGoogleEvent) {
@@ -33,6 +35,7 @@ public class Event {
         this.description = description;
         this.hosts = hosts;
         this.isGoogleEvent = isGoogleEvent;
+        this.expired = false;
     }
 
     public void addToCalendar(String calendarID) {
@@ -85,4 +88,6 @@ public class Event {
     }
 
     public boolean isGoogleEvent() { return isGoogleEvent; }
+
+    public boolean isExpired() {return expired;}
 }
