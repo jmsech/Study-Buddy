@@ -1,8 +1,7 @@
-package com.studybuddy;
+package com.studybuddy.controllers;
 
 import com.studybuddy.models.TimeChunk;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class RecommendationAlgorithm {
+public class WeightedRecommendationAlgorithm {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CONSTANTS ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,166 +28,15 @@ public class RecommendationAlgorithm {
     private static final double HOST_UNAVAILABLE_WEIGHT = -1000;  //FIXME?
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // RECOMMENDATION ALGORITHM 1 //////////////////////////////////////////////////////////////////////////////////////
+    // RECOMMENDATION ALGORITHM ////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction) {
-
-        long startSec = start.toEpochSecond(ZoneOffset.UTC);
-        long endSec = end.toEpochSecond(ZoneOffset.UTC);
-        int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
-        int[] timeArray = new int[lengthInMinutes];
-
-        for (TimeChunk t : unavailable) {
-            long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-            long trueF = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-
-            int s = (int) (trueS - startSec)/SECONDS_PER_MINUTE;
-            int f = (int) (trueF - startSec)/SECONDS_PER_MINUTE;
-
-            if (s < 0) {s = 0;}
-            if (f < 0) {f = 0;}
-            if (s >= lengthInMinutes) {s = lengthInMinutes - 1;}
-            if (f >= lengthInMinutes) {f = lengthInMinutes - 1;}
-
-            for (int i = s; i <= f; i++) { timeArray[i]++; }
-        }
-
-        long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
-        int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
-
-        int len = timeArray.length;
-        for (int i = 0; i < len; i++) {
-            if ((i - relativeSleepStart + MINUTES_PER_DAY) % MINUTES_PER_DAY <= MINUTES_OF_SLEEP) {
-                timeArray[i] = -1;
-            }
-        }
-
-//        printTimeArray(timeArray); // FIXME
-
-        return findStudyTimes(timeArray, startSec, fraction);
-    }
-
-    private static List<TimeChunk> findStudyTimes(int[] timeArray, long startSec, double fraction) {
-
-        int length = timeArray.length;
-        int[] freeTime = new int[length];
-
-        for (int i = 0; i < length; i++) {
-            if (timeArray[i] == 0) { freeTime[i] = 1; }
-            else { freeTime[i] = 0; }
-        }
-
-//        printFreeTimeChunks(freeTime); // FIXME
-
-        List<TimeChunk> chunks = new ArrayList<>();
-        int state = -1;
-        for (int i = 0; i < length; i++) {
-            if (freeTime[i] == 1) {
-                if (state == -1) {
-                    state = i;
-                }
-            } else if (freeTime[i] == 0)  {
-                if (state != -1) {
-                    TimeChunk c = new TimeChunk(
-                            makeTime(startSec + (state) * SECONDS_PER_MINUTE),
-                            makeTime(startSec + (i) * SECONDS_PER_MINUTE)
-                    );
-                    chunks.add(c);
-//                    printTimeChunkWithTag(c, "x"); //FIXME
-                    state = -1;
-                }
-            }
-        }
-        if (state != -1) {
-            TimeChunk c = new TimeChunk(
-                    makeTime(startSec + (state)*SECONDS_PER_MINUTE),
-                    makeTime(startSec + (length-1)*SECONDS_PER_MINUTE)
-            );
-            chunks.add(c);
-//            printTimeChunkWithTag(c, "y"); //FIXME
-        }
-
-        return createStudyChunks(chunks, fraction);
-    }
-
-    private static List<TimeChunk> createStudyChunks(List<TimeChunk> chunks, double fraction) {
-
-        List<TimeChunk> studyChunks = new ArrayList<>();
-        int studyLength = (int) (fraction*MINUTES_PER_HOUR);
-
-        for (var chunk: chunks) {
-            long start = chunk.getStartTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
-            long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
-            int chunkLength = (int) (end - start);
-
-//            printTimeChunkWithTag(chunk, "c"); //FIXME
-
-            if (studyLength <= chunkLength) {
-                double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
-                int numSlots = (int) fractionSlots;
-                if (fractionSlots - numSlots >= 0.5) { numSlots++;}
-                for (int i = 0; i < numSlots/2; i++) {
-
-                    long forwardBegin = start + i*studyLength;
-                    long forwardEnd = start + (i+1)*studyLength;
-                    TimeChunk c = new TimeChunk(
-                            makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
-                            makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
-                    );
-//                    printTimeChunkWithTag(c, "f"); //FIXME
-                    studyChunks.add(c);
-
-                    long reverseEnd = end - i*studyLength;
-                    long reverseBegin = end - (i+1)*studyLength;
-                    c = new TimeChunk(
-                            makeTime(reverseBegin*SECONDS_PER_MINUTE),
-                            makeTime(reverseEnd*SECONDS_PER_MINUTE)
-                    );
-//                    printTimeChunkWithTag(c, "r"); //FIXME
-                    studyChunks.add(c);
-
-                }
-                if (numSlots % 2 == 1) {
-                    long forwardBegin = start + numSlots/2*studyLength;
-                    long forwardEnd = start + (numSlots/2+1)*studyLength;
-                    TimeChunk c = new TimeChunk(
-                            makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
-                            makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
-                    );
-//                    printTimeChunkWithTag(c, "a"); //FIXME
-                    studyChunks.add(c);
-                }
-            }
-        }
-
-        class TimeChunkComparator implements Comparator<TimeChunk>{
-            @Override
-            public int compare(TimeChunk t1, TimeChunk t2) {
-                long start1 = t1.getStartTime().toEpochSecond(ZoneOffset.UTC);
-                long start2 = t2.getStartTime().toEpochSecond(ZoneOffset.UTC);
-                if (start1 < start2) { return -1; }
-                else if (start1 == start2) {return 0; }
-                else {return 1; }
-            }
-        }
-
-        studyChunks.sort(new TimeChunkComparator());
-
-        return studyChunks;
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // RECOMMENDATION ALGORITHM 2 //////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
         ArrayList<TimeChunk> arr = new ArrayList<>();
-        return makeBetterRecommendation(start,end,unavailable,arr,fraction,numRecs);
+        return makeRecommendation(start,end,unavailable,arr,fraction,numRecs);
     }
 
-    public static List<TimeChunk> makeBetterRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, List<TimeChunk> host, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, List<TimeChunk> host, double fraction, int numRecs) {
 
         // Initialize array of doubles to hold availability of individuals
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -196,7 +44,7 @@ public class RecommendationAlgorithm {
         int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
         double[] available = new double[lengthInMinutes];
 
-        for (int i = 0; i < lengthInMinutes; i++) {available[i] = 1;}
+        for (int i = 0; i < lengthInMinutes; i++) { available[i] = 0.1; }
 
         // Time of interval shorter than length of studying time
         if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
@@ -282,13 +130,9 @@ public class RecommendationAlgorithm {
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
         double[] chunkValues;
 
-//        printFreeTimeChunks(available); //FIXME
-//        System.out.println(); // FIXME
-
         for (int n = 0; n < numRecs; n++) {
             // Initialize array of values of Studying Chunks
-            chunkValues = new double[lengthInMinutes - lengthStudy];
-//            chunkValues = new double[available.length - lengthStudy]; //FIXME
+            chunkValues = new double[lengthInMinutes - lengthStudy + 1];
 
             // Calculate first value of first TimeChunk
             for (int i = 0; i < lengthStudy; i++) {
@@ -328,8 +172,6 @@ public class RecommendationAlgorithm {
                     available[i] = min - 1;
                 }
             }
-//            System.out.println(startIndex); //FIXME
-//            System.out.println(n); //FIXME
         }
 
         class TimeChunkComparator implements Comparator<TimeChunk>{
@@ -355,6 +197,23 @@ public class RecommendationAlgorithm {
 
     private static LocalDateTime makeTime(long t) {
         return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
+    }
+
+    private static TimeChunk nearest15(TimeChunk t) {
+
+        long startSec = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
+        long endSec = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
+        long mod = startSec % (FIFTEEN_MINUTES);
+
+        if (mod <= FIFTEEN_MINUTES / 2.0) {
+            startSec = startSec - mod;
+            endSec = endSec - mod;
+        } else {
+            startSec = startSec - mod + (FIFTEEN_MINUTES);
+            endSec = endSec - mod + (FIFTEEN_MINUTES);
+        }
+
+        return new TimeChunk(makeTime(startSec), makeTime(endSec));
     }
 
     public static void printTimeChunks(List<TimeChunk> chunks) {
@@ -413,22 +272,5 @@ public class RecommendationAlgorithm {
 
     private static void printTimeChunkWithTag(TimeChunk c, String tag) {
         System.out.println(c.getStartTime() + " " + c.getEndTime() + " " + tag);
-    }
-
-    private static TimeChunk nearest15(TimeChunk t) {
-
-        long startSec = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-        long endSec = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-        long mod = startSec % (FIFTEEN_MINUTES);
-
-        if (mod <= FIFTEEN_MINUTES / 2.0) {
-            startSec = startSec - mod;
-            endSec = endSec - mod;
-        } else {
-            startSec = startSec - mod + (FIFTEEN_MINUTES);
-            endSec = endSec - mod + (FIFTEEN_MINUTES);
-        }
-
-        return new TimeChunk(makeTime(startSec), makeTime(endSec));
     }
 }
