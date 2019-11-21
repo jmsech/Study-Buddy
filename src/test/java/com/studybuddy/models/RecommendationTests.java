@@ -1,10 +1,8 @@
 package com.studybuddy.models;
 
-import com.studybuddy.controllers.RecommendationAlgorithm;
-import com.studybuddy.controllers.WeightedRecommendationAlgorithm;
-import org.junit.Before;
+import com.studybuddy.RecommendationAlgorithm;
+import com.studybuddy.WeightedRecommendationAlgorithm;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
