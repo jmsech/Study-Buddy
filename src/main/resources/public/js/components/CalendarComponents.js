@@ -41,7 +41,7 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
         formData.append("location", event.target.location.value);
-        formData.append("inviteList", event.target.inviteList.value);
+        formData.append("inviteList", event.target.newEventInviteList.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
@@ -99,15 +99,15 @@ class NewEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="description">Event description</label>
-                    <input id="description" name="description" type="text"/>
+                    <textarea id="description" name="description" className="materialize-textarea"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="location">Event location</label>
                     <input id="location" name="location" type="text"/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="inviteList">Invite list (insert comma-separated emails)</label>
-                    <input id="inviteList" name="inviteList" type="text"/>
+                    <label htmlFor="newEventInviteList">Invite list (insert comma-separated emails)</label>
+                    <textarea id="newEventInviteList" name="newEventInviteList" className="materialize-textarea"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
@@ -385,7 +385,7 @@ class EditEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + this.formatTime(event.target.endTime.value));
         formData.append("description", event.target.description.value);
         formData.append("location", event.target.location.value);
-        formData.append("inviteList", event.target.inviteList.value);
+        formData.append("inviteList", event.target.editEventInviteList.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events/${this.props.event.id}`, {method: "PUT", body: formData})
@@ -436,15 +436,15 @@ class EditEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="description" className="active">Event description</label>
-                    <input id="description" name="description" type="text" defaultValue={this.props.event.description}/>
+                    <textarea id="description" name="description" className="materialize-textarea" defaultValue={this.props.event.description}/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="location" className="active">Event location</label>
                     <input id="location" name="location" type="text" defaultValue={this.props.event.location}/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="inviteList" className="active">Invite list</label>
-                    <textarea id="inviteList" name="inviteList" className="materialize-textarea" defaultValue={this.getInviteList()}/>
+                    <label htmlFor="editEventInviteList" className="active">Invite list</label>
+                    <textarea id="editEventInviteList" name="editEventInviteList" className="materialize-textarea" defaultValue={this.getInviteList()}/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>

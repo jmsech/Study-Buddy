@@ -90,6 +90,7 @@ class EventsController {
 
         // Create list of attendees by id
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
+        System.out.println(inviteListString);
         var userId = ctx.formParam("userId", Integer.class).get();
         List<Integer> idInviteList = new ArrayList<>();
         idInviteList.add(userId);
@@ -127,7 +128,7 @@ class EventsController {
         var lastIdStatement = connection.createStatement();
         var result = lastIdStatement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
         var eventId = result.getInt("eventId");
-        idInviteList = this.removeDuplicates(idInviteList);
+        idInviteList = removeDuplicates(idInviteList);
         insertInviteList(eventId, idInviteList);
         ctx.json("Success");
         ctx.status(201);
@@ -227,13 +228,13 @@ class EventsController {
         statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ?");
         statement.setInt(1, eventId);
         statement.executeUpdate();
-        idInviteList = this.removeDuplicates(idInviteList);
+        idInviteList = removeDuplicates(idInviteList);
         insertInviteList(eventId, idInviteList);
         ctx.json("Success");
         ctx.status(201);
     }
 
-    private List<Integer> removeDuplicates(List<Integer> list) {
+    public static List<Integer> removeDuplicates(List<Integer> list) {
         List<Integer> resultList = new ArrayList<>();
         for (Integer item : list) {
             if (!resultList.contains(item)) {

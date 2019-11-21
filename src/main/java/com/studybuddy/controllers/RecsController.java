@@ -23,10 +23,10 @@ class RecsController {
     void getRec(Context ctx) throws SQLException {
         //get all the buddies the user requested
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
-        var userID = ctx.formParam("userID", Integer.class).get();
+        var userId = ctx.formParam("userId", Integer.class).get();
         List<Integer> idInviteList = new ArrayList<>();
         List<User> inviteList = new ArrayList<>();
-        idInviteList.add(userID);
+        idInviteList.add(userId);
         // Get ids from email invite list
         if (inviteListString != null) {
             var emailInviteList = inviteListString.split("\\s*,\\s*");
@@ -69,6 +69,7 @@ class RecsController {
         //make a list of when everyone is busy
         ArrayList<TimeChunk> busyTimes = new ArrayList<>();
 
+        idInviteList = EventsController.removeDuplicates(idInviteList); // Remove potential duplicates
         for (Object buddyID : idInviteList) {
             var busyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
                     "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +

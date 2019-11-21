@@ -64,6 +64,8 @@ class NewRecForm extends React.Component {
             alert("Invalid recommendation period (start has to be before end)");
         } else if (data ==="NoRecsToDisplay") {
             alert("There are no times in the specified time period where everyone is available")
+        } else if (data === "InviteListError") {
+            alert("Invalid invite list (should be comma separated list of existing user's emails");
         } else {
             this.props.setRecs(data);
         }
@@ -73,19 +75,15 @@ class NewRecForm extends React.Component {
     async handleSubmit(rec) {
         this.props.flip();
         const formData = new FormData();
-        // TODO - add caller id to attendee list
-        formData.append("userID", this.props.userID);
-        formData.append("user1", rec.target.user1.value);
-        formData.append("user2", rec.target.user2.value);
-        formData.append("user3", rec.target.user3.value);
-        formData.append("user4", rec.target.user4.value);
-        formData.append("user5", rec.target.user5.value);
+        formData.append("userId", this.props.userID);
+        formData.append("inviteList", rec.target.recInviteList.value);
         formData.append("startTime", rec.target.startDate.value + " " + rec.target.startTime.value);
         formData.append("endTime", rec.target.endDate.value + " " + rec.target.endTime.value);
         formData.append("sessionLength", rec.target.sessionLength.value);
 
         rec.preventDefault();
-        fetch(`../${this.props.userID}/recs`, {method: "POST", body: formData}).then(this.handleResponse);
+        fetch(`../${this.props.userID}/recs`, {method: "POST", body: formData})
+            .then(this.handleResponse);
         rec.target.reset(); // clear the form entries
     }
 
@@ -134,24 +132,8 @@ class NewRecForm extends React.Component {
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="user1">Study Buddy #1 email</label>
-                    <input id="user1" name="user1" type="email" required/>
-                </div>
-                <div className="input-field">
-                    <label htmlFor="user2">Study Buddy #2 email</label>
-                    <input id="user2" name="user2" type="email"/>
-                </div>
-                <div className="input-field">
-                    <label htmlFor="user3">Study Buddy #3 email</label>
-                    <input id="user3" name="user3" type="email"/>
-                </div>
-                <div className="input-field">
-                    <label htmlFor="user4">Study Buddy #4 email</label>
-                    <input id="user4" name="user4" type="email"/>
-                </div>
-                <div className="input-field">
-                    <label htmlFor="user5">Study Buddy #5 email</label>
-                    <input id="user5" name="user5" type="text"/>
+                    <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
+                    <input id="recInviteList" name="recInviteList" type="text" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
@@ -180,13 +162,25 @@ class NewRecForm extends React.Component {
 }
 
 class Rec extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {showAttendees: false};
+    }
+
+    flipAttendeesState() {
+        this.setState({showAttendees: !this.state.showAttendees});
+    }
+
     render() {
         return (
             <li className="card hoverable cyan darken-2">
                 <div className="card-content black-text">
                     <span className="card-title"> <EventTitle event={this.props.event}/></span>
-                    <EventDescription event={this.props.event}/>
                     <EventDateTime event={this.props.event}/>
+                    <EventDescription event={this.props.event}/>
+                    <EventLocation event={this.props.event}/>
+                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
                 </div>
                 <div id="recommendation-actions" className="card-action">
                     <RecAcceptButton event={this.props.event} userID={this.props.userID} clearRecs={this.props.clearRecs}/>
@@ -204,11 +198,11 @@ class RecList extends React.Component {
     }
 
     expandCollapse() {
-        if (this.state.expanded == true) {
+        if (this.state.expanded === true) {
             this.setState({expanded: false, numRecs: 5})
         } else if (this.state.numRecs + 5 < this.props.recs.length) {
             this.setState({numRecs: this.state.numRecs + 5})
-        } else if (this.state.numRecs + 5 == this.props.recs.length) {
+        } else if (this.state.numRecs + 5 === this.props.recs.length) {
             this.setState({expanded: true, numRecs: this.state.numRecs + 5})
         } else {
             this.setState({expanded: true, numRecs: this.props.recs.length})
@@ -223,7 +217,7 @@ class RecList extends React.Component {
                     <ul>{this.props.recs.map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID} clearRecs={this.props.clearRecs} clearRec={this.props.clearRec}/>)}</ul>
                 </div>
             );
-        } else if (this.state.expanded == false) {
+        } else if (this.state.expanded === false) {
             return (
                 <div>
                     <ul>{this.props.recs.slice(0, this.state.numRecs).map(rec => <Rec key={rec.id} event={rec} userID={this.props.userID}
@@ -260,10 +254,20 @@ class RecAcceptButton extends React.Component {
         return hours + ':' + minutes + ' ' + ampm;
     }
 
+    async handleResponse(response) {
+        const msg = await response.json();
+        if (msg === "EventPeriodError") {
+            alert("Invalid event period (start has to be before end)");
+        } else if (msg === "InviteListError") {
+            alert("Invalid invite list (should be comma separated list of existing user's emails");
+        }
+        return response;
+    }
+
     handleClick() {
         const event = this.props.event;
         const formData = new FormData();
-        formData.append("userID", this.props.userID);
+        formData.append("userId", this.props.userID);
         formData.append("title", event.title);
         // Format startTime
         let startTime = String(event.startTime.year).concat("-").concat(event.startTime.monthValue).concat("-");
@@ -284,8 +288,16 @@ class RecAcceptButton extends React.Component {
         formData.append("startTime", startTime);
         formData.append("endTime", endTime);
         formData.append("description", event.description);
+        // Get list of attendees emails
+        let attendeeList = "";
+        for (let i = 0; i < event.attendees.length; i++) {
+            attendeeList = attendeeList + event.attendees[i].email + ", ";
+        }
+        attendeeList = attendeeList.substr(0, attendeeList.length - 2);
+        formData.append("inviteList", attendeeList);
         this.props.clearRecs();
-        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData});
+        fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
+            .then(this.handleResponse);
     }
 
     render() {
