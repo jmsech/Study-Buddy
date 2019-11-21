@@ -1,15 +1,14 @@
 package com.studybuddy.models;
 
-import com.studybuddy.RecommendationAlgorithm;
 import com.studybuddy.WeightedRecommendationAlgorithm;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecommendationTests {
 

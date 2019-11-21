@@ -1,6 +1,7 @@
 package com.studybuddy.controllers;
 
 import com.studybuddy.RecommendationAlgorithm;
+import com.studybuddy.WeightedRecommendationAlgorithm;
 import com.studybuddy.models.Event;
 import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
@@ -88,8 +89,26 @@ class RecsController {
             }
         }
 
+        // Create list of busy times for the event host
+        var hostBusyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
+                "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
+                "INNER JOIN users as u ON etum.userId = u.id " +
+                "WHERE u.id = ? AND e.expired = FALSE");
+        hostBusyStatement.setInt(1, userId);
+        var hostResult = hostBusyStatement.executeQuery();
+        var hostBusyTimes = new ArrayList<TimeChunk>();
+
+        while (hostResult.next()) {
+            hostBusyTimes.add(
+                    new TimeChunk(
+                            hostResult.getTimestamp("startTime").toLocalDateTime(),
+                            hostResult.getTimestamp("endTime").toLocalDateTime()
+                    )
+            );
+        }
+
         //use algo to get a list of recommended times everyone is free
-        List<TimeChunk> recTimes = RecommendationAlgorithm.makeBetterRecommendation(startTime, endTime, busyTimes, host, sessionLen, 10);
+        List<TimeChunk> recTimes = WeightedRecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, hostBusyTimes, sessionLen, 10);
 
         //make the recs an event
         List<Event> recsToDisplay = new ArrayList<>();
