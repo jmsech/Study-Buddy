@@ -34,7 +34,7 @@ class NewEventForm extends React.Component {
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
-        formData.append("userID", this.props.userID);
+        formData.append("userId", this.props.userID);
         formData.append("title", event.target.title.value);
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
@@ -216,7 +216,7 @@ class EventDescription extends React.Component {
     }
 
     render() {
-        if (this.props.event.description !== "") {
+        if (this.props.event.description !== "" && this.props.event.description !== null) {
             return (
                 <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
             );
@@ -231,7 +231,7 @@ class EventLocation extends React.Component {
     }
 
     render() {
-        if (this.props.event.location !== ""){
+        if (this.props.event.location !== "" && this.props.event.description !== null){
             return (
                 <div>
                     <p><i className="tiny material-icons">location_on</i>{this.props.event.location}</p>
@@ -251,7 +251,7 @@ class EventInviteList extends React.Component {
         if (this.props.showAttendees) {
             return (
                 <div>
-                    <ul>{this.props.event.attendees.map(email => <li key={email}>{email}</li>)}</ul>
+                    <ul>{this.props.event.attendees.map(user => <li key={user.id}>{user.name}</li>)}</ul>
                 </div>
             );
         }
@@ -314,14 +314,7 @@ class DeleteButton extends React.Component {
 }
 
 class EditButton extends React.Component {
-    /*constructor(props) {
-        super(props);
-        //this.state = null;
-    }*/
-
     render() {
-        //const basePath = `../${this.props.userID}/events/`;
-        //const path = basePath.concat(this.props.event.id);
         return (
             <button className="btn" onClick={() => { this.props.flip() }}>Edit</button>
         )
@@ -360,6 +353,8 @@ class EditEventForm extends React.Component {
         const msg = await response.json();
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
+        } else if (msg === "InviteListError") {
+            alert("Invalid invite list (should be comma separated list of existing user's emails");
         }
         return response;
     }
@@ -371,16 +366,26 @@ class EditEventForm extends React.Component {
         return time;
     }
 
+    getInviteList() {
+        let inviteList = "";
+        for (let i = 0; i < this.props.event.attendees.length; i++) {
+            const email = this.props.event.attendees[i].email;
+            inviteList = inviteList + email + ", ";
+        }
+        return inviteList.substr(0, inviteList.length - 2);
+    }
+
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
-        formData.append("userID", this.props.userID);
+        formData.append("userId", this.props.userID);
         formData.append("title", event.target.title.value);
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("startTime", event.target.startDate.value + " " + this.formatTime(event.target.startTime.value));
         formData.append("endTime", event.target.endDate.value + " " + this.formatTime(event.target.endTime.value));
-        // TODO: add invite list (including the event creator
         formData.append("description", event.target.description.value);
+        formData.append("location", event.target.location.value);
+        formData.append("inviteList", event.target.inviteList.value);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events/${this.props.event.id}`, {method: "PUT", body: formData})
@@ -424,14 +429,22 @@ class EditEventForm extends React.Component {
         }
 
         return (
-            <form id="eventform" onSubmit={this.handleSubmit} style={style}>
+            <form id="edit-event-form" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="title" className="active">Event name</label>
-                    <input id="title" name="title" type="text" defaultValue = {this.props.event.title}required/>
+                    <input id="title" name="title" type="text" defaultValue = {this.props.event.title} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="description" className="active">Event description</label>
                     <input id="description" name="description" type="text" defaultValue={this.props.event.description}/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="location" className="active">Event location</label>
+                    <input id="location" name="location" type="text" defaultValue={this.props.event.location}/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="inviteList" className="active">Invite list</label>
+                    <textarea id="inviteList" name="inviteList" className="materialize-textarea" defaultValue={this.getInviteList()}/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>

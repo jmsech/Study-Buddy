@@ -11,12 +11,12 @@ public class Event {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String description;
-    private List<String> attendees;
+    private List<User> attendees;
     private String location;
     private boolean isGoogleEvent;
     private boolean expired;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<String> attendees, String location) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
@@ -68,11 +68,11 @@ public class Event {
         this.description = description;
     }
 
-    public List<String> getAttendees() {
+    public List<User> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(List<String> attendees) {
+    public void setAttendees(List<User> attendees) {
         this.attendees = attendees;
     }
 
@@ -86,5 +86,5 @@ public class Event {
 
     public boolean isGoogleEvent() { return isGoogleEvent; }
 
-    public boolean isExpired() {return expired;}
+    public boolean isExpired() { return expired; }
 }

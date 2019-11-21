@@ -21,6 +21,7 @@ import io.javalin.http.Context;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -62,7 +63,7 @@ public class CalendarQuickstart {
     }
 
     public static void collectEvents(Connection connection, Context ctx) throws IOException, GeneralSecurityException, SQLException {
-        var userID = ctx.formParam("userID", Integer.class).get();
+        var userId = ctx.formParam("userID", Integer.class).get();
         var daysToCollect = ctx.formParam("daysToCollect", Integer.class).get();
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -77,8 +78,8 @@ public class CalendarQuickstart {
         }
 
         /////// Delete Current Google Event////////////
-        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description, isGoogleEvent FROM events WHERE userID = ?");
-        statement.setInt(1, userID);
+        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description, isGoogleEvent FROM events WHERE hostId = ?");
+        statement.setInt(1, userId);
         var result = statement.executeQuery();
         while (result.next()) {
             //check if current event is a google event, delete from database
@@ -111,13 +112,25 @@ public class CalendarQuickstart {
                 if (startDate != null) {
                     Timestamp start = new Timestamp(startDate.getValue());
                     Timestamp end = new Timestamp(event.getEnd().getDateTime().getValue());
-                    statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, userID, isGoogleEvent) VALUES (?, ?, ?, ?, ?, ?)");
+                    statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                     statement.setString(1, event.getSummary());
                     statement.setTimestamp(2, start);
                     statement.setTimestamp(3, end);
-                    statement.setString(4, " ");
-                    statement.setInt(5, userID);
-                    statement.setBoolean(6,true);
+                    statement.setString(4, event.getDescription());
+                    statement.setString(5, event.getLocation());
+                    statement.setInt(6, userId);
+                    statement.setBoolean(7,true);
+                    statement.setBoolean(8, false);
+                    statement.executeUpdate();
+                    statement.close();
+
+                    // Insert into user to event mapping database
+                    var lastIdStatement = connection.createStatement();
+                    var lastInsert = lastIdStatement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
+                    var eventId = lastInsert.getInt("eventId");
+                    statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
+                    statement.setInt(1, eventId);
+                    statement.setInt(2, userId);
                     statement.executeUpdate();
                     statement.close();
                 }

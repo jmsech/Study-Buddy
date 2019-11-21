@@ -31,14 +31,20 @@ class EventsController {
         ArrayList<User> stu = new ArrayList<>();
         while (result.next()) {
             var eventId = result.getInt("id");
-            var mappingStatement = this.connection.prepareStatement("SELECT u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
+            var mappingStatement = this.connection.prepareStatement("SELECT u.id, u.email, u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
                     "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
             mappingStatement.setInt(1, eventId);
             var mappingResult = mappingStatement.executeQuery();
-            List<String> inviteList = new ArrayList<>();
+            List<User> inviteList = new ArrayList<>();
             while (mappingResult.next()) {
                 String name = mappingResult.getString("firstName") + " " + mappingResult.getString("lastName");
-                inviteList.add(name);
+                inviteList.add(
+                        new User(
+                                mappingResult.getInt("id"),
+                                name,
+                                mappingResult.getString("email")
+                        )
+                );
             }
             events.add(
                     new Event(
@@ -84,9 +90,9 @@ class EventsController {
 
         // Create list of attendees by id
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
-        var userID = ctx.formParam("userID", Integer.class).get();
-        List<Integer> inviteList = new ArrayList<>();
-        inviteList.add(userID);
+        var userId = ctx.formParam("userId", Integer.class).get();
+        List<Integer> idInviteList = new ArrayList<>();
+        idInviteList.add(userId);
         // Get ids from email invite list
         if (inviteListString != null) {
             var emailInviteList = inviteListString.split("\\s*,\\s*");
@@ -95,7 +101,7 @@ class EventsController {
                 statement.setString(1, email);
                 var result = statement.executeQuery();
                 if (result.next()) {
-                    inviteList.add(result.getInt("id"));
+                    idInviteList.add(result.getInt("id"));
                 } else {
                     ctx.json("InviteListError");
                     return;
@@ -110,7 +116,7 @@ class EventsController {
         statement.setTimestamp(3, sqlEndDate);
         statement.setString(4, description);
         statement.setString(5, location);
-        statement.setInt(6, userID);
+        statement.setInt(6, userId);
         statement.setBoolean(7, false);
         statement.setBoolean(8, false);
         statement.executeUpdate();
@@ -121,7 +127,8 @@ class EventsController {
         var lastIdStatement = connection.createStatement();
         var result = lastIdStatement.executeQuery("SELECT last_insert_rowid() AS eventId FROM events");
         var eventId = result.getInt("eventId");
-        insertInviteList(eventId, inviteList);
+        idInviteList = this.removeDuplicates(idInviteList);
+        insertInviteList(eventId, idInviteList);
         ctx.json("Success");
         ctx.status(201);
     }
@@ -197,9 +204,9 @@ class EventsController {
 
         // Create list of attendees by id
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
-        var userID = ctx.formParam("userID", Integer.class).get();
-        List<Integer> inviteList = new ArrayList<>();
-        inviteList.add(userID);
+        var userId = ctx.formParam("userId", Integer.class).get();
+        List<Integer> idInviteList = new ArrayList<>();
+        idInviteList.add(userId);
         // Get ids from email invite list
         if (inviteListString != null) {
             var emailInviteList = inviteListString.split("\\s*,\\s*");
@@ -208,7 +215,7 @@ class EventsController {
                 statement.setString(1, email);
                 var result = statement.executeQuery();
                 if (result.next()) {
-                    inviteList.add(result.getInt("id"));
+                    idInviteList.add(result.getInt("id"));
                 } else {
                     ctx.json("InviteListError");
                     return;
@@ -219,9 +226,21 @@ class EventsController {
         // Delete associations from table and reinsert the new list
         statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ?");
         statement.setInt(1, eventId);
-        insertInviteList(eventId, inviteList);
+        statement.executeUpdate();
+        idInviteList = this.removeDuplicates(idInviteList);
+        insertInviteList(eventId, idInviteList);
         ctx.json("Success");
         ctx.status(201);
+    }
+
+    private List<Integer> removeDuplicates(List<Integer> list) {
+        List<Integer> resultList = new ArrayList<>();
+        for (Integer item : list) {
+            if (!resultList.contains(item)) {
+                resultList.add(item);
+            }
+        }
+        return resultList;
     }
 
     private void insertInviteList(int eventId, List inviteList) throws SQLException {

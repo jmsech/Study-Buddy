@@ -22,7 +22,34 @@ class RecsController {
 
     void getRec(Context ctx) throws SQLException {
         //get all the buddies the user requested
-        List inviteList = ctx.formParam("inviteList", List.class).getOrNull();
+        String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
+        var userID = ctx.formParam("userID", Integer.class).get();
+        List<Integer> idInviteList = new ArrayList<>();
+        List<User> inviteList = new ArrayList<>();
+        idInviteList.add(userID);
+        // Get ids from email invite list
+        if (inviteListString != null) {
+            var emailInviteList = inviteListString.split("\\s*,\\s*");
+            for (String email : emailInviteList) {
+                var statement = connection.prepareStatement("SELECT id, email, firstName, lastName FROM users WHERE email = ?");
+                statement.setString(1, email);
+                var result = statement.executeQuery();
+                if (result.next()) {
+                    idInviteList.add(result.getInt("id"));
+                    String name = result.getString("firstName") + " " + result.getString("lastName");
+                    inviteList.add(
+                            new User(
+                                    result.getInt("id"),
+                                    name,
+                                    result.getString("email")
+                            )
+                    );
+                } else {
+                    ctx.json("InviteListError");
+                    return;
+                }
+            }
+        }
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
@@ -42,12 +69,11 @@ class RecsController {
         //make a list of when everyone is busy
         ArrayList<TimeChunk> busyTimes = new ArrayList<>();
 
-        assert inviteList != null;
-        for (Object buddyID : inviteList) {
+        for (Object buddyID : idInviteList) {
             var busyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
                     "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                     "INNER JOIN users as u ON etum.userId = u.id " +
-                    "WHERE u.id = ?");
+                    "WHERE u.id = ? AND e.expired = FALSE");
             busyStatement.setInt(1, (int) buddyID);
             var buddyResult = busyStatement.executeQuery();
 
@@ -70,8 +96,7 @@ class RecsController {
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
             var id = i + 1;
-            //TODO:: change to list of strings (actual people's names yay)
-            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList, "", false)));
+            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList, "")));
         }
 
         if (recsToDisplay.isEmpty()) {
