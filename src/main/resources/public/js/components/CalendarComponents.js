@@ -182,7 +182,8 @@ class Event extends React.Component {
                     <EventDescription event={this.props.event}/>
                     <EventLocation event={this.props.event}/>
                     <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
-                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
+                    <AddToGoogleCalendarButton event={this.props.event}/>
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
@@ -333,6 +334,41 @@ class ShowAttendeesButton extends React.Component {
             title = "Hide Attendees";
         }
         return <a onClick={() => { this.props.flip() }}>{title}</a>;
+    }
+}
+
+class AddToGoogleCalendarButton extends React.Component {
+    createUrlParam(base, content) {
+        if (content === null || content === "") {
+            return null
+        }
+        return base + encodeURI(content);
+    }
+
+    createGoogleCalendarUrl() {
+        const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+        const titleParam =  this.createUrlParam("&text=", this.props.event.title);
+        const st = this.props.event.startTime;
+        const startTimeString = new Date(st.year, (st.monthValue-1), st.dayOfMonth, st.hour, st.minute, st.second)
+            .toISOString().replace(/-|:|\.\d\d\d/g,"");
+        const et = this.props.event.endTime;
+        const endTimeString = new Date(et.year, (et.monthValue-1), et.dayOfMonth, et.hour, et.minute, et.second)
+            .toISOString().replace(/-|:|\.\d\d\d/g,"");
+        const timeParam = "&dates=" + startTimeString + "/" + endTimeString;
+        const descriptionParam = this.createUrlParam("&details=", this.props.event.description);
+        const locationParam = this.createUrlParam("&location=", this.props.event.location);
+        let url = baseUrl + titleParam + timeParam;
+        if (descriptionParam !== null) {
+            url = url + descriptionParam;
+        }
+        if (locationParam !== null) {
+            url = url + locationParam;
+        }
+        open(url);
+    }
+
+    render() {
+        return <a onClick={this.createGoogleCalendarUrl.bind(this)}>Add to Google Calendar</a>;
     }
 }
 
