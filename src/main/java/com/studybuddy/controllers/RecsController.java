@@ -5,6 +5,7 @@ import com.studybuddy.WeightedRecommendationAlgorithm;
 import com.studybuddy.models.Event;
 import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
+import com.studybuddy.repositories.EventRepository;
 import io.javalin.http.Context;
 
 import java.sql.Connection;
@@ -70,7 +71,7 @@ class RecsController {
         //make a list of when everyone is busy
         ArrayList<TimeChunk> busyTimes = new ArrayList<>();
 
-        idInviteList = EventsController.removeDuplicates(idInviteList); // Remove potential duplicates
+        idInviteList = EventRepository.removeDuplicates(idInviteList); // Remove potential duplicates
         for (Object buddyID : idInviteList) {
             var busyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
                     "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
