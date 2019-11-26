@@ -2,7 +2,6 @@ package com.studybuddy.repositories;
 
 import com.studybuddy.models.Event;
 import com.studybuddy.models.User;
-import io.javalin.http.Context;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -95,7 +94,7 @@ public class EventRepository {
         statement.close();
     }
 
-    public static List<Integer> createIdListFromUserIdAndInviteList(Connection connection, Context ctx, String inviteListString, int userId) throws SQLException {
+    public static List<Integer> createIdListFromUserIdAndInviteList(Connection connection, String inviteListString, int userId) throws SQLException {
         List<Integer> idInviteList = new ArrayList<>();
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         idInviteList.add(userId);
@@ -107,7 +106,6 @@ public class EventRepository {
                 if (result.next()) {
                     idInviteList.add(result.getInt("id"));
                 } else {
-                    ctx.json("InviteListError");
                     return null;
                 }
             }
@@ -116,7 +114,7 @@ public class EventRepository {
         return idInviteList;
     }
 
-    public static void updateEventInDB(Connection connection, Context ctx, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int eventId) throws SQLException {
+    public static int updateEventInDB(Connection connection, String inviteListString, int userId, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int eventId) throws SQLException {
         var statement = connection.prepareStatement("UPDATE events SET title = ?, startTime = ?, endTime = ?, description = ?, location = ? WHERE id = ?");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
@@ -126,9 +124,6 @@ public class EventRepository {
         statement.setInt(6, eventId);
         statement.executeUpdate();
 
-
-        String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
-        var userId = ctx.formParam("userId", Integer.class).get();
         List<Integer> idInviteList = new ArrayList<>();
         idInviteList.add(userId);
 
@@ -142,8 +137,7 @@ public class EventRepository {
                 if (result.next()) {
                     idInviteList.add(result.getInt("id"));
                 } else {
-                    ctx.json("InviteListError");
-                    return;
+                    return 1;
                 }
             }
         }
@@ -154,6 +148,7 @@ public class EventRepository {
         idInviteList = removeDuplicates(idInviteList);
         insertInviteList(eventId, idInviteList, connection);
         statement.close();
+        return 0;
     }
 
     private static void insertInviteList(int eventId, List inviteList, Connection connection) throws SQLException {

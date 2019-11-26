@@ -1,6 +1,4 @@
 package com.studybuddy.controllers;
-import com.studybuddy.models.Event;
-import com.studybuddy.models.User;
 import com.studybuddy.repositories.EventRepository;
 import io.javalin.http.Context;
 
@@ -52,7 +50,11 @@ class EventsController {
         var userId = ctx.formParam("userId", Integer.class).get();
 
         // Get list of userId's attending event
-        List<Integer> idInviteList = EventRepository.createIdListFromUserIdAndInviteList(connection, ctx, inviteListString, userId);
+        List<Integer> idInviteList = EventRepository.createIdListFromUserIdAndInviteList(connection, inviteListString, userId);
+        if (idInviteList == null) {
+            ctx.json("InviteListError");
+            return;
+        }
 
         // Create event and insert into events table
         EventRepository.addUsersToEventListInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, userId);
@@ -93,7 +95,14 @@ class EventsController {
         if (location == null) { location = ""; }
 
         // Make potential updates to the event
-        EventRepository.updateEventInDB(connection, ctx, title, sqlStartDate, sqlEndDate, description, location, eventId);
+        String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
+        var userId = ctx.formParam("userId", Integer.class).get();
+        int error = EventRepository.updateEventInDB(connection, inviteListString, userId, title, sqlStartDate, sqlEndDate, description, location, eventId);
+        if (error == 1) {
+            ctx.json("InviteListError");
+            return;
+        }
+
         ctx.json("Success");
         ctx.status(201);
     }

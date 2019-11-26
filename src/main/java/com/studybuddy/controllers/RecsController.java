@@ -1,6 +1,5 @@
 package com.studybuddy.controllers;
 
-import com.studybuddy.RecommendationAlgorithm;
 import com.studybuddy.WeightedRecommendationAlgorithm;
 import com.studybuddy.models.Event;
 import com.studybuddy.models.TimeChunk;
