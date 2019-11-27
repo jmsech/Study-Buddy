@@ -74,6 +74,7 @@ class RecsController {
             var recommendation = recTimes.get(i);
             var id = i + 1; // FIXME Is this correct?
             List<User> users = UserRepository.createUserListFromInviteList(connection, recommendation.getUserIDs());
+            if (users == null) { users = new ArrayList<>(); }
             recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", users, "")));
         }
 

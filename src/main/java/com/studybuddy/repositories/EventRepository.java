@@ -140,7 +140,7 @@ public class EventRepository {
             statement.setInt(2, (int) id);
             statement.executeUpdate();
         }
-        assert statement != null;
+        assert statement != null; //FIXME What is this assert?
         statement.close();
     }
 

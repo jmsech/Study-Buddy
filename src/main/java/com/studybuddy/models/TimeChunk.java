@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TimeChunk {
@@ -143,5 +144,28 @@ public class TimeChunk {
 
     public static LocalDateTime makeTime(long t) {
         return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
+    }
+
+    // FIXME Should we sort by weight or numPeopleAvailable or somethingElse?
+    public static class TimeChunkComparator implements Comparator<TimeChunk> {
+        @Override
+        public int compare(TimeChunk t1, TimeChunk t2) {
+            long start1 = t1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long start2 = t2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            if (start1 < start2) { return -1; }
+            else if (start1 == start2) {return 0; }
+            else {return 1; }
+        }
+    }
+
+    public static class TimeChunkWeightComparator implements Comparator<TimeChunk>{
+        @Override
+        public int compare(TimeChunk t1, TimeChunk t2) {
+            double start1 = t1.getWeight();
+            double start2 = t2.getWeight();
+            if (start1 < start2) { return 1; }
+            else if (start1 == start2) {return 0; }
+            else {return -1; }
+        }
     }
 }
