@@ -50,11 +50,9 @@ class EventsController {
         var userId = ctx.formParam("userId", Integer.class).get();
 
         // Get list of userId's attending event
-        List<Integer> idInviteList = EventRepository.createIdListFromUserIdAndInviteList(connection, inviteListString, userId);
-        if (idInviteList == null) {
-            ctx.json("InviteListError");
-            return;
-        }
+        List<Integer> idInviteList = EventRepository.createIdListFromInviteList(connection, inviteListString);
+        if (idInviteList == null) { ctx.json("InviteListError"); return; }
+        idInviteList.add(userId);
 
         // Create event and insert into events table
         EventRepository.addUsersToEventListInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, userId);

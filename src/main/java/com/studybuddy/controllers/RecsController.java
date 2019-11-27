@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class RecsController {
+
     private Connection connection;
 
-    RecsController(Connection connection) throws SQLException {
+    RecsController(Connection connection) {
         this.connection = connection;
     }
 
@@ -25,32 +26,13 @@ class RecsController {
         //get all the buddies the user requested
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
         var userId = ctx.formParam("userId", Integer.class).get();
-        List<Integer> idInviteList = new ArrayList<>();
-        List<User> inviteList = new ArrayList<>();
+
+
+        var idInviteList = EventRepository.createIdListFromInviteList(connection, inviteListString);
+        if (idInviteList == null) {ctx.json("InviteListError"); return;}
         idInviteList.add(userId);
-        // Get ids from email invite list
-        if (inviteListString != null) {
-            var emailInviteList = inviteListString.split("\\s*,\\s*");
-            for (String email : emailInviteList) {
-                var statement = connection.prepareStatement("SELECT id, email, firstName, lastName FROM users WHERE email = ?");
-                statement.setString(1, email);
-                var result = statement.executeQuery();
-                if (result.next()) {
-                    idInviteList.add(result.getInt("id"));
-                    String name = result.getString("firstName") + " " + result.getString("lastName");
-                    inviteList.add(
-                            new User(
-                                    result.getInt("id"),
-                                    name,
-                                    result.getString("email")
-                            )
-                    );
-                } else {
-                    ctx.json("InviteListError");
-                    return;
-                }
-            }
-        }
+        var inviteList = EventRepository.createUserListFromInviteList(connection, inviteListString);
+        if (inviteList == null) {ctx.json("InviteListError"); return;}
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
@@ -68,44 +50,14 @@ class RecsController {
         }
 
         //make a list of when everyone is busy
-        ArrayList<TimeChunk> busyTimes = new ArrayList<>();
-
+        List<TimeChunk> busyTimes = new ArrayList<>();
         idInviteList = EventRepository.removeDuplicates(idInviteList); // Remove potential duplicates
-        for (Object buddyID : idInviteList) {
-            var busyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
-                    "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
-                    "INNER JOIN users as u ON etum.userId = u.id " +
-                    "WHERE u.id = ? AND e.expired = FALSE");
-            busyStatement.setInt(1, (int) buddyID);
-            var buddyResult = busyStatement.executeQuery();
-
-            while (buddyResult.next()) {
-                busyTimes.add(
-                        new TimeChunk(
-                                buddyResult.getTimestamp("startTime").toLocalDateTime(),
-                                buddyResult.getTimestamp("endTime").toLocalDateTime()
-                        )
-                );
-            }
+        for (int buddyID : idInviteList) {
+            busyTimes = EventRepository.getBusyTimesFromId(connection, buddyID, busyTimes);
         }
 
         // Create list of busy times for the event host
-        var hostBusyStatement = this.connection.prepareStatement("SELECT e.startTime, e.endTime " +
-                "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
-                "INNER JOIN users as u ON etum.userId = u.id " +
-                "WHERE u.id = ? AND e.expired = FALSE");
-        hostBusyStatement.setInt(1, userId);
-        var hostResult = hostBusyStatement.executeQuery();
-        var hostBusyTimes = new ArrayList<TimeChunk>();
-
-        while (hostResult.next()) {
-            hostBusyTimes.add(
-                    new TimeChunk(
-                            hostResult.getTimestamp("startTime").toLocalDateTime(),
-                            hostResult.getTimestamp("endTime").toLocalDateTime()
-                    )
-            );
-        }
+        List<TimeChunk> hostBusyTimes = EventRepository.getBusyTimesFromId(connection, userId, null);
 
         //use algo to get a list of recommended times everyone is free
         List<TimeChunk> recTimes = WeightedRecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, hostBusyTimes, sessionLen, 10);
