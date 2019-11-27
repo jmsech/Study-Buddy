@@ -47,9 +47,11 @@ public class BuddyRecsController {
             idAllInCourseList.add(result.getInt("id"));
         }
 
-        //now it's as if we wanted a rec for these users, so call function
-        
+        //now it's as if we wanted a rec for these users, so call function to convert their ids to timechunks
 
+        //now we can call rec algo
+
+        //and then display
     }
 
 }
