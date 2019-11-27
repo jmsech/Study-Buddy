@@ -10,6 +10,7 @@ import java.security.spec.KeySpec;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,19 +79,52 @@ public class UserRepository {
         return inviteList;
     }
 
-    public static List<TimeChunk> getBusyTimesFromId(Connection connection, int id, List<TimeChunk> busyTimes) throws SQLException {
-        if (busyTimes == null) { busyTimes = new ArrayList<>(); }
+    public static List<User> createUserListFromInviteList(Connection connection, List<Integer> inviteList) throws SQLException {
+        List<User> userList = new ArrayList<>();
+        ArrayList<PreparedStatement> statements = new ArrayList<>();
+        for (int userId : inviteList) {
+            var statement = connection.prepareStatement("SELECT id, email, firstName, lastName FROM users WHERE id = ?");
+            statement.setInt(1, userId);
+            var result = statement.executeQuery();
+            statements.add(statement);
+            if (result.next()) {
+                String name = result.getString("firstName") + " " + result.getString("lastName");
+                userList.add(
+                        new User(
+                                userId,
+                                name,
+                                result.getString("email")
+                        )
+                );
+            } else {
+                return null;
+            }
+        }
+        for (var s : statements) {s.close();}
+        return userList;
+    }
+
+    public static List<TimeChunk> getUserBusyTimesFromId(Connection connection, int id, List<TimeChunk> busyTimes) throws SQLException {
+        if (busyTimes == null) { busyTimes = new ArrayList<TimeChunk>(); }
         var statement = connection.prepareStatement("SELECT e.startTime, e.endTime " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = FALSE");
         statement.setInt(1, id);
         var result = statement.executeQuery();
+
+        // User has no unavailable times
+        if (!result.isBeforeFirst()) {
+            return null;
+        }
+
         while (result.next()) {
             busyTimes.add(
                     new TimeChunk(
                             result.getTimestamp("startTime").toLocalDateTime(),
-                            result.getTimestamp("endTime").toLocalDateTime()
+                            result.getTimestamp("endTime").toLocalDateTime(),
+                            TimeChunk.DEFAULT_WEIGHT,
+                            id
                     )
             );
         }

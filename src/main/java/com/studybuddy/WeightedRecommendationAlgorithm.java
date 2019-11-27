@@ -2,7 +2,9 @@ package com.studybuddy;
 
 import com.studybuddy.models.TimeChunk;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +25,10 @@ public class WeightedRecommendationAlgorithm {
     private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
+
+    private static final double INITIAL_PROXIMITY_WEIGHT = 1;
+    private static final double PROXIMITY_RATIO = 0.5;
+    private static final double BASELINE_VALUE = 0.1;
     private static final int OFF_BY_ONE = 1; // Accounting for off-by-one errors
 
     private static final double SLEEP_WEIGHT = -20; //FIXME?
@@ -32,12 +38,12 @@ public class WeightedRecommendationAlgorithm {
     // RECOMMENDATION ALGORITHM ////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, double fraction, int numRecs) {
         ArrayList<TimeChunk> arr = new ArrayList<>();
-        return makeRecommendation(start,end,unavailable,arr,fraction,numRecs);
+        return makeRecommendation(start,end,busyTimes,arr,new ArrayList<>(),fraction,numRecs);
     }
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<TimeChunk> unavailable, List<TimeChunk> host, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, List<TimeChunk> host, List<Integer> alwaysFree, double fraction, int numRecs) {
 
         // Initialize array of doubles to hold availability of individuals
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -45,14 +51,24 @@ public class WeightedRecommendationAlgorithm {
         int lengthInMinutes = (int) (endSec-startSec)/SECONDS_PER_MINUTE;
         double[] available = new double[lengthInMinutes];
 
-        for (int i = 0; i < lengthInMinutes; i++) { available[i] = 0.1; }
+        for (int i = 0; i < lengthInMinutes; i++) { available[i] = BASELINE_VALUE; }
 
         // Time of interval shorter than length of studying time
         if (lengthInMinutes < (int) (fraction * MINUTES_PER_HOUR)) { return new ArrayList<>();}
         if (lengthInMinutes == (int) (fraction * MINUTES_PER_HOUR)) {
             ArrayList<TimeChunk> arr = new ArrayList<>();
-            arr.add(nearest15(new TimeChunk(makeTime(startSec), makeTime(endSec))));
+            arr.add(TimeChunk.nearest15(new TimeChunk(
+                    TimeChunk.makeTime(startSec),
+                    TimeChunk.makeTime(endSec)),
+                    FIFTEEN_MINUTES
+            ));
             return arr;
+        }
+
+        // Make one cumulative list of when people are unavailable
+        List<TimeChunk> unavailable = new ArrayList<>();
+        for (var userTimeChunkList : busyTimes) {
+            unavailable.addAll(userTimeChunkList);
         }
 
         // Use time chunks to popoluate availability array
@@ -104,18 +120,18 @@ public class WeightedRecommendationAlgorithm {
 
             // Add proximity weights to favor recommending events before host event
             int lower = s - MINUTES_PER_HOUR - 1;
-            double proximityWeight = 1;
+            double proximityWeight = INITIAL_PROXIMITY_WEIGHT;
             for (int i = s - 1; i >= 0 && i >= lower; i--) {
                 available[i] += proximityWeight;
-                proximityWeight *= 0.5;
+                proximityWeight *= PROXIMITY_RATIO;
             }
 
             // Add proximity weights to favor recommending events after host event
             int upper = f + MINUTES_PER_HOUR;
-            proximityWeight = 1;
+            proximityWeight = INITIAL_PROXIMITY_WEIGHT;
             for (int i = f; i < lengthInMinutes && i <= upper; i++) {
                 available[i] += proximityWeight;
-                proximityWeight *= 0.5;
+                proximityWeight *= PROXIMITY_RATIO;
             }
         }
 
@@ -158,10 +174,37 @@ public class WeightedRecommendationAlgorithm {
             if (max >= 0) {
                 int endIndex = startIndex + lengthStudy + OFF_BY_ONE;
                 // Add TimeChunk starting at this time
-                TimeChunk chunk = nearest15(new TimeChunk(
-                                makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
-                                makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE)
-                ));
+                TimeChunk chunk = new TimeChunk(
+                        TimeChunk.makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),
+                        TimeChunk.makeTime(startSec + (endIndex) * SECONDS_PER_MINUTE),
+                        max
+                );
+
+                // Determine who can attend event entirety of
+                List<Integer> attendees = new ArrayList<>();
+                TimeChunk comparisonChunk = new TimeChunk(
+                        TimeChunk.makeTime(startSec + (startIndex + OFF_BY_ONE) * SECONDS_PER_MINUTE),
+                        TimeChunk.makeTime(startSec + (endIndex - OFF_BY_ONE) * SECONDS_PER_MINUTE),
+                        max
+                );
+                for (var user : busyTimes) {
+                    int id = user.get(0).getUserIDs().get(0);
+                    for (var c : user) {
+                        if (c.isOverlapping(comparisonChunk)) {
+                            id = Integer.MIN_VALUE;
+                            break;
+                        }
+                    }
+                    if (id != Integer.MIN_VALUE) {
+                        attendees.add(id);
+                    }
+                }
+                attendees.addAll(alwaysFree);
+                chunk.setUserIDs(attendees);
+
+                // Round chunk to nearest 15 minute interval
+                chunk = TimeChunk.nearest15(chunk, FIFTEEN_MINUTES);
+
                 recommendations.add(chunk);
                 startIndex = (int) ((chunk.getStartTime().toEpochSecond(ZoneOffset.UTC) - startSec)/SECONDS_PER_MINUTE);
                 endIndex = startIndex + lengthStudy;
@@ -172,9 +215,12 @@ public class WeightedRecommendationAlgorithm {
                 for (int i = startIndex; i < endIndex; i++) {
                     available[i] = min - 1;
                 }
+            } else {
+                break; // FIXME is breaking okay?
             }
         }
 
+        // FIXME Should we sort by weight or numPeopleAvailable or somethingElse?
         class TimeChunkComparator implements Comparator<TimeChunk>{
             @Override
             public int compare(TimeChunk t1, TimeChunk t2) {
@@ -183,6 +229,17 @@ public class WeightedRecommendationAlgorithm {
                 if (start1 < start2) { return -1; }
                 else if (start1 == start2) {return 0; }
                 else {return 1; }
+            }
+        }
+
+        class TimeChunkWeightComparator implements Comparator<TimeChunk>{
+            @Override
+            public int compare(TimeChunk t1, TimeChunk t2) {
+                double start1 = t1.getWeight();
+                double start2 = t2.getWeight();
+                if (start1 < start2) { return 1; }
+                else if (start1 == start2) {return 0; }
+                else {return -1; }
             }
         }
 
@@ -195,27 +252,6 @@ public class WeightedRecommendationAlgorithm {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static LocalDateTime makeTime(long t) {
-        return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
-    }
-
-    private static TimeChunk nearest15(TimeChunk t) {
-
-        long startSec = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
-        long endSec = t.getEndTime().toEpochSecond(ZoneOffset.UTC);
-        long mod = startSec % (FIFTEEN_MINUTES);
-
-        if (mod <= FIFTEEN_MINUTES / 2.0) {
-            startSec = startSec - mod;
-            endSec = endSec - mod;
-        } else {
-            startSec = startSec - mod + (FIFTEEN_MINUTES);
-            endSec = endSec - mod + (FIFTEEN_MINUTES);
-        }
-
-        return new TimeChunk(makeTime(startSec), makeTime(endSec));
-    }
 
     public static void printTimeChunks(List<TimeChunk> chunks) {
         for (var chunk : chunks) {

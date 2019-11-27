@@ -3,6 +3,7 @@ package com.studybuddy.controllers;
 import com.studybuddy.WeightedRecommendationAlgorithm;
 import com.studybuddy.models.Event;
 import com.studybuddy.models.TimeChunk;
+import com.studybuddy.models.User;
 import com.studybuddy.repositories.IdRepository;
 import com.studybuddy.repositories.UserRepository;
 import io.javalin.http.Context;
@@ -49,24 +50,31 @@ class RecsController {
         }
 
         //make a list of when everyone is busy
-        List<TimeChunk> busyTimes = new ArrayList<>();
+        List<List<TimeChunk>> busyTimes = new ArrayList<>();
+        List<Integer> alwaysFree = new ArrayList<>();
         for (int buddyID : idInviteList) {
-            busyTimes = UserRepository.getBusyTimesFromId(connection, buddyID, busyTimes);
+            var busy = UserRepository.getUserBusyTimesFromId(connection, buddyID, null);
+            if (busy == null) {
+                alwaysFree.add(buddyID);
+            } else {
+                busyTimes.add(busy);
+            }
         }
 
         // Create list of busy times for the event host
-        List<TimeChunk> hostBusyTimes = UserRepository.getBusyTimesFromId(connection, userId, null);
+        List<TimeChunk> hostBusyTimes = UserRepository.getUserBusyTimesFromId(connection, userId, null);
 
         //use algo to get a list of recommended times everyone is free
-        List<TimeChunk> recTimes = WeightedRecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, hostBusyTimes, sessionLen, 10);
+        List<TimeChunk> recTimes = WeightedRecommendationAlgorithm.makeRecommendation(startTime, endTime, busyTimes, hostBusyTimes, alwaysFree, sessionLen, 10);
 
         //make the recs an event
         List<Event> recsToDisplay = new ArrayList<>();
 
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
-            var id = i + 1;
-            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList, "")));
+            var id = i + 1; // FIXME Is this correct?
+            List<User> users = UserRepository.createUserListFromInviteList(connection, recommendation.getUserIDs());
+            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", users, "")));
         }
 
         if (recsToDisplay.isEmpty()) {
