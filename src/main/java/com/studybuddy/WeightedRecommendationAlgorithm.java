@@ -23,6 +23,7 @@ public class WeightedRecommendationAlgorithm {
     private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
+    private static final int OFF_BY_ONE = 1; // Accounting for off-by-one errors
 
     private static final double SLEEP_WEIGHT = -20; //FIXME?
     private static final double HOST_UNAVAILABLE_WEIGHT = -1000;  //FIXME?
@@ -127,7 +128,7 @@ public class WeightedRecommendationAlgorithm {
         }
 
         ArrayList<TimeChunk> recommendations = new ArrayList<>();
-        int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
+        int lengthStudy = (int) (fraction*MINUTES_PER_HOUR) - OFF_BY_ONE; //Accounting for off by one errors
         double[] chunkValues;
 
         for (int n = 0; n < numRecs; n++) {
@@ -155,7 +156,7 @@ public class WeightedRecommendationAlgorithm {
             }
 
             if (max >= 0) {
-                int endIndex = startIndex + lengthStudy;
+                int endIndex = startIndex + lengthStudy + OFF_BY_ONE;
                 // Add TimeChunk starting at this time
                 TimeChunk chunk = nearest15(new TimeChunk(
                                 makeTime(startSec + (startIndex) * SECONDS_PER_MINUTE),

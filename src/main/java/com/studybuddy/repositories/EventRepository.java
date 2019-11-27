@@ -1,7 +1,6 @@
 package com.studybuddy.repositories;
 
 import com.studybuddy.models.Event;
-import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
 
 import java.sql.*;
@@ -66,13 +65,6 @@ public class EventRepository {
         return statement.executeQuery();
     }
 
-    private static java.sql.ResultSet getIdFromEmail(String email, Connection connection, List<PreparedStatement> statements) throws SQLException {
-        var statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
-        statement.setString(1, email);
-        statements.add(statement);
-        return statement.executeQuery();
-    }
-
     public static void addUsersToEventListInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
@@ -88,78 +80,8 @@ public class EventRepository {
         // Create event to users mapping
         // Get most recent event's id
         var eventId = getLastEventId(connection);
-
-        idInviteList = removeDuplicates(idInviteList);
-        insertInviteList(eventId, idInviteList, connection);
-
+        updateEventInviteList(eventId, idInviteList, connection);
         statement.close();
-    }
-
-    public static List<Integer> createIdListFromInviteList(Connection connection, String inviteListString) throws SQLException {
-        List<Integer> idInviteList = new ArrayList<>();
-        ArrayList<PreparedStatement> statements = new ArrayList<>();
-        // Get ids from email invite list
-        if (inviteListString != null) {
-            var emailInviteList = inviteListString.split("\\s*,\\s*");
-            for (String email : emailInviteList) {
-                var result = getIdFromEmail(email, connection, statements);
-                if (result.next()) {
-                    idInviteList.add(result.getInt("id"));
-                } else {
-                    return null;
-                }
-            }
-        }
-        for (var s : statements) {s.close();}
-        return idInviteList;
-    }
-
-    public static List<User> createUserListFromInviteList(Connection connection, String inviteListString) throws SQLException {
-        ArrayList<User> inviteList = new ArrayList<>();
-        ArrayList<PreparedStatement> statements = new ArrayList<>();
-        if (inviteListString != null) {
-            var emailInviteList = inviteListString.split("\\s*,\\s*");
-            for (String email : emailInviteList) {
-                var statement = connection.prepareStatement("SELECT id, email, firstName, lastName FROM users WHERE email = ?");
-                statement.setString(1, email);
-                var result = statement.executeQuery();
-                statements.add(statement);
-                if (result.next()) {
-                    String name = result.getString("firstName") + " " + result.getString("lastName");
-                    inviteList.add(
-                            new User(
-                                    result.getInt("id"),
-                                    name,
-                                    result.getString("email")
-                            )
-                    );
-                } else {
-                    return null;
-                }
-            }
-        }
-        for (var s : statements) {s.close();}
-        return inviteList;
-    }
-    
-    public static List<TimeChunk> getBusyTimesFromId(Connection connection, int id, List<TimeChunk> busyTimes) throws SQLException {
-        if (busyTimes == null) { busyTimes = new ArrayList<>(); }
-        var statement = connection.prepareStatement("SELECT e.startTime, e.endTime " +
-                "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
-                "INNER JOIN users as u ON etum.userId = u.id " +
-                "WHERE u.id = ? AND e.expired = FALSE");
-        statement.setInt(1, id);
-        var result = statement.executeQuery();
-        while (result.next()) {
-            busyTimes.add(
-                    new TimeChunk(
-                            result.getTimestamp("startTime").toLocalDateTime(),
-                            result.getTimestamp("endTime").toLocalDateTime()
-                    )
-            );
-        }
-        statement.close();
-        return busyTimes;
     }
 
     public static int updateEventInDB(Connection connection, String inviteListString, int userId, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int eventId) throws SQLException {
@@ -172,54 +94,18 @@ public class EventRepository {
         statement.setInt(6, eventId);
         statement.executeUpdate();
 
-        List<Integer> idInviteList = new ArrayList<>();
+        var idInviteList = new ArrayList<Integer>();
         idInviteList.add(userId);
-
-        // Get ids from email invite list
-        if (inviteListString != null) {
-            var emailInviteList = inviteListString.split("\\s*,\\s*");
-            for (String email : emailInviteList) {
-                statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
-                statement.setString(1, email);
-                var result = statement.executeQuery();
-                if (result.next()) {
-                    idInviteList.add(result.getInt("id"));
-                } else {
-                    return 1;
-                }
-            }
-        }
+        idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, idInviteList);
+        if (idInviteList == null) { return 1; }
 
         statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ?");
         statement.setInt(1, eventId);
         statement.executeUpdate();
-        idInviteList = removeDuplicates(idInviteList);
-        insertInviteList(eventId, idInviteList, connection);
+
+        updateEventInviteList(eventId, idInviteList, connection);
         statement.close();
         return 0;
-    }
-
-    private static void insertInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
-        PreparedStatement statement = null;
-        assert inviteList != null;
-        for (Object id : inviteList) {
-            statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
-            statement.setInt(1, eventId);
-            statement.setInt(2, (int) id);
-            statement.executeUpdate();
-        }
-        assert statement != null;
-        statement.close();
-    }
-
-    public static List<Integer> removeDuplicates(List<Integer> list) {
-        List<Integer> resultList = new ArrayList<>();
-        for (Integer item : list) {
-            if (!resultList.contains(item)) {
-                resultList.add(item);
-            }
-        }
-        return resultList;
     }
 
     public static void deleteEvent(Connection connection, int eventId, int callerId) throws SQLException {
@@ -236,12 +122,25 @@ public class EventRepository {
         statement.close();
     }
 
-    public static void deletePastEvents(Connection connection) throws SQLException{
+    public static void deletePastEvents(Connection connection) throws SQLException {
         LocalDateTime cur = LocalDateTime.now();
         java.sql.Timestamp sqlCur = java.sql.Timestamp.valueOf(cur);
         var statement = connection.prepareStatement("UPDATE events SET expired = true WHERE endTime < ?");
         statement.setTimestamp(1,sqlCur);
         statement.executeUpdate();
+        statement.close();
+    }
+
+    private static void updateEventInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
+        PreparedStatement statement = null;
+        assert inviteList != null;
+        for (Object id : inviteList) {
+            statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
+            statement.setInt(1, eventId);
+            statement.setInt(2, (int) id);
+            statement.executeUpdate();
+        }
+        assert statement != null;
         statement.close();
     }
 

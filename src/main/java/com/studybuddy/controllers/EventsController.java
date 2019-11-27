@@ -1,5 +1,6 @@
 package com.studybuddy.controllers;
 import com.studybuddy.repositories.EventRepository;
+import com.studybuddy.repositories.IdRepository;
 import io.javalin.http.Context;
 
 import java.sql.Connection;
@@ -50,7 +51,7 @@ class EventsController {
         var userId = ctx.formParam("userId", Integer.class).get();
 
         // Get list of userId's attending event
-        List<Integer> idInviteList = EventRepository.createIdListFromInviteList(connection, inviteListString);
+        List<Integer> idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, null);
         if (idInviteList == null) { ctx.json("InviteListError"); return; }
         idInviteList.add(userId);
 
