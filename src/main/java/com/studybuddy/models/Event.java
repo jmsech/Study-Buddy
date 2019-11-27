@@ -2,6 +2,8 @@ package com.studybuddy.models;
 
 import java.time.LocalDateTime;
 import java.lang.*;
+import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 
 public class Event {
@@ -87,4 +89,15 @@ public class Event {
     public boolean isGoogleEvent() { return isGoogleEvent; }
 
     public boolean isExpired() { return expired; }
+
+    public static class EventComparator implements Comparator<Event> {
+        @Override
+        public int compare(Event e1, Event e2) {
+            long start1 = e1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long start2 = e2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            if (start1 < start2) { return -1; }
+            else if (start1 == start2) {return 0; }
+            else {return 1; }
+        }
+    }
 }

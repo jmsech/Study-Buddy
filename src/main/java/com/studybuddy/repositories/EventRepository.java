@@ -51,9 +51,9 @@ public class EventRepository {
                     )
             );
         }
-
         for (var s : statements) {s.close();}
 
+        events.sort(new Event.EventComparator());
         return events;
     }
 
