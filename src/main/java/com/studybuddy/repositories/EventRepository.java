@@ -10,6 +10,7 @@ import java.util.List;
 
 public class EventRepository {
 
+
     public static ArrayList<Event> getEventsForUser(int userId, Connection connection) throws SQLException {
         var statement = connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
