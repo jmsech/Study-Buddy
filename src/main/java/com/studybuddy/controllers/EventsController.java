@@ -54,7 +54,8 @@ class EventsController {
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
                             inviteList,
-                            result.getString("location")
+                            result.getString("location"),
+                            result.getBoolean("isGoogleEvent")
                     )
             );
         }

@@ -116,7 +116,7 @@ class RecsController {
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
             var id = i + 1;
-            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList, "")));
+            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", inviteList, "", false)));
         }
 
         if (recsToDisplay.isEmpty()) {

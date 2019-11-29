@@ -172,6 +172,10 @@ class Event extends React.Component {
     }
 
     render() {
+        let style = {display: "block"}
+        if (this.props.event.googleEvent) {
+            style = {display: "none"}
+        }
         return (
             <li className="card hoverable teal lighten-2">
                 <div className="card-content black-text">
@@ -183,7 +187,8 @@ class Event extends React.Component {
                     <EventLocation event={this.props.event}/>
                     <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
                     <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
-                    <AddToGoogleCalendarButton event={this.props.event}/>
+                    <AddToGoogleCalendarButton event={this.props.event} style={style}/>
+
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
@@ -368,7 +373,7 @@ class AddToGoogleCalendarButton extends React.Component {
     }
 
     render() {
-        return <a onClick={this.createGoogleCalendarUrl.bind(this)}>Add to Google Calendar</a>;
+        return <a onClick={this.createGoogleCalendarUrl.bind(this)} style={this.props.style}>Add to Google Calendar</a>;
     }
 }
 

@@ -16,7 +16,7 @@ public class Event {
     private boolean isGoogleEvent;
     private boolean expired;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location, Boolean isGoogleEvent) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
@@ -24,7 +24,7 @@ public class Event {
         this.description = description;
         this.attendees = attendees;
         this.location = location;
-        this.isGoogleEvent = false;
+        this.isGoogleEvent = isGoogleEvent;
         this.expired = false;
     }
 
