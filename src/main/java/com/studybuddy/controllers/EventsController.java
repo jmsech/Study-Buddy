@@ -267,4 +267,14 @@ class EventsController {
         statement.close();
         ctx.status(200);
     }
+
+    public void addToGoogleCalender(Context ctx) throws SQLException {
+        var eventId = Integer.parseInt(ctx.pathParam("eventId"));
+        // Make potential updates to the event
+        var statement = connection.prepareStatement("UPDATE events SET isGoogleEvent = ? WHERE id = ?");
+        statement.setBoolean(1, true);
+        statement.setInt(2, eventId);
+        statement.executeUpdate();
+        ctx.status(201);
+    }
 }

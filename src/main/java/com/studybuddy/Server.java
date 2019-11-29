@@ -35,6 +35,7 @@ public class Server {
                             path(":eventId", () -> {
                                 delete(ApplicationController::deleteEvent);
                                 put(ApplicationController::editEvent);
+                                post(ApplicationController::addToGoogleCalender);
                             });
                         });
                     });

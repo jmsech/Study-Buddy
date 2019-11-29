@@ -68,4 +68,8 @@ public class ApplicationController {
     public void logOut(Context ctx) throws IOException {
         Files.deleteIfExists(Paths.get("tokens/StoredCredential"));
     }
+
+    public void addToGoogleCalender(Context context) throws SQLException {
+        eventsController.addToGoogleCalender(context);
+    }
 }
