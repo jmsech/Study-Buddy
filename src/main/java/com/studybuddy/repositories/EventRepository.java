@@ -65,7 +65,7 @@ public class EventRepository {
         return statement.executeQuery();
     }
 
-    public static void addUsersToEventListInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
+    public static void createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);

@@ -8,6 +8,10 @@ import java.util.List;
 
 public class IdRepository {
 
+    public static ArrayList<Integer> createIdListFromInviteList(Connection connection, String inviteListString) throws SQLException {
+        return createIdListFromInviteList(connection, inviteListString, null);
+    }
+
     public static ArrayList<Integer> createIdListFromInviteList(Connection connection, String inviteListString, ArrayList<Integer> idInviteList) throws SQLException {
         if (idInviteList == null) { idInviteList = new ArrayList<>(); }
         ArrayList<PreparedStatement> statements = new ArrayList<>();

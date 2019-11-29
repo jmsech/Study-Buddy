@@ -1,27 +1,43 @@
 package com.studybuddy.models;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class ParticularCourse implements Cloneable{
 
-    private Course course;
+    private String courseId; // xxx.xxxFyyyy
+    private String courseNumber;
     private String semester;
+    private String section;
     private boolean active;
     private List<User> students;
-    private List<User> TAs;
-    private List<User> Instructor;
-    private List<Event> classEvents;
+    private List<User> tas;
+    private List<User> instructors;
+    private List<User> classEvents;
 
-    public ParticularCourse(Course course, String semester, boolean active, List<User> students, List<User> TAs, List<User> instructor, List<Event> classEvents) {
-        this.course = course;
+    public ParticularCourse(String courseId, String courseNumber, String semester, String section, boolean active,
+                            List<User> students, List<User> tas, List<User> instructors, List<User> classEvents) {
+        this.courseId = courseId;
+        this.courseNumber = courseNumber;
         this.semester = semester;
+        this.section = section;
         this.active = active;
         this.students = students;
-        this.TAs = TAs;
-        this.Instructor = instructor;
+        this.tas = tas;
+        this.instructors = instructors;
         this.classEvents = classEvents;
+    }
+
+    public static class CourseComparator implements Comparator<ParticularCourse> {
+        @Override
+        public int compare(ParticularCourse c1, ParticularCourse c2) {
+            // TODO:
+            //  1) Fix this comparator to sort reverse chronologically, then alphabetically
+            return 0;
+        }
     }
 
     /** Initialize the roster of students for a ParticularCourse
@@ -29,11 +45,8 @@ public class ParticularCourse implements Cloneable{
      * @param stu - students that will be enrolled in class. Let List be null if now students in roster yet.
      */
     public void initializeRoster(List<User> stu) {
-        if (stu == null) {
-            this.students = new ArrayList<User>();
-        } else {
-            this.students = stu;
-        }
+        if (stu == null) {this.students = new ArrayList<>();
+        } else { this.students = stu; }
     }
 
     /** Add students to roster
@@ -43,14 +56,14 @@ public class ParticularCourse implements Cloneable{
     public void addToRoster(List<User> stu) {
         this.students.addAll(stu);
     }
+    public void addToRoster(User stu) {this.students.add(stu); }
 
     /** Add students to roster
      *
      * @param stu - students to be added to roster
      */
-    public void removeFromRoster(List<User> stu) {
-        this.students.removeAll(stu);
-    }
+    public void removeFromRoster(List<User> stu) { this.students.removeAll(stu); }
+    public void removeFromRoster(User stu) {this.students.add(stu); }
 
     /** Create a group of students (likely for a group project)
      *
@@ -80,16 +93,20 @@ public class ParticularCourse implements Cloneable{
     // Getters and Setters Below //
     ///////////////////////////////
 
-    public boolean isActive() {
-        return active;
+    public String getCourseId() {
+        return courseId;
     }
 
-    public Course getCourse() {
-        return course;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public String getCourseNumber() {
+        return courseNumber;
+    }
+
+    public void setCourseNumber(String courseNumber) {
+        this.courseNumber = courseNumber;
     }
 
     public String getSemester() {
@@ -98,6 +115,18 @@ public class ParticularCourse implements Cloneable{
 
     public void setSemester(String semester) {
         this.semester = semester;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public void setActive(boolean active) {
@@ -112,27 +141,28 @@ public class ParticularCourse implements Cloneable{
         this.students = students;
     }
 
-    public List<User> getTAs() {
-        return TAs;
+    public List<User> getTas() {
+        return tas;
     }
 
-    public void setTAs(List<User> TAs) {
-        this.TAs = TAs;
+    public void setTas(List<User> tas) {
+        this.tas = tas;
     }
 
-    public List<User> getInstructor() {
-        return Instructor;
+    public List<User> getInstructors() {
+        return instructors;
     }
 
-    public void setInstructor(List<User> instructor) {
-        Instructor = instructor;
+    public void setInstructors(List<User> instructors) {
+        this.instructors = instructors;
     }
 
-    public List<Event> getClassEvents() {
+    public List<User> getClassEvents() {
         return classEvents;
     }
 
-    public void setClassEvents(List<Event> classEvents) {
+    public void setClassEvents(List<User> classEvents) {
         this.classEvents = classEvents;
     }
+
 }

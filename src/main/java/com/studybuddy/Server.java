@@ -22,7 +22,7 @@ public class Server {
                             post(ApplicationController::authenticateUser);
                         });
                     });
-                    path(":userId", () -> {
+                    path(":userId", () -> { 
                         post(ApplicationController::collectGoogleEvents);
                         delete(ApplicationController::logOut);
                         path("recs", () -> {
@@ -35,6 +35,15 @@ public class Server {
                             path(":eventId", () -> {
                                 delete(ApplicationController::deleteEvent);
                                 put(ApplicationController::editEvent);
+                            });
+                        });
+                        path("courses", () -> {
+                            get(ApplicationController::getCourses);
+                            post(ApplicationController::addCourse);
+                            put(ApplicationController::archiveOldCourses);
+                            path(":courseId", () -> {
+                                delete(ApplicationController::removeCourse);
+                                put(ApplicationController::updateCourseStatus);
                             });
                         });
                     });

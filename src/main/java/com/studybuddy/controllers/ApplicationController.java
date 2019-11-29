@@ -17,17 +17,39 @@ public class ApplicationController {
     private EventsController eventsController;
     private UserController userController;
     private RecsController recsController;
+    private CourseController courseController;
 
     public ApplicationController(Connection connection) throws SQLException {
         this.eventsController = new EventsController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);
+        this.courseController = new CourseController(connection);
 
         InitializationRepository.initializeTables(connection);
     }
 
     public void getRec(Context ctx) throws SQLException {
         recsController.getRec(ctx);
+    }
+
+    public void getCourses(Context ctx) throws SQLException {
+        courseController.getCourses(ctx);
+    }
+
+    public void addCourse(Context ctx) throws SQLException {
+        courseController.addCourse(ctx);
+    }
+
+    public void archiveOldCourses(Context ctx) throws SQLException {
+        courseController.archiveOldCourses(ctx);
+    }
+
+    public void removeCourse(Context ctx) throws SQLException {
+        courseController.removeCourse(ctx);
+    }
+
+    public void updateCourseStatus(Context ctx) throws SQLException {
+        courseController.updateCourseStatus(ctx);
     }
 
     public void getEvents(Context ctx) throws SQLException {

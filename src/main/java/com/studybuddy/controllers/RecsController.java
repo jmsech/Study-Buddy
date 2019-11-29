@@ -33,7 +33,7 @@ class RecsController {
         idInviteList.add(userId);
         idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, idInviteList);
         if (idInviteList == null) {ctx.json("InviteListError"); return;}
-        var inviteList = UserRepository.createUserListFromInviteList(connection, inviteListString);
+        var inviteList = UserRepository.createUserListFromIdList(connection, inviteListString);
         if (inviteList == null) {ctx.json("InviteListError"); return;}
 
         //get session length
@@ -73,7 +73,7 @@ class RecsController {
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
             var id = i + 1; // FIXME Is this correct?
-            List<User> users = UserRepository.createUserListFromInviteList(connection, recommendation.getUserIDs());
+            List<User> users = UserRepository.createUserListFromIdList(connection, recommendation.getUserIDs());
             if (users == null) { users = new ArrayList<>(); }
             recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", users, "")));
         }

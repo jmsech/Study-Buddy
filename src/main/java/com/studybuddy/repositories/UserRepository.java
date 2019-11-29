@@ -51,7 +51,7 @@ public class UserRepository {
         }
     }
 
-    public static List<User> createUserListFromInviteList(Connection connection, String inviteListString) throws SQLException {
+    public static List<User> createUserListFromIdList(Connection connection, String inviteListString) throws SQLException {
         ArrayList<User> inviteList = new ArrayList<>();
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         if (inviteListString != null) {
@@ -79,7 +79,7 @@ public class UserRepository {
         return inviteList;
     }
 
-    public static List<User> createUserListFromInviteList(Connection connection, List<Integer> inviteList) throws SQLException {
+    public static List<User> createUserListFromIdList(Connection connection, List<Integer> inviteList) throws SQLException {
         List<User> userList = new ArrayList<>();
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         for (int userId : inviteList) {

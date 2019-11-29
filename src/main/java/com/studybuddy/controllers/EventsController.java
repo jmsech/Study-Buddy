@@ -56,7 +56,7 @@ class EventsController {
         idInviteList.add(userId);
 
         // Create event and insert into events table
-        EventRepository.addUsersToEventListInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, userId);
+        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, userId);
 
         ctx.json("Success");
         ctx.status(201);
