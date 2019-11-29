@@ -1,15 +1,10 @@
 package com.studybuddy.repositories;
 
-import com.studybuddy.models.Course;
-import com.studybuddy.models.Event;
 import com.studybuddy.models.ParticularCourse;
-import com.studybuddy.models.User;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
