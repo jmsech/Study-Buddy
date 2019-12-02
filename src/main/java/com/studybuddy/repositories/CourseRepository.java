@@ -1,6 +1,8 @@
 package com.studybuddy.repositories;
 
+import com.studybuddy.models.Event;
 import com.studybuddy.models.ParticularCourse;
+import com.studybuddy.models.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,16 +23,12 @@ public class CourseRepository {
 
     public static List<String> getCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
 
-        // TODO:
-        //  1) Pull list of courseIDs from associative database. The CODE BELOW DOES NOT work but it might be a good
-        //  template from EventRepository
+        // TODO: <COMPLETED>
+        //  1) Pull list of courseIDs from associative database.
 
-        // FIXME Fix this table call
-        var statement = connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent " +
-                "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
-                "INNER JOIN users as u ON etum.userId = u.id " +
-                "WHERE u.id = ? AND e.expired = false");
-
+        var statement = connection.prepareStatement("SELECT c.courseId c.courseNum c.courseDescription c.courseSectionNum" +
+                " c.courseName c.semester c.instructorName c.isActive FROM courses AS c INNER JOIN courses_to_users_mapping " +
+                "AS ctum ON c.id = ctum.courseId INNER JOIN users as u ON ctum.userId = u.id WHERE u.id = ?");
         statement.setInt(1, userId);
         var result = statement.executeQuery();
         var courseIDs = new ArrayList<String>();
@@ -51,28 +49,33 @@ public class CourseRepository {
         for (String courseId : courseIDs) {
             var result = CourseRepository.loadCourseFields(connection, courseId, statements);
 
-            var studentIdList = result.getString("students");
+            var studentIdList = result.getString("studentIds");
             var students = UserRepository.createUserListFromIdList(connection, studentIdList);
 
-            var taIdList = result.getString("tas");
-            var tas = UserRepository.createUserListFromIdList(connection, taIdList);
+            //var taIdList = result.getString("taIds");
+            //var tas = UserRepository.createUserListFromIdList(connection, taIdList);
+            var tas = new ArrayList<User>();
 
-            var instructorIds = result.getString("tas");
-            var instructors = UserRepository.createUserListFromIdList(connection, instructorIds);
+            //var instructorIds = result.getString("instructor");
+            //var instructors = UserRepository.createUserListFromIdList(connection, instructorIds);
+            var instructor = result.getString("instructorName");
 
-            var courseEventIds = result.getString("tas");
-            var courseEvents = UserRepository.createUserListFromIdList(connection, courseEventIds);
+            //var courseEventIds = result.getString("courseIds");
+           // var courseEvents = UserRepository.createUserListFromIdList(connection, courseEventIds);
+            var courseEvents  = new ArrayList<Event>();
 
             courses.add(
                     new ParticularCourse(
                             courseId,
-                            result.getString("courseNumber"),
+                            result.getString("courseName"),
+                            result.getString("courseDescription"),
+                            result.getString("courseNum"),
                             result.getString("semester"),
-                            result.getString("sectionNumber"),
-                            result.getBoolean("active"),
+                            result.getString("courseSectionNum"),
+                            result.getBoolean("isActive"),
                             students,
                             tas,
-                            instructors,
+                            instructor,
                             courseEvents
                     )
             );
@@ -88,13 +91,11 @@ public class CourseRepository {
     }
 
     private static java.sql.ResultSet loadCourseFields(Connection connection, String courseId, List<PreparedStatement> statements) throws SQLException {
-        // TODO:
+        // TODO: <COMPLETED>
         //  1) Pull course information from course database. Return a SQL.ResultSet please
-        //  The CODE BELOW DOES NOT WORK but it is a good template from eventRepository
 
-        // FIXME Fix this table call
-        var statement = connection.prepareStatement("SELECT u.id, u.email, u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
-                "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
+        var statement = connection.prepareStatement("SELECT c.courseNum c.courseDescription c.courseSectionNum " +
+                "c.courseName c.semester c.instructorName c.isActive FROM courses AS c WHERE c.courseId = ? ");
 
         statement.setString(1, courseId);
         statements.add(statement);
@@ -116,24 +117,38 @@ public class CourseRepository {
 
         if (rosterIDs.contains(userId)) {return 2; }
 
-        rosterIDs.add(userId);
-
-        CourseRepository.updateCourseRoster(connection, courseId, rosterIDs);
+        CourseRepository.updateCourseRoster(connection, courseId, userId);
 
         return 0;
     }
 
-    public static List<Integer> getRosterIDs(Connection connection, String courseId) {
+    public static List<Integer> getRosterIDs(Connection connection, String courseId) throws SQLException {
 
-        // TODO:
+        // TODO: <COMPLETED>
         //  1) Figure out how to pull data from DB
 
-        return null; // Stub
+        var statement = connection.prepareStatement("SELECT ctum.userid FROM courses_to_users_mapping AS ctum WHERE ctum.courseId = ?");
+
+        statement.setString(1, courseId);
+        var result = statement.executeQuery();
+
+        var rosterIds = new ArrayList<Integer>();
+        while (result.next()) {
+            rosterIds.add(result.getInt("userId"));
+        }
+
+        return rosterIds;
     }
 
-    public static void updateCourseRoster(Connection connection, String courseId, List<Integer> rosterIDs) {
-        // TODO:
+    public static void updateCourseRoster(Connection connection, String courseId, int userId) throws SQLException {
+        // TODO: <COMPLETED>
         //  1) Update roster of course corresponding to courseId to the new roster list
+        var statement = connection.prepareStatement("INSERT INTO courses_to_users_mapping(courseId, userId) VALUES (?, ?)");
+
+        statement.setString(1, courseId);
+        statement.setInt(2, userId);
+        statement.executeQuery();
+        statement.close();
     }
 
     public static void archiveOldCourses(Connection connection) {
@@ -145,7 +160,12 @@ public class CourseRepository {
     public static void removeCourse(Connection connection, int userId, String courseId) throws SQLException {
         var roster = CourseRepository.getRosterFromCourseId(connection, courseId);
         roster.remove(userId);
-        CourseRepository.updateCourseRoster(connection, courseId, roster);
+        var statement = connection.prepareStatement("DELETE FROM courses_to_users_mapping WHERE courseID = ? AND userId = ?");
+        statement.setString(1, courseId);
+        statement.setInt(2, userId);
+
+        statement.executeQuery();
+        statement.close();
     }
 
     public static List<Integer> getRosterFromCourseId(Connection connection, String courseId) throws SQLException {
