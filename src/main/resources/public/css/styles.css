@@ -100,3 +100,10 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.list-inline {
+    list-style: none;
+}
+.list-inline > li {
+    display: inline-block;
+}
