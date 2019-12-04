@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.lang.*;
 import java.util.List;
 
-public class Event {
+public class Event implements Comparable<Event>{
 
     private long id;
     private String title;
@@ -87,4 +87,9 @@ public class Event {
     public boolean isGoogleEvent() { return isGoogleEvent; }
 
     public boolean isExpired() { return expired; }
+
+    public int compareTo(Event e) {
+        return this.getStartTime().compareTo(e.getStartTime());
+    }
+
 }

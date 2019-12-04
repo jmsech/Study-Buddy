@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 class EventsController {
@@ -58,6 +59,7 @@ class EventsController {
                     )
             );
         }
+        Collections.sort(events);
         result.close();
         statement.close();
         ctx.json(events);
