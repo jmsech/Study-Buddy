@@ -19,7 +19,7 @@ public class ApplicationController {
     private RecsController recsController;
     private CourseController courseController;
 
-    public ApplicationController(Connection connection) throws SQLException {
+    public ApplicationController(Connection connection) throws SQLException, IOException {
         this.eventsController = new EventsController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);

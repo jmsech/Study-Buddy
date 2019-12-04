@@ -1,13 +1,15 @@
 package com.studybuddy;
 import com.studybuddy.controllers.ApplicationController;
 import io.javalin.Javalin;
+
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class Server {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         var connection = DriverManager.getConnection("jdbc:sqlite:studyBuddy.db");
 
         var ApplicationController = new ApplicationController(connection);
