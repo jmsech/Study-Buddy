@@ -18,18 +18,24 @@ public class ApplicationController {
     private UserController userController;
     private RecsController recsController;
     private CourseController courseController;
+    private CourseLinkRecsController courseLinkRecsController;
 
     public ApplicationController(Connection connection) throws SQLException, IOException {
         this.eventsController = new EventsController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);
         this.courseController = new CourseController(connection);
+        this.courseLinkRecsController = new CourseLinkRecsController(connection);
 
         InitializationRepository.initializeTables(connection);
     }
 
     public void getRec(Context ctx) throws SQLException {
         recsController.getRec(ctx);
+    }
+
+    public void getCourseLinkRec(Context ctx) throws SQLException {
+        courseLinkRecsController.getRec(ctx);
     }
 
     public void getCourses(Context ctx) throws SQLException {

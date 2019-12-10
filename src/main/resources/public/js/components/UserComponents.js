@@ -101,7 +101,7 @@ class CourseList extends React.Component {
     }
 
     async componentDidMount() {
-        // await this.getDataFromServer();
+        await this.getDataFromServer();
     }
 
     render() {
@@ -127,12 +127,14 @@ class Course extends React.Component {
         return (
             <li className="card hoverable teal lighten-2">
                 <div className="card-content black-text" style={this.props.disp}>
-                    <p>{this.props.course.courseNumber}</p>
                     <span className="card-title">
                         {/*<CourseHeader course={this.props.course}/>*/}
-                        <h4>{this.props.course.name}</h4>
+                        <h6>{this.props.course.courseName}</h6>
                     </span>
-                    <p>{this.props.course.professor}</p>
+                    <p>{this.props.course.courseNumber + " (" + this.props.course.section + ") "}</p>
+                    {/*<p>{this.props.course.courseDescription}</p> //FIXME: This is very long*/}
+                    <p>{this.props.course.instructor}</p>
+                    <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
                 </div>
             </li>

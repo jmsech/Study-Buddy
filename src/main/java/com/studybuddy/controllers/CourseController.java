@@ -1,13 +1,10 @@
 package com.studybuddy.controllers;
 
 import com.studybuddy.repositories.CourseRepository;
-import com.studybuddy.repositories.EventRepository;
-import com.studybuddy.repositories.IdRepository;
 import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 public class CourseController {
 
@@ -19,7 +16,7 @@ public class CourseController {
 
     public void getCourses(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
-        var courses = CourseRepository.getCoursesForUser(userId, this.connection);
+        var courses = CourseRepository.getCoursesForUser(this.connection, userId);
         ctx.json(courses);
     }
 

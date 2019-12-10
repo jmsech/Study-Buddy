@@ -13,11 +13,11 @@ class NewEventForm extends React.Component {
         super(props);
         this.state = {value: ''};
 
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this); // FIXME I don't think we use this
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) {
+    handleChange(event) { // FIXME I don't think we every call this
         this.setState({value: event.target.value});
     }
 

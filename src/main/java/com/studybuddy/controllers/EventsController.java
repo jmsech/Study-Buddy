@@ -53,7 +53,7 @@ class EventsController {
         // Get list of userId's attending event
         List<Integer> idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, null);
         if (idInviteList == null) { ctx.json("InviteListError"); return; }
-        idInviteList.add(userId);
+        if (!idInviteList.contains(userId)) {idInviteList.add(userId);}
 
         // Create event and insert into events table
         EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, userId);

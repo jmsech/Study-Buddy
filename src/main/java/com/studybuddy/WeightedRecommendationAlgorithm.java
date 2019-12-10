@@ -21,7 +21,7 @@ public class WeightedRecommendationAlgorithm {
     private static final int SECONDS_PER_MINUTE = 60 * COMPRESSION_FACTOR; //seconds/60 = minutes
     private static final long SECONDS_PER_DAY = 86400;
     private static final long SECONDS_OF_SLEEP = 28800;
-    private static final int MINUTES_PER_HOUR = (int) (SECONDS_PER_DAY/SECONDS_PER_MINUTE/24);
+    private static final int MINUTES_PER_HOUR = (int) (SECONDS_PER_DAY/SECONDS_PER_MINUTE / 24);
     private static final long MINUTES_PER_DAY = SECONDS_PER_DAY/SECONDS_PER_MINUTE;
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
@@ -39,7 +39,9 @@ public class WeightedRecommendationAlgorithm {
     // RECOMMENDATION ALGORITHM ////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, List<TimeChunk> host, List<Integer> alwaysFree, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end,
+                                                     List<List<TimeChunk>> busyTimes, List<TimeChunk> host,
+                                                     List<Integer> alwaysFree, double fraction, int numRecs) {
 
         // Determine beginning and end of time period as well as length of time period
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -112,6 +114,7 @@ public class WeightedRecommendationAlgorithm {
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
         int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
+        if (host == null) {host = new ArrayList<>(); }
         for (TimeChunk t : host) {
             // Get start and end second of timechunk
             long trueS = t.getStartTime().toEpochSecond(ZoneOffset.UTC);
@@ -263,7 +266,12 @@ public class WeightedRecommendationAlgorithm {
     // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end,
+                                                     double fraction, int numRecs, ArrayList<TimeChunk> hostTimes) {
+        return makeRecommendation(start, end, new ArrayList<>(), hostTimes, new ArrayList<>(), fraction, numRecs);
+    }
+
+        public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, double fraction, int numRecs) {
         ArrayList<TimeChunk> arr = new ArrayList<>();
         return makeRecommendation(start,end,busyTimes,arr,new ArrayList<>(),fraction,numRecs);
     }

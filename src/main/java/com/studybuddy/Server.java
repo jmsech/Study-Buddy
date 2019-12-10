@@ -30,6 +30,9 @@ public class Server {
                         path("recs", () -> {
                             post(ApplicationController::getRec);
                         });
+                        path("courseLinkRecs", () -> {
+                            post(ApplicationController::getCourseLinkRec);
+                        });
                         path("events", () -> {
                             get(ApplicationController::getEvents);
                             post(ApplicationController::createEvent);

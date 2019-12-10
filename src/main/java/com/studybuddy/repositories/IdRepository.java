@@ -32,13 +32,24 @@ public class IdRepository {
         return idInviteList;
     }
 
+    public static ArrayList<Integer> getUserIdListFromCourseId(Connection connection, String courseId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT userId FROM courses_to_users_mapping  WHERE courseId = ?");
+        statement.setString(1, courseId);
+        var result = statement.executeQuery();
+        ArrayList<Integer> userIds = new ArrayList<>();
+        while (result.next()) {
+            userIds.add(result.getInt("userId"));
+        }
+        statement.close();
+        return userIds;
+    }
+
     private static java.sql.ResultSet getIdFromEmail(String email, Connection connection, List<PreparedStatement> statements) throws SQLException {
         var statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
         statement.setString(1, email);
         statements.add(statement);
         return statement.executeQuery();
     }
-
 
     private static ArrayList<Integer> removeDuplicates(ArrayList<Integer> list) {
         ArrayList<Integer> resultList = new ArrayList<>();

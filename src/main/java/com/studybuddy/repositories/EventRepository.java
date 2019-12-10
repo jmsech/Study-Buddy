@@ -15,18 +15,17 @@ public class EventRepository {
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = false");
+        //  AND e.expired = false //TODO: Add and remove this line in the query to care or not care for old events
         statement.setInt(1, userId);
-
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         statements.add(statement);
-
         var result = statement.executeQuery();
 
         var events = new ArrayList<Event>();
         while (result.next()) {
             var eventId = result.getInt("id");
 
-            var mappingResult = EventRepository.loadEventFields(eventId, connection, statements);
+            var mappingResult = EventRepository.loadEventAttendees(eventId, connection, statements);
 
             List<User> inviteList = new ArrayList<>();
             while (mappingResult.next()) {
@@ -53,11 +52,13 @@ public class EventRepository {
         }
         for (var s : statements) {s.close();}
 
+        // TODO (maybe): Let courses be associated with events so that users can have course events automatically added to schedule
+
         events.sort(new Event.EventComparator());
         return events;
     }
 
-    private static java.sql.ResultSet loadEventFields(int eventId, Connection connection, List<PreparedStatement> statements) throws SQLException {
+    private static java.sql.ResultSet loadEventAttendees(int eventId, Connection connection, List<PreparedStatement> statements) throws SQLException {
         var statement = connection.prepareStatement("SELECT u.id, u.email, u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
                 "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
         statement.setInt(1, eventId);
@@ -65,7 +66,7 @@ public class EventRepository {
         return statement.executeQuery();
     }
 
-    public static void createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
+    public static int createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
@@ -82,6 +83,7 @@ public class EventRepository {
         var eventId = getLastEventId(connection);
         updateEventInviteList(eventId, idInviteList, connection);
         statement.close();
+        return eventId;
     }
 
     public static int updateEventInDB(Connection connection, String inviteListString, int userId, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int eventId) throws SQLException {
@@ -131,17 +133,20 @@ public class EventRepository {
         statement.close();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private static void updateEventInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
-        PreparedStatement statement = null;
-        assert inviteList != null;
+        PreparedStatement statement= null;
+        if (inviteList == null) {return;}
         for (Object id : inviteList) {
             statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
             statement.setInt(1, eventId);
             statement.setInt(2, (int) id);
             statement.executeUpdate();
+            statement.close();
         }
-        assert statement != null; //FIXME What is this assert?
-        statement.close();
     }
 
     private static int getLastEventId(Connection connection) throws SQLException {
