@@ -33,29 +33,26 @@ public class InitializationRepository {
     }
 
     private static void populateCoursesTable(Connection connection) throws IOException, SQLException {
+        System.out.println("Extracting courses...");
         populateJHUClasses(connection);
     }
 
     // This functions obtains JHU classes based on the SIS API
     // Most of the code structure used here comes from the following tutorial: https://www.baeldung.com/java-http-request
     private static void populateJHUClasses(Connection connection) throws IOException, SQLException {
-        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses LIMIT 1");
-        var check = check_statement.executeQuery();
-        if (check.next()) {
-            check.close();
-            return;
-        }
-        check.close();
-
         String whitingSchoolString = "Whiting School Of Engineering".replaceAll(" ", "%20");
         String kriegerSchoolString = "Krieger School of Arts and Sciences".replaceAll(" ", "%20");
         List<String> schools = new ArrayList<>();
         schools.add(whitingSchoolString);
         schools.add(kriegerSchoolString);
-        for (String schoolString : schools) {
+        int numSchools = schools.size();
+        for (int i = 0; i < numSchools; i++) {
+            String schoolString = schools.get(i);
             String classesContent = obtainJHUClassesInSpecificSchool(schoolString);
             List sisCourses = jsonMapper(classesContent);
-            for (Object o : sisCourses) {
+            int numCourses = sisCourses.size();
+            for (int j = 0; j < numCourses; j++) {
+                Object o = sisCourses.get(j);
                 SISCourse sisCourse = (SISCourse) o;
                 String title = sisCourse.getTitle();
                 String instructor = sisCourse.getInstructorsFullName();
@@ -75,6 +72,11 @@ public class InitializationRepository {
                 String courseId = courseNumber + "(" + courseSectionNumber + ")" + semester;
                 String description = "";
                 boolean isActive = true;
+                if ((j + 1) % 50 == 0 || j == numCourses - 1 ) {
+                    String progressText = "Schools loaded: " + (i+1) + "/" + numSchools + "\n" +
+                            "Courses loaded: " + (j+1) + "/" + numCourses;
+                    System.out.println(progressText);
+                }
                 CourseRepository.createCourseInDB(connection, courseId, courseNumber, description, courseSectionNumber,
                         title, instructor, semester, location, credits, meetings, isActive);
             }
