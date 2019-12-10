@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ParticularCourse implements Cloneable {
 
-    private String courseId; // xxx.xxxFyyyy
+    private String courseId; // xxx.xxx(01)Fayyyy
     private String courseName;
     private String courseDescription;
     private String courseNumber;
