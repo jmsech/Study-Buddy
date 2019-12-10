@@ -39,7 +39,9 @@ public class WeightedRecommendationAlgorithm {
     // RECOMMENDATION ALGORITHM ////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, List<TimeChunk> host, List<Integer> alwaysFree, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end,
+                                                     List<List<TimeChunk>> busyTimes, List<TimeChunk> host,
+                                                     List<Integer> alwaysFree, double fraction, int numRecs) {
 
         // Determine beginning and end of time period as well as length of time period
         long startSec = start.toEpochSecond(ZoneOffset.UTC);
@@ -264,7 +266,12 @@ public class WeightedRecommendationAlgorithm {
     // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, double fraction, int numRecs) {
+    public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end,
+                                                     double fraction, int numRecs, ArrayList<TimeChunk> hostTimes) {
+        return makeRecommendation(start, end, new ArrayList<>(), hostTimes, new ArrayList<>(), fraction, numRecs);
+    }
+
+        public static List<TimeChunk> makeRecommendation(LocalDateTime start, LocalDateTime end, List<List<TimeChunk>> busyTimes, double fraction, int numRecs) {
         ArrayList<TimeChunk> arr = new ArrayList<>();
         return makeRecommendation(start,end,busyTimes,arr,new ArrayList<>(),fraction,numRecs);
     }

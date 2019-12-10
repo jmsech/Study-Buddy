@@ -16,6 +16,7 @@ public class ParticularCourse implements Cloneable {
     private String section;
     private String location;
     private String credits;
+    private String timeString;
     private boolean active;
     private List<User> students;
     private List<User> tas;
@@ -23,8 +24,9 @@ public class ParticularCourse implements Cloneable {
     private List<Event> classEvents;
 
     public ParticularCourse(String courseId, String courseName, String courseDescription, String courseNumber,
-                            String semester, String section, String location, String credits, boolean active,
-                            List<User> students, List<User> tas, String instructor, List<Event> classEvents) {
+                            String semester, String section, String location, String credits, String timeString,
+                            boolean active, List<User> students, List<User> tas, String instructor,
+                            List<Event> classEvents) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseDescription = courseDescription;
@@ -33,6 +35,7 @@ public class ParticularCourse implements Cloneable {
         this.section = section;
         this.location = location;
         this.credits = credits;
+        this.timeString = timeString;
         this.active = active;
         this.students = students;
         this.tas = tas;
@@ -118,6 +121,7 @@ public class ParticularCourse implements Cloneable {
     // Getters and Setters Below //
     ///////////////////////////////
 
+
     public String getCourseId() {
         return courseId;
     }
@@ -180,6 +184,14 @@ public class ParticularCourse implements Cloneable {
 
     public void setCredits(String credits) {
         this.credits = credits;
+    }
+
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
     }
 
     public boolean isActive() {

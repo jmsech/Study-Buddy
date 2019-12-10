@@ -15,6 +15,8 @@ public class EventRepository {
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = false");
+        //  AND e.expired = false //TODO: Add and remove this line in the query to care or not care for old events
+
         statement.setInt(1, userId);
 
         ArrayList<PreparedStatement> statements = new ArrayList<>();
@@ -67,7 +69,7 @@ public class EventRepository {
         return statement.executeQuery();
     }
 
-    public static void createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
+    public static int createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
         var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
@@ -84,6 +86,7 @@ public class EventRepository {
         var eventId = getLastEventId(connection);
         updateEventInviteList(eventId, idInviteList, connection);
         statement.close();
+        return eventId;
     }
 
     public static int updateEventInDB(Connection connection, String inviteListString, int userId, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int eventId) throws SQLException {
@@ -133,17 +136,21 @@ public class EventRepository {
         statement.close();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private static void updateEventInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
-        PreparedStatement statement = null;
-        assert inviteList != null;
+        PreparedStatement statement;
+        if (inviteList == null) {inviteList = new ArrayList<>(); }
         for (Object id : inviteList) {
             statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
             statement.setInt(1, eventId);
             statement.setInt(2, (int) id);
             statement.executeUpdate();
+            statement.close(); //FIXME: Brandon moved this
         }
-        assert statement != null; //FIXME What is this assert?
-        statement.close();
+//        statement.close() //FIXME: It was here
     }
 
     private static int getLastEventId(Connection connection) throws SQLException {
