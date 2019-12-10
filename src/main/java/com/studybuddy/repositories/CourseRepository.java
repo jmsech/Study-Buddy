@@ -234,6 +234,7 @@ public class CourseRepository {
 
     private static long getMillis(String time, String ampm) {
         try {
+            if (time.substring(0, 2).equals("12")) { time = "0" + time.substring(2); }
             long sec = 0;
             sec += 60 * Integer.parseInt(time.substring(time.length() - 1));
             sec += 60 * 10 * Integer.parseInt(time.substring(time.length() - 2, time.length() - 1));
