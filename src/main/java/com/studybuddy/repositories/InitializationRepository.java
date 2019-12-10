@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.studybuddy.models.Course;
 import com.studybuddy.models.SISCourse;
 
 public class InitializationRepository {
@@ -22,7 +23,7 @@ public class InitializationRepository {
         statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
         statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN, expired BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS events_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, eventId INTEGER, userId INTEGER, FOREIGN KEY (eventId) REFERENCES events (id), FOREIGN KEY (userId) REFERENCES users (id))");
-        statement.execute("CREATE TABLE IF NOT EXISTS courses (courseId TEXT, courseNum TEXT, courseDescription TEXT, courseSectionNum TEXT, courseName TEXT, instructorName TEXT, semester TEXT, location TEXT, credits TEXT, timeString TEXT, isActive BOOLEAN)");
+        statement.execute("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, courseNum TEXT, courseDescription TEXT, courseSectionNum TEXT, courseName TEXT, instructorName TEXT, semester TEXT, location TEXT, credits TEXT, timeString TEXT, isActive BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, userId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_events_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, eventId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (eventId) REFERENCES events (id))");
         add_test_users(connection);
@@ -33,14 +34,13 @@ public class InitializationRepository {
         populateCoursesTable(connection);
     }
 
-    private static void populateCoursesTable(Connection connection) throws IOException {
-        String classesContent = obtainJHUClasses();
-
+    private static void populateCoursesTable(Connection connection) throws IOException, SQLException {
+        populateJHUClasses(connection);
     }
 
     // This functions obtains JHU classes based on the SIS API
     // Most of the code structure used here comes from the following tutorial: https://www.baeldung.com/java-http-request
-    private static String obtainJHUClasses() throws IOException {
+    private static void populateJHUClasses(Connection connection) throws IOException, SQLException {
         String whitingSchoolString = "Whiting School Of Engineering".replaceAll(" ", "%20");
         String kriegerSchoolString = "Krieger School of Arts and Sciences".replaceAll(" ", "%20");
         List<String> schools = new ArrayList<>();
@@ -48,11 +48,31 @@ public class InitializationRepository {
         schools.add(kriegerSchoolString);
         for (String schoolString : schools) {
             String classesContent = obtainJHUClassesInSpecificSchool(schoolString);
-
-            List courseList = jsonMapper(classesContent);
-            //System.out.println(classesContent.substring(0, 500));
+            List sisCourses = jsonMapper(classesContent);
+            for (Object o : sisCourses) {
+                SISCourse sisCourse = (SISCourse) o;
+                String title = sisCourse.getTitle();
+                String instructor = sisCourse.getInstructorsFullName();
+                String courseNumber = sisCourse.getOfferingName();
+                String courseSectionNumber = sisCourse.getSectionName();
+                String semester = sisCourse.getTerm();
+                if (semester.contains("Fall")) {
+                    semester = semester.replace("Fall ", "Fa");
+                } else {
+                    semester = semester.replace("Spring ", "Sp");
+                }
+                String location = sisCourse.getBuilding();
+                String credits = sisCourse.getCredits();
+                String meetings = sisCourse.getMeetings();
+                meetings = meetings.replace("AM", " AM");
+                meetings = meetings.replace("PM", " PM");
+                String courseId = courseNumber + "(" + courseSectionNumber + ")" + semester;
+                String description = "";
+                boolean isActive = true;
+                CourseRepository.createCourseInDB(connection, courseId, courseNumber, description, courseSectionNumber,
+                        title, instructor, semester, location, credits, meetings, isActive);
+            }
         }
-        return null;
     }
 
     private static String obtainJHUClassesInSpecificSchool(String schoolString) throws IOException {
@@ -79,14 +99,7 @@ public class InitializationRepository {
 
     private static List jsonMapper(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-
-        List<SISCourse> courseList = mapper.readValue(json, new TypeReference<List<SISCourse>>(){});
-        // pretty print
-        String course = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(courseList.get(0));
-        System.out.println(course);
-        System.out.println(courseList.size());
-
-        return courseList;
+        return mapper.<List<SISCourse>>readValue(json, new TypeReference<List<SISCourse>>(){});
     }
 
     public static void add_test_users(Connection connection) throws SQLException {
