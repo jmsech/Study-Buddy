@@ -8,12 +8,10 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studybuddy.models.Course;
 import com.studybuddy.models.SISCourse;
 
 public class InitializationRepository {
@@ -26,11 +24,11 @@ public class InitializationRepository {
         statement.execute("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, courseNum TEXT, courseDescription TEXT, courseSectionNum TEXT, courseName TEXT, instructorName TEXT, semester TEXT, location TEXT, credits TEXT, timeString TEXT, isActive BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, userId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_events_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, eventId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (eventId) REFERENCES events (id))");
+        statement.close();
+
         add_test_users(connection);
         add_test_courses(connection);
         add_test_students(connection);
-        statement.close();
-
         populateCoursesTable(connection);
     }
 
@@ -41,6 +39,14 @@ public class InitializationRepository {
     // This functions obtains JHU classes based on the SIS API
     // Most of the code structure used here comes from the following tutorial: https://www.baeldung.com/java-http-request
     private static void populateJHUClasses(Connection connection) throws IOException, SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses LIMIT 1");
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return;
+        }
+        check.close();
+
         String whitingSchoolString = "Whiting School Of Engineering".replaceAll(" ", "%20");
         String kriegerSchoolString = "Krieger School of Arts and Sciences".replaceAll(" ", "%20");
         List<String> schools = new ArrayList<>();
