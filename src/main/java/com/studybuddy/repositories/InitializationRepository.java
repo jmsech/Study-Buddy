@@ -20,6 +20,14 @@ public class InitializationRepository {
     }
 
     public static void add_test_users(Connection connection) throws SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  users LIMIT 1");
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return;
+        }
+        check.close();
+
         UserRepository.createUser(connection, "bfremin32@gmail.com", "Fremin1!", "Brandon",
                 "Fremin");
         UserRepository.createUser(connection, "sweill1@jhu.edu", "Fremin1!", "Sara",
@@ -35,6 +43,14 @@ public class InitializationRepository {
     }
 
     public static void add_test_students(Connection connection) throws SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses_to_users_mapping LIMIT 1");
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return;
+        }
+        check.close();
+
         CourseRepository.addCourseToUser(connection, "EN.530.254(03)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.530.327(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.530.352(01)Fa2019", 1);
@@ -49,6 +65,14 @@ public class InitializationRepository {
     }
 
     public static void add_test_courses(Connection connection) throws SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses LIMIT 1");
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return;
+        }
+        check.close();
+
         String courseName = "Manufacturing Engineering";
         String instructor = "Ronzhes, Yury";
         String courseNum = "EN.530.254";

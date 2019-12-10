@@ -16,12 +16,9 @@ public class EventRepository {
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = false");
         //  AND e.expired = false //TODO: Add and remove this line in the query to care or not care for old events
-
         statement.setInt(1, userId);
-
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         statements.add(statement);
-
         var result = statement.executeQuery();
 
         var events = new ArrayList<Event>();
@@ -141,16 +138,15 @@ public class EventRepository {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static void updateEventInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
-        PreparedStatement statement;
-        if (inviteList == null) {inviteList = new ArrayList<>(); }
+        PreparedStatement statement= null;
+        if (inviteList == null) {return;}
         for (Object id : inviteList) {
             statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
             statement.setInt(1, eventId);
             statement.setInt(2, (int) id);
             statement.executeUpdate();
-            statement.close(); //FIXME: Brandon moved this
+            statement.close();
         }
-//        statement.close() //FIXME: It was here
     }
 
     private static int getLastEventId(Connection connection) throws SQLException {

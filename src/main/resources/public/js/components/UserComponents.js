@@ -134,6 +134,7 @@ class Course extends React.Component {
                     <p>{this.props.course.courseNumber + " (" + this.props.course.section + ") "}</p>
                     {/*<p>{this.props.course.courseDescription}</p> //FIXME: This is very long*/}
                     <p>{this.props.course.instructor}</p>
+                    <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
                 </div>
             </li>

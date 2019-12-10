@@ -249,7 +249,8 @@ public class CourseRepository {
 
     private static void add_12_weeks_of_courses_to_DB(Connection connection, LocalDateTime day, long startSec,
                                                       long endSec, String courseName, String location, String courseId) throws SQLException {
-        for (int j = 0; j < 12; j++) {
+        // FIXME: Change to 12 later
+        for (int j = 0; j < 1; j++) {
             LocalDateTime startOfClass = LocalDateTime.ofEpochSecond(day.toEpochSecond(ZoneOffset.UTC) + startSec + j*60*60*24*7, 0, ZoneOffset.ofHours(0));
             LocalDateTime endOfClass = LocalDateTime.ofEpochSecond(day.toEpochSecond(ZoneOffset.UTC) + endSec + j*60*60*24*7, 0, ZoneOffset.ofHours(0));
             java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startOfClass);
@@ -276,7 +277,7 @@ public class CourseRepository {
         try { y = Integer.parseInt(year); } catch (NumberFormatException e) { return false; }
         LocalDateTime firstFullWeek = LocalDateTime.of(y,6,1,0,0,0);
         // FIXME: We have changed the semester start temporarily so that you can see classes that have ended
-        if (semester.contains("Fa")) { firstFullWeek = LocalDateTime.of(y,10,1,0,0,0); }
+        if (semester.contains("Fa")) { firstFullWeek = LocalDateTime.of(y,12,10,0,0,0); }
         if (semester.contains("Sp")) { firstFullWeek = LocalDateTime.of(y,2,1,0,0,0); }
 
         for (int i = 0; i < num_dates; i++) {
