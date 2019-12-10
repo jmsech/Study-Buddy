@@ -46,23 +46,22 @@ public class CourseRepository {
         return true;
     }
 
-    public static List<ParticularCourse> getCoursesForUser(int userId, Connection connection) throws SQLException {
+    public static List<ParticularCourse> getCoursesForUser(Connection connection, int userId) throws SQLException {
 
-        List<String> courseIDs = CourseRepository.getCourseIdListFromUserId(connection, userId);
+        List<String> courseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
 
         List<ParticularCourse> courses = CourseRepository.getCourseListFromCourseIdList(connection, courseIDs);
 
         return courses;
     }
 
-    public static List<String> getCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
+    public static List<String> getActiveCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
 
         // TODO: <COMPLETED>
         //  1) Pull list of courseIDs from associative database.
-        var statement = connection.prepareStatement("SELECT c.courseId, c.courseNum, c.courseDescription," +
-                " c.courseSectionNum, c.courseName, c.semester, c.instructorName, c.location, c.credits, c.isActive FROM courses " +
+        var statement = connection.prepareStatement("SELECT c.courseId FROM courses " +
                 "AS c INNER JOIN courses_to_users_mapping AS ctum ON c.courseId = ctum.courseId INNER JOIN users " +
-                "AS u ON ctum.userId = u.id WHERE u.id = ?");
+                "AS u ON ctum.userId = u.id WHERE u.id = ? AND c.isActive = 1");
         statement.setInt(1, userId);
         var result = statement.executeQuery();
         var courseIDs = new ArrayList<String>();

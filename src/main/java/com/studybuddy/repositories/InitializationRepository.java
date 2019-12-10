@@ -40,6 +40,11 @@ public class InitializationRepository {
         CourseRepository.addCourseToUser(connection, "EN.601.231(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.601.433(01)Fa2019", 1);
+        CourseRepository.addCourseToUser(connection, "AS.050.360(01)Fa2019", 1);
+
+        CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 2);
+        CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 3);
+        CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 4);
     }
 
     public static void add_test_courses(Connection connection) throws SQLException {
@@ -146,6 +151,31 @@ public class InitializationRepository {
                 " searching techniques such as minimum spanning trees, depth-first search, shortest paths, design" +
                 " of online algorithms and competitive analysis.";
         isActive = true;
+        CourseRepository.createCourseInDB(connection, courseId, courseNum, courseDescription, courseSectionNum,
+                courseName, instructor, semester, location, credits, isActive);
+
+        courseName = "Computational Psycholinguistics";
+        instructor = "Linzen, Terez";
+        courseNum = "AS.050.360";
+        courseSectionNum = "01";
+        semester = "Fa2019";
+        location = "Gilman 56";
+        credits = "3";
+        courseId = courseNum + "(" + courseSectionNum + ")" + semester;
+        courseDescription = "How do we understand and produce sentences in a language we speak? How do we acquire" +
+                " the knowledge that underlies this ability? Computational psycholinguistics seeks to address these" +
+                " questions using a combination of two approaches: computational models, which aim to replicate the" +
+                " processes that take place in the human mind; and human experiments, which are designed to test" +
+                " those models. The perspective we will take in this class is that the models and experimental" +
+                " paradigms do not only advance our understanding of the cognitive science, but can also help us" +
+                " advance artificial intelligence and language technologies. While computational psycholinguistics" +
+                " spans all levels of linguistic structure, from speech to discourse, our focus in this class will" +
+                " be at the level of the sentence (syntax and semantics). The course will assume familiarity with" +
+                " programming and computational modeling frameworks in cognitive science, as covered by Introduction" +
+                " to Computational Cognitive Science or equivalent. Also offered as AS.050.660. An optional," +
+                " hands-on lab (AS.050.361) is offered to supplement this course. It is highly recommended that" +
+                " students with less extensive computational and mathematical experience register for this lab.";
+        isActive = false;
         CourseRepository.createCourseInDB(connection, courseId, courseNum, courseDescription, courseSectionNum,
                 courseName, instructor, semester, location, credits, isActive);
     }

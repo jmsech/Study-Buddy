@@ -26,7 +26,7 @@ public class EventRepository {
         while (result.next()) {
             var eventId = result.getInt("id");
 
-            var mappingResult = EventRepository.loadEventFields(eventId, connection, statements);
+            var mappingResult = EventRepository.loadEventAttendees(eventId, connection, statements);
 
             List<User> inviteList = new ArrayList<>();
             while (mappingResult.next()) {
@@ -53,11 +53,13 @@ public class EventRepository {
         }
         for (var s : statements) {s.close();}
 
+        // TODO (maybe): Let courses be associated with events so that users can have course events automatically added to schedule
+
         events.sort(new Event.EventComparator());
         return events;
     }
 
-    private static java.sql.ResultSet loadEventFields(int eventId, Connection connection, List<PreparedStatement> statements) throws SQLException {
+    private static java.sql.ResultSet loadEventAttendees(int eventId, Connection connection, List<PreparedStatement> statements) throws SQLException {
         var statement = connection.prepareStatement("SELECT u.id, u.email, u.firstName, u.lastName FROM events_to_users_mapping AS etum " +
                 "INNER JOIN users AS u ON etum.userId = u.id WHERE etum.eventId = ?");
         statement.setInt(1, eventId);

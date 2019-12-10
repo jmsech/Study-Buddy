@@ -16,7 +16,7 @@ public class CourseController {
 
     public void getCourses(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
-        var courses = CourseRepository.getCoursesForUser(userId, this.connection);
+        var courses = CourseRepository.getCoursesForUser(this.connection, userId);
         ctx.json(courses);
     }
 
