@@ -12,6 +12,40 @@ import java.util.List;
 
 public class CourseRepository {
 
+    public static boolean createCourseInDB(Connection connection, String courseId, String courseNum, String courseDescription,
+                                 String courseSectionNum, String courseName, String instructorName, String semester, String location,
+                                 String credits, boolean isActive) throws SQLException {
+
+        // FIXME: There has to be a better way to check but this will do for now
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses WHERE courseId = ?");
+        check_statement.setString(1, courseId);
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return false;
+        }
+        check.close();
+
+        var statement = connection.prepareStatement("INSERT INTO courses (courseId, courseNum, " +
+                "courseDescription, courseSectionNum, courseName, instructorName, semester, location, credits, " +
+                "isActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        statement.setString(1, courseId);
+        statement.setString(2, courseNum);
+        statement.setString(3, courseDescription);
+        statement.setString(4, courseSectionNum);
+        statement.setString(5, courseName);
+        statement.setString(6, instructorName);
+        statement.setString(7, semester);
+        statement.setString(8, location);
+        statement.setString(9, credits);
+        statement.setBoolean(10, isActive);
+        statement.executeUpdate();
+        statement.close();
+
+        return true;
+    }
+
     public static List<ParticularCourse> getCoursesForUser(int userId, Connection connection) throws SQLException {
 
         List<String> courseIDs = CourseRepository.getCourseIdListFromUserId(connection, userId);
@@ -25,14 +59,13 @@ public class CourseRepository {
 
         // TODO: <COMPLETED>
         //  1) Pull list of courseIDs from associative database.
-
-        var statement = connection.prepareStatement("SELECT c.courseId c.courseNum c.courseDescription c.courseSectionNum" +
-                " c.courseName c.semester c.instructorName c.isActive FROM courses AS c INNER JOIN courses_to_users_mapping " +
-                "AS ctum ON c.id = ctum.courseId INNER JOIN users as u ON ctum.userId = u.id WHERE u.id = ?");
+        var statement = connection.prepareStatement("SELECT c.courseId, c.courseNum, c.courseDescription," +
+                " c.courseSectionNum, c.courseName, c.semester, c.instructorName, c.location, c.credits, c.isActive FROM courses " +
+                "AS c INNER JOIN courses_to_users_mapping AS ctum ON c.courseId = ctum.courseId INNER JOIN users " +
+                "AS u ON ctum.userId = u.id WHERE u.id = ?");
         statement.setInt(1, userId);
         var result = statement.executeQuery();
         var courseIDs = new ArrayList<String>();
-
         while (result.next()) {
             courseIDs.add(result.getString("courseId"));
         }
@@ -49,8 +82,9 @@ public class CourseRepository {
         for (String courseId : courseIDs) {
             var result = CourseRepository.loadCourseFields(connection, courseId, statements);
 
-            var studentIdList = result.getString("studentIds");
-            var students = UserRepository.createUserListFromIdList(connection, studentIdList);
+//            var studentIdList = result.getString("studentIds");
+//            var students = UserRepository.createUserListFromIdList(connection, studentIdList);
+            var students = new ArrayList<User>();
 
             //var taIdList = result.getString("taIds");
             //var tas = UserRepository.createUserListFromIdList(connection, taIdList);
@@ -72,6 +106,8 @@ public class CourseRepository {
                             result.getString("courseNum"),
                             result.getString("semester"),
                             result.getString("courseSectionNum"),
+                            result.getString("location"),
+                            result.getString("credits"),
                             result.getBoolean("isActive"),
                             students,
                             tas,
@@ -94,8 +130,9 @@ public class CourseRepository {
         // TODO: <COMPLETED>
         //  1) Pull course information from course database. Return a SQL.ResultSet please
 
-        var statement = connection.prepareStatement("SELECT c.courseNum c.courseDescription c.courseSectionNum " +
-                "c.courseName c.semester c.instructorName c.isActive FROM courses AS c WHERE c.courseId = ? ");
+        var statement = connection.prepareStatement("SELECT c.courseNum, c.courseDescription, c.courseSectionNum, " +
+                "c.courseName, c.semester, c.instructorName, c.location, c.credits, c.isActive FROM courses AS c " +
+                "WHERE c.courseId = ? ");
 
         statement.setString(1, courseId);
         statements.add(statement);
@@ -147,7 +184,7 @@ public class CourseRepository {
 
         statement.setString(1, courseId);
         statement.setInt(2, userId);
-        statement.executeQuery();
+        statement.executeUpdate();
         statement.close();
     }
 

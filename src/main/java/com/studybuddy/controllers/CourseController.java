@@ -1,13 +1,10 @@
 package com.studybuddy.controllers;
 
 import com.studybuddy.repositories.CourseRepository;
-import com.studybuddy.repositories.EventRepository;
-import com.studybuddy.repositories.IdRepository;
 import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 public class CourseController {
 
