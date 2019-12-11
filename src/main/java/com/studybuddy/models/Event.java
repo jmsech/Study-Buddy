@@ -104,7 +104,15 @@ public class Event {
         return isDeadline;
     }
 
+    public boolean getIsDeadline() {
+        return isDeadline;
+    }
+
     public void setDeadline(boolean deadline) {
+        isDeadline = deadline;
+    }
+
+    public void setIsDeadline(boolean deadline) {
         isDeadline = deadline;
     }
 
