@@ -2,11 +2,12 @@ class User extends React.Component {
     render () {
        return (
            <div>
-               <AddCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
+               <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
+               <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userID}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
-                   <div className="column">
+                   <div className="eventsColumn">
                        {/* Header which says Events and Google Calendar button */}
                        <h3>Events <GetGoogleEvents userID={this.props.userId}/> </h3>
                        {/* "New Event" Button */}
@@ -16,11 +17,20 @@ class User extends React.Component {
                        {/* List of events which user is attending */}
                        <EventList userID={this.props.userId}/>
                    </div>
-                   <div className="column">
+                   <div className="recColumn">
                        {/* Recommendations Header */}
-                       <h3>Recommendations</h3>
-                       {/* Display list of recommendations */}
-                       <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.props.userId}/>
+                       <h3 className="center">Recommendations</h3>
+                       <div className="content-row">
+                       <div className="column">
+                            <h5 className="center"> Find a time to study with a group of your buddies </h5>
+                            {/* Display list of recommendations */}
+                            <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.props.userId}/>
+                       </div>
+                       <div className="column">
+                            <h5 className="center"> Find new buddies to study with in one of your classes </h5>
+                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.state.userID}/>
+                       </div>
+                       </div>
                    </div>
                </div>
            </div>
@@ -63,16 +73,13 @@ class GetGoogleEvents extends React.Component {
     }
 }
 
-class AddCourses extends React.Component {
+class SeeCourses extends React.Component {
     render() {
         let text = "See Courses";
-        if (this.props.active) {text = "Hide Courses";}
-        let disp = {display: "none"};
-        if (this.props.active) { disp = {display: "block"}; }
         return (
             <div>
-                <button className="btn" onClick = {() => this.props.flip()}> {text} </button>
-                <CourseList disp={disp} userID = {this.props.userID}/>
+                <button data-target="slide-out" className="btn sidenav-trigger"> {text} </button>
+                <CourseList userID = {this.props.userID}/>
             </div>
         )
     }
@@ -81,33 +88,46 @@ class AddCourses extends React.Component {
 class CourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { courses: [{id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}] };
+        this.state = {
+            courses: []
+        };
     }
 
     async getDataFromServer() {
-        await fetch(`/${this.props.userID}/courses`, {method: "PUT"}); {/* FIXME does this line do anthing?*/}
-        this.setState({ courses: await (await fetch(`/${this.props.userID}/courses`)).json() });
-        window.setTimeout(() => { this.getDataFromServer(); }, 200);
+        // This first line removes past events
+        await fetch(`/${this.props.userID}/courses`, {method: "PUT"});
+        this.setState({courses: await (await fetch(`/${this.props.userID}/courses`)).json()});
+        window.setTimeout(() => {
+            this.getDataFromServer();
+        }, 200);
     }
 
     async componentDidMount() {
         await this.getDataFromServer();
+        M.Sidenav.init(document.querySelectorAll('.sidenav'), {
+        });
     }
 
     render() {
         return (
-            <ul className="list-inline">{this.state.courses.map(course =>
-                <Course disp = {this.props.disp}
-                        key={course.id}
-                        course={course}
-                        userID={this.props.userID}
-                        disp={this.props.disp}
-                />)}
-            </ul>
+            <div>
+                <ul id="slide-out" className="sidenav">
+                    <span className="card-title">
+                        <h4>Your Courses</h4>
+                    </span>
+                    {this.state.courses.map(course =>
+                        <Course key={course.id}
+                                course={course}
+                                userID={this.props.userID}
+                        />
+                    )}
+                </ul>
+
+
+            </div>
         );
     }
 }
-
 class Course extends React.Component {
     constructor(props) {
         super(props);
@@ -115,8 +135,8 @@ class Course extends React.Component {
 
     render() {
         return (
-            <li className="card hoverable teal lighten-2">
-                <div className="card-content black-text" style={this.props.disp}>
+            <div className="card hoverable teal lighten-2">
+                <div className="card-content black-text">
                     <span className="card-title">
                         {/*<CourseHeader course={this.props.course}/>*/}
                         <h6>{this.props.course.courseName}</h6>
@@ -126,12 +146,12 @@ class Course extends React.Component {
                     <p>{this.props.course.instructor}</p>
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
+                    <button className="btn">Add Deadline</button>
                 </div>
-            </li>
+            </div>
         );
     }
 }
-
 class CourseLocation extends React.Component {
     constructor(props) {
         super(props);

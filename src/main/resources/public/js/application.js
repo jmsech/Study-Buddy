@@ -7,7 +7,8 @@ class Application extends React.Component {
         const temp = parameters[0].split("=");
         const id = unescape(temp[1]);
 
-        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, userId: id}
+        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, userId: id,
+            showBuddyRecForm: false, showAddCourseForm: false};
     }
 
     flipEventFormState() {
@@ -22,6 +23,18 @@ class Application extends React.Component {
         this.setState({showCourseDisplay: !this.state.showCourseDisplay});
     }
 
+    flipRecFormState() {
+        this.setState({showRecForm: !this.state.showRecForm});
+    }
+
+    flipBuddyRecFormState() {
+        this.setState({showBuddyRecForm: !this.state.showBuddyRecForm});
+    }
+
+    flipAddCourseFormState() {
+        this.setState({showAddCourseForm: !this.state.showAddCourseForm});
+    }
+
     render() {
         return (
             <div>
@@ -34,7 +47,12 @@ class Application extends React.Component {
                               flipEventFormState={this.flipEventFormState.bind(this)}
                               showRecForm={this.state.showRecForm}
                               flipRecFormState={this.flipRecFormState.bind(this)}
+                              showBuddyRecForm={this.state.showBuddyRecForm}
+                              flipBuddyRecFormState={this.flipBuddyRecFormState.bind(this)}
+                              showAddCourseForm={this.state.showAddCourseForm}
+                              flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
                               userId={this.state.userId}/>
+                        />
                     </div>
                 </div>
             </div>

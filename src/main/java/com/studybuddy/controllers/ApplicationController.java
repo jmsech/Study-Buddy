@@ -94,6 +94,10 @@ public class ApplicationController {
         userController.collectGoogleEvents(ctx);
     }
 
+    public void addCourseToUser(Context ctx) throws SQLException {
+        courseController.addCourseToUser(ctx);
+    }
+
     public void logOut(Context ctx) throws IOException {
         Files.deleteIfExists(Paths.get("tokens/StoredCredential"));
     }

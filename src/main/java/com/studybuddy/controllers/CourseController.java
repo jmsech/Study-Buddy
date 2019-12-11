@@ -49,6 +49,15 @@ public class CourseController {
         ctx.status(200);
     }
 
+    public void addCourseToUser(Context ctx) throws SQLException {
+        // String courseId = ctx.pathParam("courseId");
+        System.out.println("Hello");
+        var courseId = ctx.formParam("courseId", String.class).get();
+        var userId = Integer.parseInt(ctx.pathParam("userId"));
+        CourseRepository.addCourseToUser(connection, courseId, userId);
+        ctx.status(200);
+    }
+
     public void updateCourseStatus(Context ctx) {
         // TODO:
         //  Should a student be able to update a course? Maybe for a discussion board or something, idk.

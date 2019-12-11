@@ -54,6 +54,9 @@ public class Server {
                                 put(ApplicationController::updateCourseStatus);
                             });
                         });
+                        path("courses2", () -> {
+                            post(ApplicationController::addCourseToUser);
+                        });
                     });
                 })
                 .start(System.getenv("PORT") == null ? 7000 : Integer.parseInt(System.getenv("PORT")));
