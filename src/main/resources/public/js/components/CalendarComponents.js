@@ -134,7 +134,8 @@ class NewEventForm extends React.Component {
 class EventList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { events: [] };
+        //TODO set up isDeadline in database. If you want to see a deadline displayed, comment out the body of getDataFromServer
+        this.state = { events: [{title: "Test", isDeadline: true}] };
     }
 
     async getDataFromServer() {
@@ -173,28 +174,42 @@ class Event extends React.Component {
     }
 
     render() {
-        return (
-            <li className="card hoverable teal lighten-2">
-                <div className="card-content black-text">
+        if (this.props.event.isDeadline) {
+            return (
+                <li className="card hoverable red lighten-2">
+                    <div className="card-content black-text">
                     <span className="card-title">
                         <EventTitle event={this.props.event}/>
                     </span>
-                    <EventDateTime event={this.props.event}/>
-                    <EventDescription event={this.props.event}/>
-                    <EventLocation event={this.props.event}/>
-                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
-                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
-                    <AddToGoogleCalendarButton event={this.props.event}/>
-                </div>
-                <div className="card-action right-align">
-                    <div id="edit-delete">
-                        <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                        <DeleteButton event={this.props.event} userID = {this.props.userID}/>
                     </div>
-                    <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                </div>
-            </li>
-        );
+                </li>
+            );
+        } else {
+            return (
+                <li className="card hoverable teal lighten-2">
+                    <div className="card-content black-text">
+                        <span className="card-title">
+                            <EventTitle event={this.props.event}/>
+                        </span>
+                        <EventDateTime event={this.props.event}/>
+                        <EventDescription event={this.props.event}/>
+                        <EventLocation event={this.props.event}/>
+                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}
+                                             showAttendees={this.state.showAttendees}/>
+                        <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
+                        <AddToGoogleCalendarButton event={this.props.event}/>
+                    </div>
+                    <div className="card-action right-align">
+                        <div id="edit-delete">
+                            <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                            <DeleteButton event={this.props.event} userID={this.props.userID}/>
+                        </div>
+                        <EditEventForm event={this.props.event} userID={this.props.userID}
+                                       showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                    </div>
+                </li>
+            );
+        }
     }
 }
 
