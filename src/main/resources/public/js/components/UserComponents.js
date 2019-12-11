@@ -12,7 +12,7 @@ class User extends React.Component {
     render () {
        return (
            <div>
-               <AddCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.state.userID}/>
+               <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.state.userID}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
@@ -73,16 +73,13 @@ class GetGoogleEvents extends React.Component {
     }
 }
 
-class AddCourses extends React.Component {
+class SeeCourses extends React.Component {
     render() {
         let text = "See Courses";
-        if (this.props.active) {text = "Hide Courses";}
-        let disp = {display: "none"};
-        if (this.props.active) { disp = {display: "block"}; }
         return (
             <div>
-                <button className="btn" onClick = {() => this.props.flip()}> {text} </button>
-                <CourseList disp={disp} userID = {this.props.userID}/>
+                <button data-target="slide-out" className="btn sidenav-trigger"> {text} </button>
+                <CourseList userID = {this.props.userID}/>
             </div>
         )
     }
@@ -91,33 +88,47 @@ class AddCourses extends React.Component {
 class CourseList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { courses: [{id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}, {id: 1, name: "OOSE", location: "merg", courseNumber: "601.400", professor: "Fettuccine"}, {id:2, name:"algos", location:"shaffer", courseNumber: "601.433", professor: "Dinitz"}] };
+        this.state = {
+            courses: []
+        };
     }
 
     async getDataFromServer() {
-        await fetch(`/${this.props.userID}/courses`, {method: "PUT"}); {/* FIXME does this line do anthing?*/}
-        this.setState({ courses: await (await fetch(`/${this.props.userID}/courses`)).json() });
-        window.setTimeout(() => { this.getDataFromServer(); }, 200);
+        await fetch(`/${this.props.userID}/courses`, {method: "PUT"});
+        {/* FIXME does this line do anthing?*/
+        }
+        this.setState({courses: await (await fetch(`/${this.props.userID}/courses`)).json()});
+        window.setTimeout(() => {
+            this.getDataFromServer();
+        }, 200);
     }
 
     async componentDidMount() {
         await this.getDataFromServer();
+        M.Sidenav.init(document.querySelectorAll('.sidenav'), {
+        });
     }
 
     render() {
         return (
-            <ul className="list-inline">{this.state.courses.map(course =>
-                <Course disp = {this.props.disp}
-                        key={course.id}
-                        course={course}
-                        userID={this.props.userID}
-                        disp={this.props.disp}
-                />)}
-            </ul>
+            <div>
+                <ul id="slide-out" className="sidenav">
+                    <span className="card-title">
+                        <h4>Your Courses</h4>
+                    </span>
+                    {this.state.courses.map(course =>
+                        <Course key={course.id}
+                                course={course}
+                                userID={this.props.userID}
+                        />
+                    )}
+                </ul>
+
+
+            </div>
         );
     }
 }
-
 class Course extends React.Component {
     constructor(props) {
         super(props);
@@ -125,8 +136,8 @@ class Course extends React.Component {
 
     render() {
         return (
-            <li className="card hoverable teal lighten-2">
-                <div className="card-content black-text" style={this.props.disp}>
+            <div className="card hoverable teal lighten-2">
+                <div className="card-content black-text">
                     <span className="card-title">
                         {/*<CourseHeader course={this.props.course}/>*/}
                         <h6>{this.props.course.courseName}</h6>
@@ -136,12 +147,13 @@ class Course extends React.Component {
                     <p>{this.props.course.instructor}</p>
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
+                    <button className="btn">Add Deadline</button>
                 </div>
-            </li>
+            </div>
+
         );
     }
 }
-
 class CourseLocation extends React.Component {
     constructor(props) {
         super(props);
