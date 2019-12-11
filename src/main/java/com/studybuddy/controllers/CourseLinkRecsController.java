@@ -98,7 +98,9 @@ public class CourseLinkRecsController {
             var id = i + 1; // FIXME Is this correct?
             List<User> users = UserRepository.createUserListFromIdList(connection, recommendation.getUserIDs());
             if (users == null) { users = new ArrayList<>(); }
-            recsToDisplay.add((new Event(id, "Suggested Study Time with Your New Buddies", recommendation.getStartTime(), recommendation.getEndTime(), "We found some buddies for you to study with!", users, "")));
+            recsToDisplay.add((new Event(id, "Suggested Study Time with Your New Buddies",
+                    recommendation.getStartTime(), recommendation.getEndTime(),
+                    "We found some buddies for you to study with!", users, "", false)));
         }
 
         if (recsToDisplay.isEmpty()) {

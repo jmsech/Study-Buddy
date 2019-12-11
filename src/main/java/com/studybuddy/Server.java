@@ -54,8 +54,12 @@ public class Server {
                                 put(ApplicationController::updateCourseStatus);
                             });
                         });
-                        path("courses2", () -> {
+                        path("addCourse", () -> {
                             post(ApplicationController::addCourseToUser);
+                        });
+                        path("deadline", () -> {
+                            post(ApplicationController::addDeadlineToCourse);
+                            delete(ApplicationController::removeDeadlineFromCourse);
                         });
                     });
                 })

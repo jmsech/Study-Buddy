@@ -11,7 +11,7 @@ import java.util.List;
 public class EventRepository {
 
     public static ArrayList<Event> getEventsForUser(int userId, Connection connection) throws SQLException {
-        var statement = connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent " +
+        var statement = connection.prepareStatement("SELECT e.id, e.title, e.startTime, e.endTime, e.description, e.location, e.isGoogleEvent, e.isDeadline " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = false");
@@ -38,6 +38,7 @@ public class EventRepository {
                         )
                 );
             }
+            // TODO: Make sure event isn't already in list
             events.add(
                     new Event(
                             result.getInt("id"),
@@ -46,16 +47,74 @@ public class EventRepository {
                             result.getTimestamp("endTime").toLocalDateTime(),
                             result.getString("description"),
                             inviteList,
-                            result.getString("location")
+                            result.getString("location"),
+                            result.getBoolean("isDeadline")
                     )
             );
         }
         for (var s : statements) {s.close();}
 
-        // TODO (maybe): Let courses be associated with events so that users can have course events automatically added to schedule
+        events.addAll(EventRepository.getEventsFromUserCourses(connection, userId));
 
         events.sort(new Event.EventComparator());
         return events;
+    }
+
+    public static List<Event> getEventsFromUserCourses(Connection connection, int userId) throws SQLException {
+        var events = new ArrayList<Event>();
+
+        var courseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
+        var eventIDs = new ArrayList<Integer>();
+        for (var cid : courseIDs) { eventIDs.addAll(EventRepository.getEventIDsFromCourseID(connection, cid)); }
+        for (var eid : eventIDs) {
+            var event = EventRepository.loadEventFields(connection, eid, new ArrayList<>());
+            if (event != null) {
+                events.add(event);
+            }
+        }
+
+        return events;
+    }
+
+    public static Event loadEventFields(Connection connection, int eventId, ArrayList<User> attendees) throws SQLException {
+        var statement = connection.prepareStatement("SELECT id, title, startTime, endTime, description, location, isGoogleEvent, isDeadline " +
+                "FROM events WHERE id = ? AND expired = 0");
+        statement.setInt(1, eventId);
+        var result = statement.executeQuery();
+        if (!result.isBeforeFirst()) { return null; }
+        var event = new Event(
+                result.getInt("id"),
+                result.getString("title"),
+                result.getTimestamp("startTime").toLocalDateTime(),
+                result.getTimestamp("endTime").toLocalDateTime(),
+                result.getString("description"),
+                attendees,
+                result.getString("location"),
+                result.getBoolean("isDeadline")
+        );
+        statement.close();
+        return event;
+    }
+
+    public static List<Integer> getEventIDsFromCourseID(Connection connection, String courseId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT eventId FROM courses_to_events_mapping WHERE courseId = ?");
+        statement.setString(1, courseId);
+        var result = statement.executeQuery();
+        var eventIDs = new ArrayList<Integer>();
+        while (result.next()) {
+            eventIDs.add(result.getInt("eventId"));
+        }
+        statement.close();
+
+        statement = connection.prepareStatement("SELECT eventId FROM courses_to_deadlines_mapping WHERE courseId = ?");
+        statement.setString(1, courseId);
+        result = statement.executeQuery();
+        while (result.next()) {
+            eventIDs.add(result.getInt("eventId"));
+        }
+        statement.close();
+
+        return eventIDs;
     }
 
     private static java.sql.ResultSet loadEventAttendees(int eventId, Connection connection, List<PreparedStatement> statements) throws SQLException {
@@ -66,8 +125,8 @@ public class EventRepository {
         return statement.executeQuery();
     }
 
-    public static int createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId) throws SQLException {
-        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+    public static int createEventInDB(Connection connection, List<Integer> idInviteList, String title, Timestamp sqlStartDate, Timestamp sqlEndDate, String description, String location, int userId, boolean isDeadline) throws SQLException {
+        var statement = connection.prepareStatement("INSERT INTO events (title, startTime, endTime, description, location, hostId, isGoogleEvent, expired, isDeadline) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
         statement.setString(1, title);
         statement.setTimestamp(2, sqlStartDate);
         statement.setTimestamp(3, sqlEndDate);
@@ -76,6 +135,7 @@ public class EventRepository {
         statement.setInt(6, userId);
         statement.setBoolean(7, false);
         statement.setBoolean(8, false);
+        statement.setBoolean(9, isDeadline);
         statement.executeUpdate();
 
         // Create event to users mapping

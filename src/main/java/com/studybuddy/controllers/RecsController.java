@@ -76,7 +76,9 @@ class RecsController {
             var id = i + 1;
             List<User> users = UserRepository.createUserListFromIdList(connection, recommendation.getUserIDs());
             if (users == null) { users = new ArrayList<>(); }
-            recsToDisplay.add((new Event(id, "Buddy Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "Some of your buddies are free at this time!", users, "")));
+            recsToDisplay.add((new Event(id, "Buddy Study Time", recommendation.getStartTime(),
+                    recommendation.getEndTime(), "Some of your buddies are free at this time!",
+                    users, "", false)));
         }
 
         if (recsToDisplay.isEmpty()) {

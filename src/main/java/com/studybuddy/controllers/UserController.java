@@ -6,7 +6,6 @@ import com.studybuddy.repositories.AuthenticationRepository;
 import com.studybuddy.repositories.UserRepository;
 import io.javalin.http.Context;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;

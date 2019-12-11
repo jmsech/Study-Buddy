@@ -7,6 +7,7 @@ import com.studybuddy.models.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -50,6 +51,23 @@ public class CourseRepository {
         add_course_lectures_to_DB(connection, timeString, semester, courseName, location, courseId);
 
         return true;
+    }
+
+    public static void addDeadlineToCourse(Connection connection, String courseId, String title, String description, Timestamp time) throws SQLException {
+        var eventId = EventRepository.createEventInDB(connection, new ArrayList<>(), title, time, time, description, "", courseId.hashCode(), true);
+        var statement2 = connection.prepareStatement("INSERT INTO courses_to_deadlines_mapping(courseId, eventId) VALUES (?, ?)");
+        statement2.setString(1, courseId);
+        statement2.setInt(2, eventId);
+        statement2.executeUpdate();
+        statement2.close();
+    }
+
+    public static void removeDeadlineFromCourse(Connection connection, int eventId, String courseId) throws SQLException {
+        var statement = connection.prepareStatement("DELETE FROM events WHERE id = ? AND hostId = ?");
+        statement.setInt(1, eventId);
+        statement.setInt(1, courseId.hashCode());
+        statement.executeUpdate();
+        statement.close();
     }
 
     public static List<ParticularCourse> getCoursesForUser(Connection connection, int userId) throws SQLException {
@@ -140,24 +158,9 @@ public class CourseRepository {
         //  3) Check if student is already on list (If student not on list, return 2)
         //  4) Add Student to list and update course roster in DB (return 0)
 
-        var statement = connection.prepareStatement("SELECT eventId FROM courses_to_events_mapping WHERE courseId = ?");
-        statement.setString(1, courseId);
-        var result = statement.executeQuery();
-        while (result.next()) {
-            int eventId = result.getInt("eventId");
-            var statement2 = connection.prepareStatement("INSERT INTO events_to_users_mapping(userId, eventId) VALUES (?, ?)");
-            statement2.setInt(1, userId);
-            statement2.setInt(2, eventId);
-            statement2.executeUpdate();
-            statement2.close();
-        }
-        statement.close();
-
         List<Integer> rosterIDs = CourseRepository.getRosterIDs(connection, courseId);
-        if (rosterIDs == null) { return 1; }
-        if (rosterIDs.contains(userId)) {return 2; }
+        if (rosterIDs.contains(userId)) {return 1; }
         CourseRepository.updateCourseRoster(connection, courseId, userId);
-
         return 0;
     }
 
@@ -256,7 +259,7 @@ public class CourseRepository {
             LocalDateTime endOfClass = LocalDateTime.ofEpochSecond(day.toEpochSecond(ZoneOffset.UTC) + endSec + j*60*60*24*7, 0, ZoneOffset.ofHours(0));
             java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startOfClass);
             java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endOfClass);
-            int eventId = EventRepository.createEventInDB(connection, new ArrayList<>(), courseName + " Lecture", sqlStartDate, sqlEndDate, "", location, courseId.hashCode());
+            int eventId = EventRepository.createEventInDB(connection, new ArrayList<>(), courseName + " Lecture", sqlStartDate, sqlEndDate, "", location, courseId.hashCode(), false);
             var statement = connection.prepareStatement("INSERT INTO courses_to_events_mapping(courseId, eventId) VALUES (?, ?)");
             statement.setString(1, courseId);
             statement.setInt(2, eventId);
