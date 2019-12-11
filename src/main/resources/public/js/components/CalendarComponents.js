@@ -187,7 +187,7 @@ class Event extends React.Component {
                 </div>
                 <div className="card-action right-align">
                     <div id="edit-delete">
-                        <EditButton flip={this.flipFormState.bind(this)}/>
+                        <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
                         <DeleteButton event={this.props.event} userID = {this.props.userID}/>
                     </div>
                     <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
@@ -316,9 +316,11 @@ class DeleteButton extends React.Component {
 
 class EditButton extends React.Component {
     render() {
-        return (
-            <button className="btn" onClick={() => { this.props.flip() }}>Edit</button>
-        )
+        let title = "Edit";
+        if (this.props.showForm) {
+            title = "Cancel";
+        }
+        return <button className="btn" onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
 
