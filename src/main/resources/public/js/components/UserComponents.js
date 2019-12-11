@@ -109,9 +109,9 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav">
+                <ul id="slide-out" className="sidenav teal lighten-1">
                     <span className="card-title">
-                        <h4>Your Courses</h4>
+                        <h4 color="white">Your Courses</h4>
                     </span>
                     {this.state.courses.map(course => <Course key={course.id} course={course}/>)}
                 </ul>

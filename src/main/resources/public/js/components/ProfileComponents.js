@@ -36,13 +36,13 @@ class CurrentCourses extends React.Component {
         return (
             <div className="center">
                 <h4>Your classes</h4>
-                <CollapsibleCoursesList userId={this.props.userId}/>
+                <CollapsibleCourseList userId={this.props.userId}/>
             </div>
         );
     }
 }
 
-class CollapsibleCoursesList extends React.Component {
+class CollapsibleCourseList extends React.Component {
     constructor(props) {
         super(props);
         this.state = { courses: [] };
@@ -56,20 +56,13 @@ class CollapsibleCoursesList extends React.Component {
     componentDidMount() {
         this.getDataFromServer();
         // Initialize materialize collapsible
-        document.addEventListener('DOMContentLoaded', function() {
-            const elems = document.querySelectorAll('.collapsible');
-            M.Collapsible.init(elems, {});
-        });
+        M.AutoInit();
     }
 
     render() {
         return (
             <div>
                 <ul className="collapsible popout">
-                    <li>
-                        <div className="collapsible-header">Test header</div>
-                        <div className="collapsible-body"><span>Test body</span></div>
-                    </li>
                     {this.state.courses.map(course => <CollapsibleCourse key={course.courseId} course={course}/>)}</ul>
             </div>
         );
@@ -80,8 +73,8 @@ class CollapsibleCourse extends React.Component {
     render() {
         return (
             <li>
-                <div className="collapsible-header">{this.props.course.courseName}</div>
-                <div className="collapsible-body">yeet</div>
+                <div className="collapsible-header teal lighten-2">{this.props.course.courseName}</div>
+                <div className="collapsible-body teal lighten-2">yeet</div>
             </li>
         );
     }
