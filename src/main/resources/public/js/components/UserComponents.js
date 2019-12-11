@@ -1,36 +1,26 @@
 class User extends React.Component {
-    // Constructor called by application.js
-    constructor(props) {
-        super(props);
-
-        // Determine the userId from the website url. (location.search)
-        const parameters = location.search.substring(1).split("&");
-        const temp = parameters[0].split("=");
-        const id = unescape(temp[1]);
-        this.state = {userID: id};
-    }
     render () {
        return (
            <div>
-               <AddCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.state.userID}/>
+               <AddCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
                    <div className="column">
                        {/* Header which says Events and Google Calendar button */}
-                       <h3>Events <GetGoogleEvents userID={this.state.userID}/> </h3>
+                       <h3>Events <GetGoogleEvents userID={this.props.userId}/> </h3>
                        {/* "New Event" Button */}
                        <NewEventButton className="new-event-button btn white-text" flip={this.props.flipEventFormState} showEventForm={this.props.showEventForm}/>
                        {/* New event form (which is hidden when "New Event" is unclicked) */}
-                       <NewEventForm userID={this.state.userID} showEventForm={this.props.showEventForm} flip={this.props.flipEventFormState}/>
+                       <NewEventForm userID={this.props.userId} showEventForm={this.props.showEventForm} flip={this.props.flipEventFormState}/>
                        {/* List of events which user is attending */}
-                       <EventList userID={this.state.userID}/>
+                       <EventList userID={this.props.userId}/>
                    </div>
                    <div className="column">
                        {/* Recommendations Header */}
                        <h3>Recommendations</h3>
                        {/* Display list of recommendations */}
-                       <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.state.userID}/>
+                       <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.props.userId}/>
                    </div>
                </div>
            </div>

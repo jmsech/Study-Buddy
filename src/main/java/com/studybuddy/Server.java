@@ -15,13 +15,16 @@ public class Server {
         var ApplicationController = new ApplicationController(connection);
         Javalin.create(config -> { config.addStaticFiles("/public"); })
                 .events(event -> {
-                    event.serverStopped(() -> { connection.close(); });
+                    event.serverStopped(connection::close);
                 })
                 .routes(() -> {
                     path("users", () -> {
                         post(ApplicationController::createUser);
                         path("authenticate/", () -> {
                             post(ApplicationController::authenticateUser);
+                        });
+                        path(":userId", () -> {
+                           get(ApplicationController::getUser);
                         });
                     });
                     path(":userId", () -> { 

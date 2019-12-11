@@ -1,7 +1,13 @@
 class Application extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false}
+
+        // Determine the userId from the website url. (location.search)
+        const parameters = location.search.substring(1).split("&");
+        const temp = parameters[0].split("=");
+        const id = unescape(temp[1]);
+
+        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, userId: id}
     }
 
     flipEventFormState() {
@@ -20,40 +26,21 @@ class Application extends React.Component {
         return (
             <div>
                 <div>
-                    <Header/>
+                    <Header userId={this.state.userId}/>
                     <div className="centralized-body">
                         <User showCourseDisplay = {this.state.showCourseDisplay}
                               flipCourseDisplay = {this.flipCourseDisplay.bind(this)}
                               showEventForm = {this.state.showEventForm}
                               flipEventFormState={this.flipEventFormState.bind(this)}
                               showRecForm={this.state.showRecForm}
-                              flipRecFormState={this.flipRecFormState.bind(this)}/>
+                              flipRecFormState={this.flipRecFormState.bind(this)}
+                              userId={this.state.userId}/>
                     </div>
                 </div>
             </div>
         );
     }
 }
-
-class LogoutButton extends React.Component {
-    render() {
-        return (
-            // TODO make this actually log out of a user
-            <a className="btn" href="/../index.html" onClick = {() => this.logOut()}>Log&nbsp;Out</a>
-        );
-    }
-
-    async logOut() {
-        await fetch(`../${this.props.userID}`, {method: "DELETE"})
-    }
-}
-
-const Header = () => (
-    <header>
-        <img className="logo" src="../images/logo-full.png"/>
-        <div className="logout-button"><LogoutButton/></div>
-    </header>
-);
 
 ReactDOM.render(<Application/>, document.querySelector("#application"));
 

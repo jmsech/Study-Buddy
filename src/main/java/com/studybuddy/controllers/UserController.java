@@ -1,10 +1,12 @@
 package com.studybuddy.controllers;
 
 import com.studybuddy.CalendarQuickstart;
+import com.studybuddy.models.User;
 import com.studybuddy.repositories.AuthenticationRepository;
 import com.studybuddy.repositories.UserRepository;
 import io.javalin.http.Context;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +20,18 @@ class UserController {
 
     UserController(Connection connection) {
         this.connection = connection;
+    }
+
+    void getUser(Context ctx) throws SQLException {
+        var id = ctx.pathParam("userId", Integer.class).get();
+        User user = UserRepository.getUser(connection, id);
+        if (user != null) {
+            ctx.json(user);
+            ctx.status(200);
+        } else {
+            // User not found
+            ctx.status(404);
+        }
     }
 
     void createUser(Context ctx) throws SQLException {

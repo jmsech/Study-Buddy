@@ -16,6 +16,17 @@ import java.util.List;
 
 public class UserRepository {
 
+    public static User getUser(Connection connection, int id) throws SQLException {
+        var statement = connection.prepareStatement("SELECT email, firstName, lastName FROM users WHERE id = ?");
+        statement.setInt(1, id);
+        var result = statement.executeQuery();
+        if (result.next()) {
+            String name = result.getString("firstName") + " " + result.getString("lastName");
+            return new User(id, name, result.getString("email"));
+        }
+        return null;
+    }
+
     public static boolean createUser(Connection connection, String email, String password, String firstName, String lastName) throws SQLException {
         var checkStatement = connection.prepareStatement("SELECT 1 FROM users WHERE email = ?");
         checkStatement.setString(1, email);

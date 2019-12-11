@@ -10,7 +10,7 @@ body {
 }
 
 .centralized-body {
-    padding-top: 0px;
+    padding-top: 0;
     margin: 100px 3%;
     font-family: "Product Sans";
 }
@@ -61,7 +61,13 @@ header {
     margin-left: 3%;
 }
 
-.logout-button {
+.header-button {
+    height: 100%;
+    padding: 20px 3%;
+}
+
+.header-buttons {
+    float: right;
     height: 100%;
     padding: 20px 3%;
 }
@@ -107,3 +113,16 @@ a:hover {
 .list-inline > li {
     display: inline-block;
 }
+
+.profile-body {
+    padding-top: 0;
+    margin: 100px auto;
+    max-width: 700px;
+    font-family: "Product Sans";
+}
+
+.profile-picture {
+    max-width: 200px;
+    border-radius: 50%;
+}
+
