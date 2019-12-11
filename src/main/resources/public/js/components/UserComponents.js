@@ -164,7 +164,7 @@ class Course extends React.Component {
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
                     <DeadlineButton userID={this.props.userID} active={this.props.active} flip = {this.props.flip}/>
-                    <NewDeadlineForm active={this.props.active} flip = {this.props.flip}/>
+                    <NewDeadlineForm active={this.props.active} flip = {this.props.flip} courseID={this.props.course.id}/>
                 </div>
             </div>
 
@@ -210,11 +210,12 @@ class NewDeadlineForm extends React.Component {
     handleSubmit(event) {
         this.props.flip();
         const formData = new FormData();
-        formData.append("userId", this.props.userID);
+        formData.append("userID", this.props.userID);
         formData.append("title", event.target.title.value);
         // combine tim/date into the format yyyy-mm-dd 00:00
-        formData.append("startTime", event.target.startDate.value + " " + event.target.startTime.value);
+        formData.append("dueDate", event.target.startDate.value + " " + event.target.dueTime.value);
         formData.append("description", event.target.description.value);
+        form.append("courseID", this.props.courseID);
         event.preventDefault();
         // TODO: Call appropriate path on Server
         // fetch(`../${this.props.userID}/courses`, {method: "POST", body: formData})
