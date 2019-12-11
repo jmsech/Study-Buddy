@@ -28,7 +28,7 @@ class User extends React.Component {
                        </div>
                        <div className="column">
                             <h5 className="center"> Find new buddies to study with in one of your classes </h5>
-                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.state.userID}/>
+                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.props.userId}/>
                        </div>
                        </div>
                    </div>
@@ -94,8 +94,6 @@ class CourseList extends React.Component {
     }
 
     async getDataFromServer() {
-        // This first line removes past events
-        await fetch(`/${this.props.userID}/courses`, {method: "PUT"});
         this.setState({courses: await (await fetch(`/${this.props.userID}/courses`)).json()});
         window.setTimeout(() => {
             this.getDataFromServer();
@@ -115,15 +113,8 @@ class CourseList extends React.Component {
                     <span className="card-title">
                         <h4>Your Courses</h4>
                     </span>
-                    {this.state.courses.map(course =>
-                        <Course key={course.id}
-                                course={course}
-                                userID={this.props.userID}
-                        />
-                    )}
+                    {this.state.courses.map(course => <Course key={course.id} course={course}/>)}
                 </ul>
-
-
             </div>
         );
     }

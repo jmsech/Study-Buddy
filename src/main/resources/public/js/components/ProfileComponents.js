@@ -36,7 +36,53 @@ class CurrentCourses extends React.Component {
         return (
             <div className="center">
                 <h4>Your classes</h4>
+                <CollapsibleCoursesList userId={this.props.userId}/>
             </div>
+        );
+    }
+}
+
+class CollapsibleCoursesList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { courses: [] };
+    }
+
+    async getDataFromServer() {
+        this.setState({ courses: await (await fetch(`/${this.props.userId}/courses`)).json() });
+        window.setTimeout(() => {this.getDataFromServer();}, 200);
+    }
+
+    componentDidMount() {
+        this.getDataFromServer();
+        // Initialize materialize collapsible
+        document.addEventListener('DOMContentLoaded', function() {
+            const elems = document.querySelectorAll('.collapsible');
+            M.Collapsible.init(elems, {});
+        });
+    }
+
+    render() {
+        return (
+            <div>
+                <ul className="collapsible popout">
+                    <li>
+                        <div className="collapsible-header">Test header</div>
+                        <div className="collapsible-body"><span>Test body</span></div>
+                    </li>
+                    {this.state.courses.map(course => <CollapsibleCourse key={course.courseId} course={course}/>)}</ul>
+            </div>
+        );
+    }
+}
+
+class CollapsibleCourse extends React.Component {
+    render() {
+        return (
+            <li>
+                <div className="collapsible-header">{this.props.course.courseName}</div>
+                <div className="collapsible-body">yeet</div>
+            </li>
         );
     }
 }

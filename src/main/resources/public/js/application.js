@@ -52,7 +52,6 @@ class Application extends React.Component {
                               showAddCourseForm={this.state.showAddCourseForm}
                               flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
                               userId={this.state.userId}/>
-                        />
                     </div>
                 </div>
             </div>
