@@ -7,11 +7,27 @@ class User extends React.Component {
         const parameters = location.search.substring(1).split("&");
         const temp = parameters[0].split("=");
         const id = unescape(temp[1]);
-        this.state = {userID: id};
+        this.state = {userID: id, user: null};
     }
+
+    async getUserData() {
+        this.setState({ user: await (await fetch(`/users/${this.props.userId}`)).json() });
+    }
+
+    componentDidMount() {
+        this.getUserData();
+    }
+
     render () {
+        let firstName = "";
+        if (this.state.user !== null) {
+            let fullName = this.state.user.name;
+            var n = fullName.search(" ");
+            firstName = fullName.substr(0, n);
+        }
        return (
            <div>
+               <h5>Welcome, {firstName}!</h5>
                <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.state.userID}/>
                <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userID}/>
                {/* Below is the original display on the webpage */}
