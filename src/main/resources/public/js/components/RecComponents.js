@@ -36,7 +36,7 @@ class Recommendations extends React.Component {
 
 class NewRecButton extends React.Component {
     render() {
-        let title = "Generate a Recommendation";
+        let title = "Time Recommendation";
         if (this.props.showRecForm) {
             title = "Cancel";
         }
@@ -84,8 +84,6 @@ class NewRecForm extends React.Component {
         rec.preventDefault();
         fetch(`../${this.props.userID}/recs`, {method: "POST", body: formData})
             .then(this.handleResponse);
-        // fetch(`../${this.props.userID}/courseLinkRecs`, {method: "POST", body: formData}) //FIXME: This is where I did the form stuff
-        //     .then(this.handleResponse);
         rec.target.reset(); // clear the form entries
     }
 

@@ -13,10 +13,11 @@ class User extends React.Component {
        return (
            <div>
                <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.state.userID}/>
+               <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userID}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
-                   <div className="column">
+                   <div className="eventsColumn">
                        {/* Header which says Events and Google Calendar button */}
                        <h3>Events <GetGoogleEvents userID={this.state.userID}/> </h3>
                        {/* "New Event" Button */}
@@ -26,11 +27,20 @@ class User extends React.Component {
                        {/* List of events which user is attending */}
                        <EventList userID={this.state.userID}/>
                    </div>
-                   <div className="column">
+                   <div className="recColumn">
                        {/* Recommendations Header */}
-                       <h3>Recommendations</h3>
-                       {/* Display list of recommendations */}
-                       <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.state.userID}/>
+                       <h3 className="center">Recommendations</h3>
+                       <div className="content-row">
+                       <div className="column">
+                            <h5 className="center"> Find a time to study with a group of your buddies </h5>
+                            {/* Display list of recommendations */}
+                            <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.state.userID}/>
+                       </div>
+                       <div className="column">
+                            <h5 className="center"> Find new buddies to study with in one of your classes </h5>
+                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.state.userID}/>
+                       </div>
+                       </div>
                    </div>
                </div>
            </div>

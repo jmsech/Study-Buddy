@@ -27,7 +27,6 @@ public class BuddyRecsController {
         String courseNum = ctx.formParam("courseNum", String.class).get();
         var userId = ctx.formParam("userId", Integer.class).get();
 
-
         List<Integer> idAllInCourseList = new ArrayList<>();
         List<User> allInCourseList = new ArrayList<>();
 

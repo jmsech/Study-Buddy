@@ -24,6 +24,7 @@ class RecsController {
     }
 
     void getRec(Context ctx) throws SQLException {
+
         //get all the buddies the user requested
         String inviteListString = ctx.formParam("inviteList", String.class).getOrNull();
         var userId = ctx.formParam("userId", Integer.class).get();
@@ -72,10 +73,10 @@ class RecsController {
 
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
-            var id = i + 1; // FIXME Is this correct?
+            var id = i + 1;
             List<User> users = UserRepository.createUserListFromIdList(connection, recommendation.getUserIDs());
             if (users == null) { users = new ArrayList<>(); }
-            recsToDisplay.add((new Event(id, "Suggested Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "This would be a good time to study", users, "")));
+            recsToDisplay.add((new Event(id, "Buddy Study Time", recommendation.getStartTime(), recommendation.getEndTime(), "Some of your buddies are free at this time!", users, "")));
         }
 
         if (recsToDisplay.isEmpty()) {

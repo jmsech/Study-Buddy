@@ -72,8 +72,21 @@ header {
 
 .column {
     flex: 50%;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 200%;
+    margin: 1% 3% 1%;
+}
+
+
+.recColumn {
+    flex: 50%;
+    max-width: 500%;
+    margin: 1% 3% 1%;
+}
+
+.eventsColumn {
+    flex: 30%;
+    max-width: 100%;
+    margin: 1% 3% 1%;
 }
 
 .content-row {

@@ -1,7 +1,9 @@
 class Application extends React.Component {
+
     constructor(props) {
         super(props);
-        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false}
+        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, showBuddyRecForm: false,
+                            showAddCourseForm: false}
     }
 
     flipEventFormState() {
@@ -16,6 +18,18 @@ class Application extends React.Component {
         this.setState({showCourseDisplay: !this.state.showCourseDisplay});
     }
 
+    flipRecFormState() {
+        this.setState({showRecForm: !this.state.showRecForm});
+    }
+
+    flipBuddyRecFormState() {
+        this.setState({showBuddyRecForm: !this.state.showBuddyRecForm});
+    }
+
+    flipAddCourseFormState() {
+        this.setState({showAddCourseForm: !this.state.showAddCourseForm});
+    }
+
     render() {
         return (
             <div>
@@ -27,7 +41,12 @@ class Application extends React.Component {
                               showEventForm = {this.state.showEventForm}
                               flipEventFormState={this.flipEventFormState.bind(this)}
                               showRecForm={this.state.showRecForm}
-                              flipRecFormState={this.flipRecFormState.bind(this)}/>
+                              flipRecFormState={this.flipRecFormState.bind(this)}
+                              showBuddyRecForm={this.state.showBuddyRecForm}
+                              flipBuddyRecFormState={this.flipBuddyRecFormState.bind(this)}
+                              showAddCourseForm={this.state.showAddCourseForm}
+                              flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
+                        />
                     </div>
                 </div>
             </div>
