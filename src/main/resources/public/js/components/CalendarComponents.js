@@ -135,7 +135,7 @@ class EventList extends React.Component {
     constructor(props) {
         super(props);
         //TODO set up isDeadline in database. If you want to see a deadline displayed, comment out the body of getDataFromServer
-        this.state = { events: [{title: "Test", isDeadline: true}] };
+        this.state = { events: [] };
     }
 
     async getDataFromServer() {
@@ -275,8 +275,6 @@ class EventInviteList extends React.Component {
         else return null;
     }
 }
-
-
 
 function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();

@@ -125,8 +125,6 @@ class CourseList extends React.Component {
 
     async getDataFromServer() {
         await fetch(`/${this.props.userID}/courses`, {method: "PUT"});
-        {/* FIXME does this line do anthing?*/
-        }
         this.setState({courses: await (await fetch(`/${this.props.userID}/courses`)).json()});
         window.setTimeout(() => {
             this.getDataFromServer();
@@ -183,7 +181,6 @@ class Course extends React.Component {
                     <NewDeadlineForm active={this.props.active} flip = {this.props.flip} courseID={this.props.course.id}/>
                 </div>
             </div>
-
         );
     }
 }
@@ -234,7 +231,7 @@ class NewDeadlineForm extends React.Component {
         form.append("courseID", this.props.courseID);
         event.preventDefault();
         // TODO: Call appropriate path on Server
-        // fetch(`../${this.props.userID}/courses`, {method: "POST", body: formData})
+        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData});
         event.target.reset(); // clear the form entries
     }
 
