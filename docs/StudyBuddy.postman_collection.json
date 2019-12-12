@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "57f6fad1-4bd4-45c2-8f48-bc68953fb8a8",
+		"_postman_id": "4a7b0458-ee7a-400f-984c-1f62ced07d26",
 		"name": "StudyBuddy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -510,6 +510,86 @@
 						"1",
 						"events",
 						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test SIS API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://sis.jhu.edu/api/classes/Whiting%20School%20Of%20Engineering/current?key=hVoxoRv4oeyxBEdxcJ6X5sb9KNNTMOu4",
+					"protocol": "https",
+					"host": [
+						"sis",
+						"jhu",
+						"edu"
+					],
+					"path": [
+						"api",
+						"classes",
+						"Whiting%20School%20Of%20Engineering",
+						"current"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "hVoxoRv4oeyxBEdxcJ6X5sb9KNNTMOu4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ddd70749-18a7-43cc-873f-59f868b12e0c",
+						"exec": [
+							"pm.environment.set(\"id\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all courses in DB",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"courses"
 					]
 				}
 			},

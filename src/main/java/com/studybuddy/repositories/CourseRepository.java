@@ -74,8 +74,40 @@ public class CourseRepository {
 
         List<String> courseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
 
-        List<ParticularCourse> courses = CourseRepository.getCourseListFromCourseIdList(connection, courseIDs);
+        return CourseRepository.getCourseListFromCourseIdList(connection, courseIDs);
+    }
 
+    public static List<ParticularCourse> getAllCourses(Connection connection) throws SQLException {
+        var statement = connection.createStatement();
+        var result = statement.executeQuery("SELECT courseId, courseNum, courseDescription, courseSectionNum, " +
+                "courseName, semester, instructorName, location, credits, timeString, isActive FROM courses WHERE isActive = TRUE");
+        var courses = new ArrayList<ParticularCourse>();
+        // Dummy variables for currently unused parameters
+        var students = new ArrayList<User>();
+        var tas = new ArrayList<User>();
+        var courseEvents  = new ArrayList<Event>();
+
+        // Iterate through result
+        while (result.next()) {
+            courses.add(
+                    new ParticularCourse(
+                            result.getString("courseId"),
+                            result.getString("courseName"),
+                            result.getString("courseDescription"),
+                            result.getString("courseNum"),
+                            result.getString("semester"),
+                            result.getString("courseSectionNum"),
+                            result.getString("location"),
+                            result.getString("credits"),
+                            result.getString("timeString"),
+                            result.getBoolean("isActive"),
+                            students,
+                            tas,
+                            result.getString("instructorName"),
+                            courseEvents
+                    )
+            );
+        }
         return courses;
     }
 
@@ -97,7 +129,7 @@ public class CourseRepository {
         return courseIDs;
     }
 
-    public static List<ParticularCourse> getCourseListFromCourseIdList(Connection connection, List<String> courseIDs) throws SQLException {
+    private static List<ParticularCourse> getCourseListFromCourseIdList(Connection connection, List<String> courseIDs) throws SQLException {
 
         var courses = new ArrayList<ParticularCourse>();
         ArrayList<PreparedStatement> statements = new ArrayList<>();
@@ -118,7 +150,7 @@ public class CourseRepository {
             var instructor = result.getString("instructorName");
 
             //var courseEventIds = result.getString("courseIds");
-           // var courseEvents = UserRepository.createUserListFromIdList(connection, courseEventIds);
+            // var courseEvents = UserRepository.createUserListFromIdList(connection, courseEventIds);
             var courseEvents  = new ArrayList<Event>();
 
             courses.add(
@@ -164,7 +196,7 @@ public class CourseRepository {
         return 0;
     }
 
-    public static List<Integer> getRosterIDs(Connection connection, String courseId) throws SQLException {
+    private static List<Integer> getRosterIDs(Connection connection, String courseId) throws SQLException {
 
         // TODO: <COMPLETED>
         //  1) Figure out how to pull data from DB
@@ -181,7 +213,7 @@ public class CourseRepository {
         return rosterIds;
     }
 
-    public static void updateCourseRoster(Connection connection, String courseId, int userId) throws SQLException {
+    private static void updateCourseRoster(Connection connection, String courseId, int userId) throws SQLException {
         // TODO: <COMPLETED>
         //  1) Update roster of course corresponding to courseId to the new roster list
         var statement = connection.prepareStatement("INSERT INTO courses_to_users_mapping(courseId, userId) VALUES (?, ?)");
@@ -209,7 +241,7 @@ public class CourseRepository {
         statement.close();
     }
 
-    public static List<Integer> getRosterFromCourseId(Connection connection, String courseId) throws SQLException {
+    private static List<Integer> getRosterFromCourseId(Connection connection, String courseId) throws SQLException {
         var statements = new ArrayList<PreparedStatement>();
         var result = CourseRepository.loadCourseFields(connection, courseId, statements);
 

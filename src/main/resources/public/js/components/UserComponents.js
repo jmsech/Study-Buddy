@@ -24,7 +24,6 @@ class User extends React.Component {
            <div>
                <h5>Welcome, {firstName}!</h5>
                <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
-               <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userID}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}

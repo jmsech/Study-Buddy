@@ -37,7 +37,7 @@ class CurrentCourses extends React.Component {
             <div className="center">
                 <h4>Your classes</h4>
                 <CollapsibleCourseList userId={this.props.userId}/>
-                <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userId}/>
+                <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userId={this.props.userId}/>
             </div>
         );
     }
@@ -57,7 +57,7 @@ class CollapsibleCourseList extends React.Component {
     componentDidMount() {
         this.getDataFromServer();
         // Initialize materialize collapsible
-        M.AutoInit();
+        M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     }
 
     render() {

@@ -5,10 +5,11 @@ import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class CourseController {
+class CourseController {
 
     private Connection connection;
 
@@ -16,13 +17,18 @@ public class CourseController {
         this.connection = connection;
     }
 
-    public void getCourses(Context ctx) throws SQLException {
+    void getCourses(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
         var courses = CourseRepository.getCoursesForUser(this.connection, userId);
         ctx.json(courses);
     }
 
-    public void addCourse(Context ctx) throws SQLException {
+    void getAllCourses(Context ctx) throws SQLException {
+        var courses = CourseRepository.getAllCourses(this.connection);
+        ctx.json(courses);
+    }
+
+    void addCourse(Context ctx) throws SQLException {
         // get courseID
         var courseId = ctx.formParam("courseId", String.class).get();
 
@@ -39,19 +45,19 @@ public class CourseController {
         ctx.status(201);
     }
 
-    public void archiveOldCourses(Context ctx) throws SQLException {
+    void archiveOldCourses(Context ctx) throws SQLException {
         CourseRepository.archiveOldCourses(connection);
         ctx.status(200);
     }
 
-    public void removeCourse(Context ctx) throws SQLException {
+    void removeCourse(Context ctx) throws SQLException {
         String courseId = ctx.pathParam("courseId");
         var userId = Integer.parseInt(ctx.pathParam("userId"));
         CourseRepository.removeCourse(connection, userId, courseId);
         ctx.status(200);
     }
 
-    public void addCourseToUser(Context ctx) throws SQLException {
+    void addCourseToUser(Context ctx) throws SQLException {
         // String courseId = ctx.pathParam("courseId");
         System.out.println("Hello");
         var courseId = ctx.formParam("courseId", String.class).get();
@@ -60,7 +66,7 @@ public class CourseController {
         ctx.status(200);
     }
 
-    public void addDeadlineToCourse(Context ctx) throws SQLException {
+    void addDeadlineToCourse(Context ctx) throws SQLException {
         var title = ctx.formParam("title", String.class).get();
         var courseId = ctx.formParam("courseID", String.class).get();
 
@@ -72,13 +78,13 @@ public class CourseController {
         CourseRepository.addDeadlineToCourse(connection, courseId, title, description, time);
     }
 
-    public void removeDeadlineFromCourse(Context ctx) throws SQLException {
+    void removeDeadlineFromCourse(Context ctx) throws SQLException {
         var courseId = ctx.formParam("courseID", String.class).get();
         var eventId = ctx.formParam("eventID", Integer.class).get();
         CourseRepository.removeDeadlineFromCourse(connection, eventId, courseId);
     }
 
-    public void updateCourseStatus(Context ctx) {
+    void updateCourseStatus(Context ctx) {
         // TODO:
         //  Should a student be able to update a course? Maybe for a discussion board or something, idk.
         //  We can leave this alone for now.

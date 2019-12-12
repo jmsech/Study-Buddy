@@ -42,6 +42,10 @@ public class ApplicationController {
         courseController.getCourses(ctx);
     }
 
+    public void getAllCourses(Context ctx) throws SQLException {
+        courseController.getAllCourses(ctx);
+    }
+
     public void addCourse(Context ctx) throws SQLException {
         courseController.addCourse(ctx);
     }

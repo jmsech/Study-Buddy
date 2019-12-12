@@ -27,6 +27,9 @@ public class Server {
                            get(ApplicationController::getUser);
                         });
                     });
+                    path("courses", () -> {
+                       get(ApplicationController::getAllCourses); 
+                    });
                     path(":userId", () -> { 
                         post(ApplicationController::collectGoogleEvents);
                         delete(ApplicationController::logOut);
