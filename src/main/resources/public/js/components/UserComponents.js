@@ -130,7 +130,7 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav beige">
+                <ul id="slide-out" className="sidenav teal lighten-1">
                     <span className="card-title">
                         <h4>Your Courses</h4>
                     </span>
