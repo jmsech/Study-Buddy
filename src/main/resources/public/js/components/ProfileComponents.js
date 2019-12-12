@@ -37,6 +37,7 @@ class CurrentCourses extends React.Component {
             <div className="center">
                 <h4>Your classes</h4>
                 <CollapsibleCourseList userId={this.props.userId}/>
+                <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userId}/>
             </div>
         );
     }
@@ -63,7 +64,8 @@ class CollapsibleCourseList extends React.Component {
         return (
             <div>
                 <ul className="collapsible popout">
-                    {this.state.courses.map(course => <CollapsibleCourse key={course.courseId} course={course}/>)}</ul>
+                    {this.state.courses.map(course => <CollapsibleCourse key={course.courseId} course={course}/>)}
+                </ul>
             </div>
         );
     }
@@ -74,7 +76,14 @@ class CollapsibleCourse extends React.Component {
         return (
             <li>
                 <div className="collapsible-header teal lighten-2">{this.props.course.courseName}</div>
-                <div className="collapsible-body teal lighten-2">yeet</div>
+                <div className="collapsible-body teal lighten-2">
+                    <p className="collapsible-course-body">
+                        {this.props.course.courseNumber + " (" + this.props.course.section + ") "}<br/>
+                        {this.props.course.instructor}<br/>
+                        {this.props.course.timeString}<br/>
+                        <i className="tiny material-icons">location_on</i>{this.props.course.location}
+                    </p>
+                </div>
             </li>
         );
     }

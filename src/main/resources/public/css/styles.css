@@ -139,3 +139,12 @@ a:hover {
     border-radius: 50%;
 }
 
+.collapsible-body {
+    padding: 1%;
+}
+
+.collapsible-course-body {
+    text-align: left;
+    padding-left: 5%;
+}
+

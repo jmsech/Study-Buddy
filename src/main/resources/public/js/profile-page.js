@@ -6,7 +6,11 @@ class Profile extends React.Component {
         const parameters = location.search.substring(1).split("&");
         const temp = parameters[0].split("=");
         const id = unescape(temp[1]);
-        this.state = {userId: id};
+        this.state = {userId: id, showAddCourseForm: false};
+    }
+
+    flipAddCourseFormState() {
+        this.setState({showAddCourseForm: !this.state.showAddCourseForm});
     }
 
     render() {
@@ -15,7 +19,11 @@ class Profile extends React.Component {
                 <Header userId={this.state.userId}/>
                 <div className="profile-body">
                     <ProfileInfo userId={this.state.userId}/>
-                    <CurrentCourses userId={this.state.userId}/>
+                    <CurrentCourses
+                        userId={this.state.userId}
+                        flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
+                        showAddCourseForm={this.state.showAddCourseForm}
+                    />
                 </div>
             </div>
         );
