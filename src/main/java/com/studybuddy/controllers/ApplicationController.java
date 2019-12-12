@@ -58,6 +58,14 @@ public class ApplicationController {
         courseController.updateCourseStatus(ctx);
     }
 
+    public void addDeadlineToCourse(Context ctx) throws SQLException {
+        courseController.addDeadlineToCourse(ctx);
+    }
+
+    public void removeDeadlineFromCourse(Context ctx) throws SQLException {
+        courseController.removeDeadlineFromCourse(ctx);
+    }
+
     public void getEvents(Context ctx) throws SQLException {
         eventsController.getEvents(ctx);
     }

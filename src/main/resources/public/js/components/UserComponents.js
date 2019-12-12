@@ -1,7 +1,28 @@
 class User extends React.Component {
+    // Constructor called by application.js
+    constructor(props) {
+        super(props);
+        this.state = {user: null};
+    }
+
+    async getUserData() {
+        this.setState({ user: await (await fetch(`/users/${this.props.userId}`)).json() });
+    }
+
+    componentDidMount() {
+        this.getUserData();
+    }
+
     render () {
+        let firstName = "";
+        if (this.state.user !== null) {
+            let fullName = this.state.user.name;
+            var n = fullName.search(" ");
+            firstName = fullName.substr(0, n);
+        }
        return (
            <div>
+               <h5>Welcome, {firstName}!</h5>
                <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
                <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userID={this.props.userID}/>
                {/* Below is the original display on the webpage */}
@@ -79,7 +100,7 @@ class SeeCourses extends React.Component {
         return (
             <div>
                 <button data-target="slide-out" className="btn sidenav-trigger"> {text} </button>
-                <CourseList userID = {this.props.userID}/>
+                <CourseList userID = {this.props.userID} active={this.props.active} flip = {this.props.flip}/>
             </div>
         )
     }
@@ -109,11 +130,18 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav teal lighten-1">
+                <ul id="slide-out" className="sidenav beige">
                     <span className="card-title">
-                        <h4 color="white">Your Courses</h4>
+                        <h4>Your Courses</h4>
                     </span>
-                    {this.state.courses.map(course => <Course key={course.id} course={course}/>)}
+                    {this.state.courses.map(course =>
+                        <Course key={course.id}
+                                course={course}
+                                userID={this.props.userID}
+                                active={this.props.active}
+                                flip = {this.props.flip}
+                        />
+                    )}
                 </ul>
             </div>
         );
@@ -137,7 +165,8 @@ class Course extends React.Component {
                     <p>{this.props.course.instructor}</p>
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
-                    <button className="btn">Add Deadline</button>
+                    <DeadlineButton userID={this.props.userID} active={this.props.active} flip = {this.props.flip}/>
+                    <NewDeadlineForm active={this.props.active} flip = {this.props.flip} courseID={this.props.course.id}/>
                 </div>
             </div>
         );
@@ -160,8 +189,95 @@ class CourseLocation extends React.Component {
     }
 }
 
+class DeadlineButton extends React.Component {
+    render() {
+        let title = "Add Deadline";
+        if (this.props.active) {
+            title = "Cancel";
+        }
+        return <button className="btn centralized-button" onClick={() => { this.props.flip() }}>{title}</button>;
+    }
+}
+
+class NewDeadlineForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
 
 
+    handleSubmit(event) {
+        this.props.flip();
+        const formData = new FormData();
+        formData.append("userID", this.props.userID);
+        formData.append("title", event.target.title.value);
+        // combine tim/date into the format yyyy-mm-dd 00:00
+        formData.append("dueDate", event.target.startDate.value + " " + event.target.dueTime.value);
+        formData.append("description", event.target.description.value);
+        form.append("courseID", this.props.courseID);
+        event.preventDefault();
+        // TODO: Call appropriate path on Server
+        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData});
+        event.target.reset(); // clear the form entries
+    }
+
+    componentDidMount() {
+        M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+            autoClose: true,
+            showClearBtn: true,
+            format: "yyyy-mm-dd",
+            minDate: (new Date())
+        });
+        M.Timepicker.init(document.querySelectorAll('.timepicker'), {
+            showClearBtn: true
+        });
+    }
+
+    formatAMPM(hours, minutes) {
+        var ampm = (hours >= 12 && hours < 24) ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? '0'+ minutes : minutes;
+        return hours + ':' + minutes + ' ' + ampm;
+    }
+
+    render() {
+        let style = {display: "none"};
+        if (this.props.active) { style = {display: "block"}};
+        let date = new Date();
+        // Define default start date
+        let defaultStartDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
+        if (date.getDate() < 10) {
+            defaultStartDate = defaultStartDate + "0" + date.getDate();
+        } else {
+            defaultStartDate = defaultStartDate + date.getDate();
+        }
+        return (
+            <form id="eventform" onSubmit={this.handleSubmit} style={style}>
+                <div className="input-field">
+                    <label htmlFor="title">Title</label>
+                    <input id="title" name="title" type="text" required/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="description">Description</label>
+                    <textarea id="description" name="description" className="materialize-textarea"/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="startDate" className="active">Due Date</label>
+                    <input id="startDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
+                </div>
+                <div className="input-field">
+                    <label htmlFor="startTime" className="active">Due Time</label>
+                    <input id="startTime" name="startTime" type="text" className="timepicker"/>
+                </div>
+                <button className="btn white-text">Save Deadline</button>
+            </form>
+        );
+    }
+}
 
 
 

@@ -17,8 +17,9 @@ public class Event {
     private String location;
     private boolean isGoogleEvent;
     private boolean expired;
+    private boolean isDeadline;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location, boolean isDeadline) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
@@ -28,6 +29,7 @@ public class Event {
         this.location = location;
         this.isGoogleEvent = false;
         this.expired = false;
+        this.isDeadline = isDeadline;
     }
 
     public long getId() {
@@ -89,6 +91,30 @@ public class Event {
     public boolean isGoogleEvent() { return isGoogleEvent; }
 
     public boolean isExpired() { return expired; }
+
+    public void setGoogleEvent(boolean googleEvent) {
+        isGoogleEvent = googleEvent;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+
+    public boolean isDeadline() {
+        return isDeadline;
+    }
+
+    public boolean getIsDeadline() {
+        return isDeadline;
+    }
+
+    public void setDeadline(boolean deadline) {
+        isDeadline = deadline;
+    }
+
+    public void setIsDeadline(boolean deadline) {
+        isDeadline = deadline;
+    }
 
     public static class EventComparator implements Comparator<Event> {
         @Override

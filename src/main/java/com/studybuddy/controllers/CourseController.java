@@ -5,6 +5,8 @@ import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class CourseController {
 
@@ -56,6 +58,24 @@ public class CourseController {
         var userId = Integer.parseInt(ctx.pathParam("userId"));
         CourseRepository.addCourseToUser(connection, courseId, userId);
         ctx.status(200);
+    }
+
+    public void addDeadlineToCourse(Context ctx) throws SQLException {
+        var title = ctx.formParam("title", String.class).get();
+        var courseId = ctx.formParam("courseID", String.class).get();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+        LocalDateTime date = LocalDateTime.parse(ctx.formParam("dueDate", String.class).get(), formatter);
+        java.sql.Timestamp time = java.sql.Timestamp.valueOf(date);
+
+        var description = ctx.formParam("description", String.class).get();
+        CourseRepository.addDeadlineToCourse(connection, courseId, title, description, time);
+    }
+
+    public void removeDeadlineFromCourse(Context ctx) throws SQLException {
+        var courseId = ctx.formParam("courseID", String.class).get();
+        var eventId = ctx.formParam("eventID", Integer.class).get();
+        CourseRepository.removeDeadlineFromCourse(connection, eventId, courseId);
     }
 
     public void updateCourseStatus(Context ctx) {

@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,98 +20,35 @@ public class InitializationRepository {
     public static void initializeTables(Connection connection) throws SQLException, IOException {
         var statement = connection.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN, expired BOOLEAN)");
+        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN, expired BOOLEAN, isDeadline BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS events_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, eventId INTEGER, userId INTEGER, FOREIGN KEY (eventId) REFERENCES events (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.execute("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, courseNum TEXT, courseDescription TEXT, courseSectionNum TEXT, courseName TEXT, instructorName TEXT, semester TEXT, location TEXT, credits TEXT, timeString TEXT, isActive BOOLEAN)");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, userId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (userId) REFERENCES users (id))");
         statement.execute("CREATE TABLE IF NOT EXISTS courses_to_events_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, eventId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (eventId) REFERENCES events (id))");
+        statement.execute("CREATE TABLE IF NOT EXISTS courses_to_deadlines_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, courseId TEXT, eventId INTEGER, FOREIGN KEY (courseId) REFERENCES courses (id), FOREIGN KEY (eventId) REFERENCES events (id))");
         statement.close();
 
         add_test_users(connection);
         add_test_courses(connection);
+        add_test_deadlines(connection);
         add_test_students(connection);
-        populateCoursesTable(connection);
     }
 
-    private static void populateCoursesTable(Connection connection) throws IOException, SQLException {
-        System.out.println("Extracting courses...");
-        populateJHUClasses(connection);
-    }
-
-    // This functions obtains JHU classes based on the SIS API
-    // Most of the code structure used here comes from the following tutorial: https://www.baeldung.com/java-http-request
-    private static void populateJHUClasses(Connection connection) throws IOException, SQLException {
-        String whitingSchoolString = "Whiting School Of Engineering".replaceAll(" ", "%20");
-        String kriegerSchoolString = "Krieger School of Arts and Sciences".replaceAll(" ", "%20");
-        List<String> schools = new ArrayList<>();
-        schools.add(whitingSchoolString);
-        schools.add(kriegerSchoolString);
-        int numSchools = schools.size();
-        for (int i = 0; i < numSchools; i++) {
-            String schoolString = schools.get(i);
-            String classesContent = obtainJHUClassesInSpecificSchool(schoolString);
-            List sisCourses = jsonMapper(classesContent);
-            int numCourses = sisCourses.size();
-            for (int j = 0; j < numCourses; j++) {
-                Object o = sisCourses.get(j);
-                SISCourse sisCourse = (SISCourse) o;
-                String title = sisCourse.getTitle();
-                String instructor = sisCourse.getInstructorsFullName();
-                String courseNumber = sisCourse.getOfferingName();
-                String courseSectionNumber = sisCourse.getSectionName();
-                String semester = sisCourse.getTerm();
-                if (semester.contains("Fall")) {
-                    semester = semester.replace("Fall ", "Fa");
-                } else {
-                    semester = semester.replace("Spring ", "Sp");
-                }
-                String location = sisCourse.getBuilding();
-                String credits = sisCourse.getCredits();
-                String meetings = sisCourse.getMeetings();
-                meetings = meetings.replace("AM", " AM");
-                meetings = meetings.replace("PM", " PM");
-                String courseId = courseNumber + "(" + courseSectionNumber + ")" + semester;
-                String description = "";
-                boolean isActive = true;
-                if ((j + 1) % 50 == 0 || j == numCourses - 1 ) {
-                    String progressText = "Schools loaded: " + (i+1) + "/" + numSchools + "\n" +
-                            "Courses loaded: " + (j+1) + "/" + numCourses;
-                    System.out.println(progressText);
-                }
-                CourseRepository.createCourseInDB(connection, courseId, courseNumber, description, courseSectionNumber,
-                        title, instructor, semester, location, credits, meetings, isActive);
-            }
+    private static void add_test_deadlines(Connection connection) throws SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  courses_to_deadlines_mapping LIMIT 1");
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return;
         }
+        check.close();
+
+        java.sql.Timestamp time = java.sql.Timestamp.valueOf(LocalDateTime.of(2019, 12, 16, 12, 0, 0, 0));
+        CourseRepository.addDeadlineToCourse(connection, "EN.601.421(01)Fa2019", "OOSE Presentation",
+                "Major Grade", time);
     }
 
-    private static String obtainJHUClassesInSpecificSchool(String schoolString) throws IOException {
-        // Call SIS API
-        String sisApiKey = "hVoxoRv4oeyxBEdxcJ6X5sb9KNNTMOu4";
-        String baseUrl = "https://sis.jhu.edu/api/classes/";
-        String urlString = baseUrl + schoolString + "/current?key=" + sisApiKey;
-        URL url = new URL(urlString);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-
-        // Get response
-        int status = con.getResponseCode();
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-        return content.toString();
-    }
-
-    private static List jsonMapper(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.<List<SISCourse>>readValue(json, new TypeReference<List<SISCourse>>(){});
-    }
-
-    public static void add_test_users(Connection connection) throws SQLException {
+    private static void add_test_users(Connection connection) throws SQLException {
         var check_statement = connection.prepareStatement("SELECT 1 FROM  users LIMIT 1");
         var check = check_statement.executeQuery();
         if (check.next()) {
@@ -133,7 +71,7 @@ public class InitializationRepository {
         UserRepository.createUser(connection, "d@gmail.com", "d", "D", "d");
     }
 
-    public static void add_test_students(Connection connection) throws SQLException {
+    private static void add_test_students(Connection connection) throws SQLException, IOException {
         var check_statement = connection.prepareStatement("SELECT 1 FROM  courses_to_users_mapping LIMIT 1");
         var check = check_statement.executeQuery();
         if (check.next()) {
@@ -155,7 +93,7 @@ public class InitializationRepository {
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 4);
     }
 
-    public static void add_test_courses(Connection connection) throws SQLException {
+    private static void add_test_courses(Connection connection) throws SQLException, IOException {
         var check_statement = connection.prepareStatement("SELECT 1 FROM  courses LIMIT 1");
         var check = check_statement.executeQuery();
         if (check.next()) {
@@ -163,6 +101,8 @@ public class InitializationRepository {
             return;
         }
         check.close();
+
+        populateCoursesTable(connection);
 
         String courseName = "Manufacturing Engineering";
         String instructor = "Ronzhes, Yury";
@@ -301,5 +241,79 @@ public class InitializationRepository {
         isActive = false;
         CourseRepository.createCourseInDB(connection, courseId, courseNum, courseDescription, courseSectionNum,
                 courseName, instructor, semester, location, credits, timeString, isActive);
+    }
+
+    private static void populateCoursesTable(Connection connection) throws IOException, SQLException {
+        System.out.println("Extracting courses...");
+        populateJHUClasses(connection);
+    }
+
+    // This functions obtains JHU classes based on the SIS API
+    // Most of the code structure used here comes from the following tutorial: https://www.baeldung.com/java-http-request
+    private static void populateJHUClasses(Connection connection) throws IOException, SQLException {
+        String whitingSchoolString = "Whiting School Of Engineering".replaceAll(" ", "%20");
+        String kriegerSchoolString = "Krieger School of Arts and Sciences".replaceAll(" ", "%20");
+        List<String> schools = new ArrayList<>();
+        schools.add(whitingSchoolString);
+        schools.add(kriegerSchoolString);
+        int numSchools = schools.size();
+        for (int i = 0; i < numSchools; i++) {
+            String schoolString = schools.get(i);
+            String classesContent = obtainJHUClassesInSpecificSchool(schoolString);
+            List sisCourses = jsonMapper(classesContent);
+            int numCourses = sisCourses.size();
+            for (int j = 0; j < numCourses; j++) {
+                Object o = sisCourses.get(j);
+                SISCourse sisCourse = (SISCourse) o;
+                String title = sisCourse.getTitle();
+                String instructor = sisCourse.getInstructorsFullName();
+                String courseNumber = sisCourse.getOfferingName();
+                String courseSectionNumber = sisCourse.getSectionName();
+                String semester = sisCourse.getTerm();
+                semester = semester.replace("Fall ", "Fa").replace("Spring ", "Sp");
+                String location = sisCourse.getBuilding();
+                String credits = sisCourse.getCredits();
+                String meetings = sisCourse.getMeetings();
+                meetings = meetings.replace("AM", " AM").replace("PM", " PM");
+                String courseId = courseNumber + "(" + courseSectionNumber + ")" + semester;
+                String description = "";
+
+                // Print Statement for client sanity
+                if ((j + 1) % 50 == 0 || j == numCourses - 1 ) {
+                    String progressText = "Schools loaded: " + (i+1) + "/" + numSchools + "\n" +
+                            "Courses loaded: " + (j+1) + "/" + numCourses;
+                    System.out.println(progressText);
+                }
+                CourseRepository.createCourseInDB(connection, courseId, courseNumber, description, courseSectionNumber,
+                        title, instructor, semester, location, credits, meetings, true);
+            }
+        }
+    }
+
+    private static String obtainJHUClassesInSpecificSchool(String schoolString) throws IOException {
+        // Call SIS API
+        String sisApiKey = "hVoxoRv4oeyxBEdxcJ6X5sb9KNNTMOu4";
+        String baseUrl = "https://sis.jhu.edu/api/classes/";
+        String urlString = baseUrl + schoolString + "/current?key=" + sisApiKey;
+        URL url = new URL(urlString);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+
+        // Get response
+        int status = con.getResponseCode();
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+        return content.toString();
+    }
+
+    private static List jsonMapper(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.<List<SISCourse>>readValue(json, new TypeReference<List<SISCourse>>(){});
     }
 }
