@@ -8,7 +8,7 @@ class AddCourse extends React.Component {
         return (
             <div>
                 <AddCourseButton className="new-event-button btn white-text" flip={this.props.flipAddCourse} showAddCourseForm={this.props.showAddCourseForm} />
-                <AddCourseForm userID={this.props.userID} showAddCourseForm={this.props.showAddCourseForm} flip={this.props.flipAddCourse}/>
+                <AddCourseForm userId={this.props.userId} showAddCourseForm={this.props.showAddCourseForm} flip={this.props.flipAddCourse}/>
             </div>
         )
     }
@@ -65,7 +65,6 @@ class AddCourseForm extends React.Component {
         courseId = courseId.concat(monthStr, year)
         formData.append("courseId", courseId);
 
-        console.log(courseId);
         fetch(`../${this.props.userId}/courses/`, {method: "POST", body: formData})
             .then(this.handleResponse);
         addCourse.target.reset(); // clear the form entries
