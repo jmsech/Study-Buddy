@@ -31,8 +31,10 @@ class CourseController {
     void addCourse(Context ctx) throws SQLException {
         // get courseID
         var courseId = ctx.formParam("courseId", String.class).get();
+
         // Get userID
         var userId = ctx.formParam("userId", Integer.class).get();
+
         // Create event and insert into events table
         int status = CourseRepository.addCourseToUser(connection, courseId, userId);
 
@@ -54,7 +56,6 @@ class CourseController {
 
     void addCourseToUser(Context ctx) throws SQLException {
         // String courseId = ctx.pathParam("courseId");
-        System.out.println("Hello");
         var courseId = ctx.formParam("courseId", String.class).get();
         var userId = Integer.parseInt(ctx.pathParam("userId"));
         CourseRepository.addCourseToUser(connection, courseId, userId);

@@ -63,7 +63,7 @@ public class CourseRepository {
 
         var students = CourseRepository.getRosterIDs(connection, courseId);
         for (var sid : students) {
-            EventRepository.addEventToUser(connection, eventId, sid);
+            EventRepository.addEventToUser(connection, sid, eventId);
         }
     }
 

@@ -168,7 +168,7 @@ class Course extends React.Component {
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
                     <DeadlineButton userID={this.props.userID} active={this.state.showDeadlineForm} flip = {this.flipDeadlineFormState.bind(this)}/>
-                    <NewDeadlineForm active={this.state.showDeadlineForm} flip = {this.flipDeadlineFormState.bind(this)} courseID={this.props.course.id} userID={this.props.userID}/>
+                    <NewDeadlineForm active={this.state.showDeadlineForm} flip = {this.flipDeadlineFormState.bind(this)} courseID={this.props.course.courseId} userID={this.props.userID}/>
                 </div>
             </div>
         );
@@ -217,11 +217,11 @@ class NewDeadlineForm extends React.Component {
     handleSubmit(deadline) {
         deadline.preventDefault();
         this.props.flip();
-        let dueTime = "11:59 PM"
+        let dueTime = "11:59 PM";
         if (deadline.target.dueTime.value !== "") {
             dueTime = deadline.target.dueTime.value
         }
-        let description = deadline.target.description.value
+        let description = deadline.target.description.value;
         if (description == "") {
             description = " "
         }
