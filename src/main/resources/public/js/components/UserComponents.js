@@ -206,30 +206,34 @@ class NewDeadlineForm extends React.Component {
         super(props);
         this.state = {value: ''};
 
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
 
-    handleChange(deadline) {
-        this.setState({value: deadline.target.value});
+    async handleResponse(response) {
+        return response;
     }
 
     handleSubmit(deadline) {
         deadline.preventDefault();
         this.props.flip();
         let dueTime = "11:59 PM"
-        // if (deadline.target.dueTime.value != "") {
-        //     dueTime = deadline.target.dueTime.value
-        // }
+        if (deadline.target.dueTime.value !== "") {
+            dueTime = deadline.target.dueTime.value
+        }
+        let description = deadline.target.description.value
+        if (description == "") {
+            description = " "
+        }
         const formData = new FormData();
         // formData.append("userID", this.props.userID);
         formData.append("title", deadline.target.title.value);
+        formData.append("courseID", this.props.courseID);
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("dueDate", deadline.target.dueDate.value + " " + dueTime);
-        formData.append("description", deadline.target.description.value);
-        formData.append("courseID", this.props.courseID);
-        // TODO: Call appropriate path on Server
-        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData});
+        formData.append("description", description);
+        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData})
+            .then(this.handleResponse);
         deadline.target.reset(); // clear the form entries
     }
 
