@@ -54,7 +54,7 @@ public class EventRepository {
         }
         for (var s : statements) {s.close();}
 
-        events.addAll(EventRepository.getEventsFromUserCourses(connection, userId));
+        //events.addAll(EventRepository.getEventsFromUserCourses(connection, userId));
 
         events.sort(new Event.EventComparator());
         return events;
@@ -193,19 +193,30 @@ public class EventRepository {
         statement.close();
     }
 
+    public static void addEventToUser(Connection connection, int userId, int eventId) throws SQLException {
+        var statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
+        statement.setInt(1, eventId);
+        statement.setInt(2, userId);
+        statement.executeUpdate();
+        statement.close();
+    }
+
+    public static void deleteByAttendee(int eventId, int callerId, Connection connection) throws SQLException {
+        var statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ? AND userId = ?");
+        statement.setInt(1, eventId);
+        statement.setInt(2, callerId);
+        statement.executeUpdate();
+        statement.close();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // HELPER FUNCTIONS ////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static void updateEventInviteList(int eventId, List inviteList, Connection connection) throws SQLException {
-        PreparedStatement statement= null;
         if (inviteList == null) {return;}
         for (Object id : inviteList) {
-            statement = connection.prepareStatement("INSERT INTO events_to_users_mapping (eventId, userId) VALUES (?, ?)");
-            statement.setInt(1, eventId);
-            statement.setInt(2, (int) id);
-            statement.executeUpdate();
-            statement.close();
+            EventRepository.addEventToUser(connection, (int) id, eventId);
         }
     }
 
@@ -218,14 +229,6 @@ public class EventRepository {
     private static void deleteByHost(int eventId, Connection connection) throws SQLException {
         var statement = connection.prepareStatement("DELETE FROM events WHERE id = ?");
         statement.setInt(1, eventId);
-        statement.executeUpdate();
-        statement.close();
-    }
-
-    private static void deleteByAttendee(int eventId, int callerId, Connection connection) throws SQLException {
-        var statement = connection.prepareStatement("DELETE FROM events_to_users_mapping WHERE eventId = ? AND userId = ?");
-        statement.setInt(1, eventId);
-        statement.setInt(2, callerId);
         statement.executeUpdate();
         statement.close();
     }

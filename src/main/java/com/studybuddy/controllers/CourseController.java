@@ -31,15 +31,10 @@ class CourseController {
     void addCourse(Context ctx) throws SQLException {
         // get courseID
         var courseId = ctx.formParam("courseId", String.class).get();
-
         // Get userID
         var userId = ctx.formParam("userId", Integer.class).get();
-
         // Create event and insert into events table
         int status = CourseRepository.addCourseToUser(connection, courseId, userId);
-
-        // TODO:
-        //  1) What should we do if status is 1 or 2?
 
         ctx.json("Success");
         ctx.status(201);
