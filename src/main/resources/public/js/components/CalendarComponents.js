@@ -134,7 +134,6 @@ class NewEventForm extends React.Component {
 class EventList extends React.Component {
     constructor(props) {
         super(props);
-        //TODO set up isDeadline in database. If you want to see a deadline displayed, comment out the body of getDataFromServer
         this.state = { events: [] };
     }
 
@@ -176,11 +175,14 @@ class Event extends React.Component {
     render() {
         if (this.props.event.isDeadline) {
             return (
-                <li className="card hoverable red lighten-2">
+                <li className="card hoverable red lighten-2" style={{height: "20%"}}>
                     <div className="card-content black-text">
-                    <span className="card-title">
-                        <EventTitle event={this.props.event}/>
-                    </span>
+                        <span className="card-title">
+                            <EventTitle event={this.props.event}/>
+                        </span>
+                        <span className="right-align">
+                            <DeadlineDeleteButton eventID={this.props.event.id}/>
+                        </span>
                     </div>
                 </li>
             );
@@ -324,6 +326,23 @@ class DeleteButton extends React.Component {
         const path = basePath.concat(this.props.event.id);
         return (
             <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
+        )
+    }
+}
+
+class DeadlineDeleteButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        const path = `../courses/deadline/`;
+        const formData = new FormData();
+        formData.append("eventID", this.props.eventID);
+        // formData.append("courseID", this.props.courseID);
+        return (
+            <button className="btn red lighten-2 right-align" onClick={() => { fetch(path, {method: "DELETE", body: formData}) }}><i className="material-icons">delete</i></button>
         )
     }
 }
