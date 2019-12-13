@@ -218,9 +218,9 @@ class NewDeadlineForm extends React.Component {
         deadline.preventDefault();
         this.props.flip();
         let dueTime = "11:59 PM"
-        if (deadline.target.dueTime.value != "") {
-            dueTime = deadline.target.dueTime.value
-        }
+        // if (deadline.target.dueTime.value != "") {
+        //     dueTime = deadline.target.dueTime.value
+        // }
         const formData = new FormData();
         // formData.append("userID", this.props.userID);
         formData.append("title", deadline.target.title.value);

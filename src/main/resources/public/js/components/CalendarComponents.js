@@ -181,7 +181,7 @@ class Event extends React.Component {
                             <EventTitle event={this.props.event}/>
                         </span>
                         <span className="right-align">
-                            <DeadlineDeleteButton eventID={this.props.event.id}/>
+                            <DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
                         </span>
                     </div>
                 </li>
@@ -324,28 +324,32 @@ class DeleteButton extends React.Component {
     render() {
         const basePath = `../${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
+        let className = "btn"
+        if (this.props.deadline) {
+            className = "btn red lighten-2"
+        }
         return (
-            <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
+            <button className={className} onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
         )
     }
 }
 
-class DeadlineDeleteButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = null;
-    }
-
-    render() {
-        const path = `../courses/deadline/`;
-        const formData = new FormData();
-        formData.append("eventID", this.props.eventID);
-        // formData.append("courseID", this.props.courseID);
-        return (
-            <button className="btn red lighten-2 right-align" onClick={() => { fetch(path, {method: "DELETE", body: formData}) }}><i className="material-icons">delete</i></button>
-        )
-    }
-}
+// class DeadlineDeleteButton extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = null;
+//     }
+//
+//     render() {
+//         const path = `../courses/deadline/`;
+//         const formData = new FormData();
+//         formData.append("eventID", this.props.eventID);
+//         // formData.append("courseID", this.props.courseID);
+//         return (
+//             <button className="btn red lighten-2 right-align" onClick={() => { fetch(path, {method: "DELETE", body: formData}) }}><i className="material-icons">delete</i></button>
+//         )
+//     }
+// }
 
 class EditButton extends React.Component {
     render() {
