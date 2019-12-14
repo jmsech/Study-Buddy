@@ -67,6 +67,13 @@ public class CourseLinkRecsController {
             }
         }
 
+        List<Integer> friendIds = IdRepository.getFriendIdsFromUserId(connection, userId);
+        for (var f : friendIds) {
+            if (coursemateIds.contains(f)) {
+                user_to_weight.put(f, user_to_weight.get(f) + 4);
+            }
+        }
+
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
 

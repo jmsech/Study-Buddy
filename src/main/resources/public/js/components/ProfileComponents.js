@@ -229,8 +229,7 @@ class Friends extends React.Component {
     render() {
         return (
             <div>
-
-                <FriendList userId={this.props.userId} />
+                <FriendList userId={this.props.userId}/>
                 <div className="content-row">
                     <div className="column">
                     <FriendAddButton className="btn cyan darken-3 centralized-button"
@@ -471,18 +470,26 @@ class Friend extends React.Component {
 class Pendings extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {userId: this.props.userId, showPending: false}
+        this.state = {userId: this.props.userId, showPending: false, numEntries: 0}
     }
 
     flipPendingState() {
         this.setState({showPending: !this.state.showPending});
     }
 
+    changeNumEntries(num) {
+        this.setState({numEntries: num})
+    }
+
     render () {
         return (
             <div>
-                <PendingButton flipPendingState={this.flipPendingState.bind(this)}/>
-                <PendingList userId={this.props.userId} showPending={this.state.showPending}/>
+                <PendingButton flipPendingState={this.flipPendingState.bind(this)}
+                               numEntries={this.state.numEntries}
+                               showPending={this.state.showPending}/>
+                <PendingList userId={this.props.userId}
+                             showPending={this.state.showPending}
+                             changeNumEntries={this.changeNumEntries.bind(this)}/>
             </div>
         )
     }
@@ -494,9 +501,9 @@ class PendingButton extends React.Component {
     }
 
     render() {
-        let title = "See Pending";
+        let title = "See Pending (" + this.props.numEntries + ")";
         if (this.props.showPending) {
-            title = "Hide";
+            title = "Hide Pending (" + this.props.numEntries + ")";
         }
         return (
             <button className="btn centralized-button"
@@ -514,6 +521,7 @@ class PendingList extends React.Component {
 
     async getDataFromServer() {
         this.setState({ users: await (await fetch(`/${this.props.userId}/followers/`, {method: "GET"})).json() });
+        this.props.changeNumEntries(this.state.users.length);
         window.setTimeout(() => {this.getDataFromServer();}, 200);
     }
 
@@ -528,8 +536,6 @@ class PendingList extends React.Component {
         if (this.props.showPending) {style = {display : "block"}; }
         return (
             <div style={style}>
-                {/*<h4>Pending Requests</h4>*/}
-                <h6>{this.state.users.length}</h6>
                 <ul>
                     {this.state.users.map(user => <Pending key={user.userId} user={user} userId={this.props.userId}/>)}
                 </ul>
@@ -585,18 +591,26 @@ class Pending extends React.Component {
 class Awaitings extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {userId: this.props.userId, showAwaiting: false}
+        this.state = {userId: this.props.userId, showAwaiting: false, numEntries: 0}
     }
 
     flipAwaitingState() {
         this.setState({showAwaiting: !this.state.showAwaiting});
     }
 
+    changeNumEntries(num) {
+        this.setState({numEntries: num})
+    }
+
     render () {
         return (
             <div>
-                <AwaitingButton flipAwaitingState={this.flipAwaitingState.bind(this)}/>
-                <AwaitingList userId={this.props.userId} showAwaiting={this.state.showAwaiting}/>
+                <AwaitingButton flipAwaitingState={this.flipAwaitingState.bind(this)}
+                                numEntries={this.state.numEntries}
+                                showAwaiting={this.state.showAwaiting}/>
+                <AwaitingList userId={this.props.userId}
+                             showAwaiting={this.state.showAwaiting}
+                             changeNumEntries={this.changeNumEntries.bind(this)}/>
             </div>
         )
     }
@@ -608,9 +622,9 @@ class AwaitingButton extends React.Component {
     }
 
     render() {
-        let title = "See Awaiting";
+        let title = "See Awaiting (" + this.props.numEntries + ")";
         if (this.props.showAwaiting) {
-            title = "Hide";
+            title = "Hide Awaiting (" + this.props.numEntries + ")";
         }
         return (
             <button className="btn centralized-button"
@@ -628,6 +642,7 @@ class AwaitingList extends React.Component {
 
     async getDataFromServer() {
         this.setState({ users: await (await fetch(`/${this.props.userId}/followers/`, {method: "POST"})).json() });
+        this.props.changeNumEntries(this.state.users.length)
         window.setTimeout(() => {this.getDataFromServer();}, 200);
     }
 
@@ -642,8 +657,6 @@ class AwaitingList extends React.Component {
         if (this.props.showAwaiting) {style = {display : "block"}; }
         return (
             <div style={style}>
-                {/*<h4>Awaiting Requests</h4>*/}
-                <h6>{this.state.users.length}</h6>
                 <ul>
                     {this.state.users.map(user => <Awaiting key={user.userId} user={user}/>)}
                 </ul>
