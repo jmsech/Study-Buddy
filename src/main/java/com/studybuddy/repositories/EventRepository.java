@@ -54,9 +54,40 @@ public class EventRepository {
         }
         for (var s : statements) {s.close();}
 
-        //events.addAll(EventRepository.getEventsFromUserCourses(connection, userId));
-
+        events = removeDuplicates(connection, events, userId);
+        events = tagConflicts(events);
         events.sort(new Event.EventComparator());
+        return events;
+    }
+
+    public static ArrayList<Event> tagConflicts(ArrayList<Event> events) {
+        for (var e : events) {
+            if (!e.getConflict()) {
+                for (var event : events) {
+                    if (Event.overlaps(e, event) && !e.equals(event)) {
+                        e.setConflict(true);
+                        event.setConflict(true);
+                        break;
+                    }
+                }
+            }
+        }
+        return events;
+    }
+
+    public static ArrayList<Event> removeDuplicates(Connection connection, List<Event> eventList, int userId) throws SQLException {
+        ArrayList<Event> events = new ArrayList<>();
+        for (var e : eventList) {
+            boolean contains = false;
+            for (var event : events) {
+                if (event.equals(e)) {
+                    EventRepository.deleteEvent(connection, (int) e.getId(), userId);
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) { events.add(e); }
+        }
         return events;
     }
 
