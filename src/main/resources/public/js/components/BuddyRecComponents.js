@@ -166,7 +166,7 @@ class NewBuddyRecForm extends React.Component {
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="courseNumber">Course Number (ex EN.601.226)</label>
+                    <label htmlFor="courseNumber">Course Name</label>
                     <input id="courseNumber" name="courseNumber" type="text" className="autocompleteBudRec" required/>
                 </div>
                 <div className="input-field">

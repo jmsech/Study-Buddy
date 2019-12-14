@@ -73,6 +73,7 @@ class NewRecForm extends React.Component {
     }
 
     async handleSubmit(rec) {
+        rec.preventDefault();
         this.props.flip();
         const formData = new FormData();
         formData.append("userId", this.props.userID);
@@ -132,10 +133,13 @@ class NewRecForm extends React.Component {
             const fullUser = userFirst.concat("(", userEmail, ")");
             Object.assign(userData, {[fullUser]: null});
         }
-        const options = {data: userData, limit: 20};
 
+        let options = {autocompleteOptions: { data: userData, limit: 20}};
+        M.Chips.init(document.querySelector('.chips-autocomplete'), options);
+
+        //const options = { data: userData, limit: 20};
         // Initialize materialize autocomplete
-        M.Autocomplete.init(document.querySelectorAll('.autocompleteTimeRec'), options);
+        //M.Chips.init(document.querySelector('.chips-autocomplete'), options);
 
         let style = {display: "none"};
         if (this.props.showRecForm) { style = {display: "block"} }
@@ -154,7 +158,7 @@ class NewRecForm extends React.Component {
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
-                    <input id="recInviteList" name="recInviteList" type="text"  className="autocompleteTimeRec" required/>
+                    <input id="recInviteList" name="recInviteList" className="chips-autocomplete" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
