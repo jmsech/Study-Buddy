@@ -24,7 +24,7 @@ public class IdRepository {
         if (inviteListString != null) {
             var emailInviteList = inviteListString.split("\\s*,\\s*");
             for (String email : emailInviteList) {
-                var result = getIdFromEmail(email, connection, statements);
+                var result = IdRepository.getIdFromEmail(email, connection, statements);
                 if (result.next()) {
                     idInviteList.add(result.getInt("id"));
                 } else {
@@ -64,7 +64,6 @@ public class IdRepository {
         for (var cid : courses) {
             users.addAll(IdRepository.getUserIdListFromCourseId(connection, cid));
         }
-
         return users;
     }
 
@@ -79,6 +78,20 @@ public class IdRepository {
         }
         statement.close();
         return -1;
+    }
+
+    public static List<Integer> getFriendIdsFromUserId(Connection connection, int userId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT buddyId FROM friends  WHERE userId = ? AND friend = ?");
+        statement.setInt(1, userId);
+        statement.setBoolean(2, true);
+        var result = statement.executeQuery();
+        ArrayList<Integer> userIds = new ArrayList<>();
+        if (!result.isBeforeFirst()) { return new ArrayList<>(); }
+        while (result.next()) {
+            userIds.add(result.getInt("buddyId"));
+        }
+        statement.close();
+        return userIds;
     }
 
     private static java.sql.ResultSet getIdFromEmail(String email, Connection connection, List<PreparedStatement> statements) throws SQLException {
