@@ -148,3 +148,8 @@ a:hover {
     padding-left: 5%;
 }
 
+.rowC {
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+}

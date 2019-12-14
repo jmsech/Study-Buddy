@@ -177,12 +177,10 @@ class Event extends React.Component {
             return (
                 <li className="card hoverable red lighten-2" style={{height: "20%"}}>
                     <div className="card-content black-text">
-                        <span className="card-title">
-                            <EventTitle event={this.props.event}/>
-                        </span>
-                        <span className="right-align">
-                            <DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
-                        </span>
+                         <span className="rowC">
+                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                         </span>
+                        <DeadlineDateTime event={this.props.event}/>
                     </div>
                 </li>
             );
@@ -315,6 +313,26 @@ class EventDateTime extends React.Component {
     }
 }
 
+class DeadlineDateTime extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <div id="DeadlineDateTime">
+                <p>
+                    <i className="tiny material-icons">date_range</i>
+                    {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+                    {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
+                    {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)}
+                </p>
+            </div>
+        );
+    }
+}
+
 class DeleteButton extends React.Component {
     constructor(props) {
         super(props);
@@ -326,30 +344,13 @@ class DeleteButton extends React.Component {
         const path = basePath.concat(this.props.event.id);
         let className = "btn"
         if (this.props.deadline) {
-            className = "btn red lighten-2"
+            className = "btn red lighten-2 right-align"
         }
         return (
             <button className={className} onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
         )
     }
 }
-
-// class DeadlineDeleteButton extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = null;
-//     }
-//
-//     render() {
-//         const path = `../courses/deadline/`;
-//         const formData = new FormData();
-//         formData.append("eventID", this.props.eventID);
-//         // formData.append("courseID", this.props.courseID);
-//         return (
-//             <button className="btn red lighten-2 right-align" onClick={() => { fetch(path, {method: "DELETE", body: formData}) }}><i className="material-icons">delete</i></button>
-//         )
-//     }
-// }
 
 class EditButton extends React.Component {
     render() {
