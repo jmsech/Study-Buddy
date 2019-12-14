@@ -44,6 +44,11 @@ class UserController {
         ctx.status(201);
     }
 
+    void getAllUsers(Context ctx) throws SQLException {
+        var users = UserRepository.getAllUsers(connection);
+        ctx.json(users);
+    }
+
     void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");

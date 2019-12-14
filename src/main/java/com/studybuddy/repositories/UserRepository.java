@@ -1,5 +1,7 @@
 package com.studybuddy.repositories;
 
+import com.studybuddy.models.Event;
+import com.studybuddy.models.ParticularCourse;
 import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
 
@@ -60,6 +62,25 @@ public class UserRepository {
             statement.close();
             return true;
         }
+    }
+
+    public static List<User> getAllUsers(Connection connection) throws SQLException {
+        var statement = connection.createStatement();
+        var result = statement.executeQuery("SELECT id, email, firstName, lastName FROM users");
+        String name = result.getString("firstName") + " " + result.getString("lastName");
+        var users = new ArrayList<User>();
+
+        // Iterate through result
+        while (result.next()) {
+            users.add(
+                    new User(
+                            result.getInt("id"),
+                            name,
+                            result.getString("email")
+                    )
+            );
+        }
+        return users;
     }
 
     public static List<User> createUserListFromIdList(Connection connection, String inviteListString) throws SQLException {

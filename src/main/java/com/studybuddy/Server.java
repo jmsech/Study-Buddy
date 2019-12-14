@@ -20,6 +20,7 @@ public class Server {
                 .routes(() -> {
                     path("users", () -> {
                         post(ApplicationController::createUser);
+                        get(ApplicationController::getAllUsers);
                         path("authenticate/", () -> {
                             post(ApplicationController::authenticateUser);
                         });

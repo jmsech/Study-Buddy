@@ -97,6 +97,10 @@ public class ApplicationController {
         userController.createUser(ctx);
     }
 
+    public void getAllUsers(Context ctx) throws SQLException {
+        userController.getAllUsers(ctx);
+    }
+
     public void authenticateUser(Context ctx) throws NoSuchAlgorithmException, SQLException, InvalidKeySpecException {
         userController.authenticateUser(ctx);
     }
