@@ -37,8 +37,14 @@ class CurrentCourses extends React.Component {
             <div className="center">
                 <h4>Your classes</h4>
                 <CollapsibleCourseList userId={this.props.userId}/>
+                <div className="content-row">
+                <div className="column">
                 <AddCourse flipAddCourse={this.props.flipAddCourseFormState} showAddCourseForm={this.props.showAddCourseForm} userId={this.props.userId}/>
+                </div>
+                <div className="column">
                 <RemoveCourse flipRemoveCourse={this.props.flipRemoveCourseFormState} showRemoveCourseForm={this.props.showRemoveCourseForm} userId={this.props.userId}/>
+                </div>
+                </div>
             </div>
         );
     }
@@ -99,7 +105,7 @@ class RemoveCourse extends React.Component {
     render() {
         return (
             <div>
-                <RemoveCourseButton className="new-event-button btn white-text" userId={this.props.userId} flip={this.props.flipRemoveCourse} showRemoveCourseForm={this.props.showRemoveCourseForm} />
+                <RemoveCourseButton className="btn cyan darken-3 centralized-button" userId={this.props.userId} flip={this.props.flipRemoveCourse} showRemoveCourseForm={this.props.showRemoveCourseForm} />
                 <RemoveCourseForm userId={this.props.userId} showRemoveCourseForm={this.props.showRemoveCourseForm} flip={this.props.flipRemoveCourse}/>
             </div>
         )
