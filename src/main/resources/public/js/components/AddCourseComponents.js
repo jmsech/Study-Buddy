@@ -83,7 +83,7 @@ class AddCourseForm extends React.Component {
         const options = {data: courseData, limit: 20};
 
         // Initialize materialize autocomplete
-        M.Autocomplete.init(document.querySelectorAll('.autocomplete'), options);
+        M.Autocomplete.init(document.querySelectorAll('.autocompleteAddCourse'), options);
 
         let style = {display: "none"};
         if (this.props.showAddCourseForm) { style = {display: "block"} }
@@ -92,7 +92,7 @@ class AddCourseForm extends React.Component {
             <form id="addCourseForm" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="courseNumber">Course Name or Number </label>
-                    <input id="courseNumber" name="courseNumber" type="text" className="autocomplete" required/>
+                    <input id="courseNumber" name="courseNumber" type="text" className="autocompleteAddCourse" required/>
                 </div>
                 <button className="btn white-text">Add Course!</button>
             </form>

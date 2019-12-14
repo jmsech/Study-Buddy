@@ -188,7 +188,7 @@ class RemoveCourseForm extends React.Component {
         const options = {data: courseData, limit: 20};
 
         // Initialize materialize autocomplete
-        M.Autocomplete.init(document.querySelectorAll('.autocomplete'), options);
+        M.Autocomplete.init(document.querySelectorAll('.autocompleteRemoveCourse'), options);
 
         let style = {display: "none"};
         if (this.props.showRemoveCourseForm) { style = {display: "block"} }
@@ -197,7 +197,7 @@ class RemoveCourseForm extends React.Component {
             <form id="RemoveCourseForm" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="courseNumber">Course Name or Number </label>
-                    <input id="courseNumber" name="courseNumber" type="text" className="autocomplete" required/>
+                    <input id="courseNumber" name="courseNumber" type="text" className="autocompleteRemoveCourse" required/>
                 </div>
                 <button className="btn white-text">Remove Course!</button>
             </form>
