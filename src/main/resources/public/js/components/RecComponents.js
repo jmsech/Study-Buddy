@@ -36,7 +36,7 @@ class Recommendations extends React.Component {
 
 class NewRecButton extends React.Component {
     render() {
-        let title = "Generate a Recommendation";
+        let title = "Time Recommendation";
         if (this.props.showRecForm) {
             title = "Cancel";
         }
@@ -47,7 +47,7 @@ class NewRecButton extends React.Component {
 class NewRecForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {value: '', users: []};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -73,6 +73,7 @@ class NewRecForm extends React.Component {
     }
 
     async handleSubmit(rec) {
+        rec.preventDefault();
         this.props.flip();
         const formData = new FormData();
         formData.append("userId", this.props.userID);
@@ -97,63 +98,87 @@ class NewRecForm extends React.Component {
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
         });
+
+        // Get user information for the autocomplete
+        this.getDataFromServer();
     }
 
-    formatAMPM(hours, minutes) {
-        var ampm = (hours >= 12 && hours < 24) ? 'PM' : 'AM';
+    async getDataFromServer() {
+        this.setState({ users: await (await fetch("/users")).json() });
+    }
+
+    formatTime(x) {
+        let hours = x.getHours();
+        let ampm = (hours >= 12 && hours < 24) ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
         hours = hours < 10 ? "0" + hours : hours;
+        let minutes = x.getMinutes();
         minutes = minutes < 10 ? '0'+ minutes : minutes;
-        return hours + ':' + minutes + ' ' + ampm;
+        return hours + ":" + minutes + " " + ampm;
+    }
+
+    formatDay(x) {
+        let date = x.getFullYear()+'-'+(x.getMonth()+1)+'-';
+        date = (x.getDate() < 10) ? date + "0" + x.getDate() : date + x.getDate();
+        return date;
     }
 
     render() {
+        let userData={};
+        for (let i = 0; i < this.state.users.length; i++) {
+            const user = this.state.users[i];
+            const userFirst = user.name;
+            const userEmail = user.email;
+            const fullUser = userFirst.concat("(", userEmail, ")");
+            Object.assign(userData, {[fullUser]: null});
+        }
+
+        let options = {autocompleteOptions: { data: userData, limit: 20}};
+        M.Chips.init(document.querySelector('.chips-autocomplete'), options);
+
+        //const options = { data: userData, limit: 20};
+        // Initialize materialize autocomplete
+        //M.Chips.init(document.querySelector('.chips-autocomplete'), options);
+
         let style = {display: "none"};
         if (this.props.showRecForm) { style = {display: "block"} }
         let date = new Date();
         // Define default start date
-        let defaultStartDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
-        if (date.getDate() < 10) {
-            defaultStartDate = defaultStartDate + "0" + date.getDate();
-        } else {
-            defaultStartDate = defaultStartDate + date.getDate();
-        }
-        // Define default end date
-        if (date.getHours() >= 23) {
-            date.setDate(date.getDate() + 1);
-        }
-        let defaultEndDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
-        if (date.getDate() < 10) {
-            defaultEndDate = defaultEndDate + "0" + date.getDate();
-        } else {
-            defaultEndDate = defaultEndDate + date.getDate();
-        }
+        let x = date.getTime();
+        let y = x + 6*60*60*1000;
+        let X = new Date(x);
+        let Y = new Date(y);
+        let timeX = this.formatTime(X);
+        let timeY = this.formatTime(Y);
+        let dayX = this.formatDay(X);
+        let dayY = this.formatDay(Y);
+
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
-                    <input id="recInviteList" name="recInviteList" type="text" required/>
+                    <input id="recInviteList" name="recInviteList" className="chips-autocomplete" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
-                    <input id="startDate" type="text" className="datepicker" defaultValue = {defaultStartDate} required/>
+                    <input id="startDate" type="text" className="datepicker" defaultValue = {dayX} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startTime" className="active">Recommend no earlier than this time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(date.getHours(), date.getMinutes())} required/>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {timeX} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endDate" className="active">Recommend no later than this day</label>
-                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue = {defaultEndDate} required/>
+                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue = {dayY} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endTime" className="active">Recommend no later than this time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {this.formatAMPM(date.getHours()+1, date.getMinutes())} required/>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {timeY} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="sessionLength" className="active">Study for this long (in hours) </label>
-                    <input id="sessionLength" name="sessionLength" type="number"  defaultValue ="1" min="1" max="6" required/>
+                    <input id="sessionLength" name="sessionLength" type="number"  defaultValue ="1" min="1" max="6" required/> {/* These parameters should be put elsewhere */}
                 </div>
                 <button className="btn white-text">Get Recommendation!</button>
             </form>

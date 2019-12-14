@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.List;
 
-public class Course implements Cloneable{
+public class Course implements Cloneable {
 
     private String id;
     private String courseNumber;

@@ -13,11 +13,11 @@ class NewEventForm extends React.Component {
         super(props);
         this.state = {value: ''};
 
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this); // FIXME I don't think we use this
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) {
+    handleChange(event) { // FIXME I don't think we every call this
         this.setState({value: event.target.value});
     }
 
@@ -138,6 +138,7 @@ class EventList extends React.Component {
     }
 
     async getDataFromServer() {
+        // This first line removes past events
         await fetch(`/${this.props.userID}/events`, {method: "PUT"});
         this.setState({ events: await (await fetch(`/${this.props.userID}/events`)).json() });
         window.setTimeout(() => { this.getDataFromServer(); }, 200);
@@ -172,28 +173,43 @@ class Event extends React.Component {
     }
 
     render() {
-        return (
-            <li className="card hoverable teal lighten-2">
-                <div className="card-content black-text">
-                    <span className="card-title">
-                        <EventTitle event={this.props.event}/>
-                    </span>
-                    <EventDateTime event={this.props.event}/>
-                    <EventDescription event={this.props.event}/>
-                    <EventLocation event={this.props.event}/>
-                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)} showAttendees={this.state.showAttendees}/>
-                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
-                    <AddToGoogleCalendarButton event={this.props.event}/>
-                </div>
-                <div className="card-action right-align">
-                    <div id="edit-delete">
-                        <EditButton flip={this.flipFormState.bind(this)}/>
-                        <DeleteButton event={this.props.event} userID = {this.props.userID}/>
+        if (this.props.event.isDeadline) {
+            return (
+                <li className="card hoverable red lighten-2" style={{height: "20%"}}>
+                    <div className="card-content black-text">
+                         <span className="rowC">
+                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                         </span>
+                        <DeadlineDateTime event={this.props.event}/>
                     </div>
-                    <EditEventForm event={this.props.event} userID={this.props.userID} showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                </div>
-            </li>
-        );
+                </li>
+            );
+        } else {
+            return (
+                <li className="card hoverable teal lighten-2">
+                    <div className="card-content black-text">
+                        <span className="card-title">
+                            <EventTitle event={this.props.event}/>
+                        </span>
+                        <EventDateTime event={this.props.event}/>
+                        <EventDescription event={this.props.event}/>
+                        <EventLocation event={this.props.event}/>
+                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}
+                                             showAttendees={this.state.showAttendees}/>
+                        <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
+                        <AddToGoogleCalendarButton event={this.props.event}/>
+                    </div>
+                    <div className="card-action right-align">
+                        <div id="edit-delete">
+                            <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                            <DeleteButton event={this.props.event} userID={this.props.userID}/>
+                        </div>
+                        <EditEventForm event={this.props.event} userID={this.props.userID}
+                                       showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                    </div>
+                </li>
+            );
+        }
     }
 }
 
@@ -203,9 +219,18 @@ class EventTitle extends React.Component {
         this.state = null;
     }
 
+    componentDidMount() {
+        M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+        });
+    }
+
     render() {
+        let display = {display: "none"}
+        if (this.props.event.conflict) {
+            display = {display: "inline"}
+        }
         return (
-            <h4>{this.props.event.title}</h4>
+            <h4><a className="tooltipped" data-position="bottom" data-tooltip="This event has a time conflict with at least one other event" style={display}><i style={display} className="small material-icons" >warning</i></a> {this.props.event.title}</h4>
         );
     }
 }
@@ -260,8 +285,6 @@ class EventInviteList extends React.Component {
     }
 }
 
-
-
 function titleCase(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
 }
@@ -299,6 +322,26 @@ class EventDateTime extends React.Component {
     }
 }
 
+class DeadlineDateTime extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <div id="DeadlineDateTime">
+                <p>
+                    <i className="tiny material-icons">date_range</i>
+                    {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+                    {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
+                    {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)}
+                </p>
+            </div>
+        );
+    }
+}
+
 class DeleteButton extends React.Component {
     constructor(props) {
         super(props);
@@ -308,17 +351,23 @@ class DeleteButton extends React.Component {
     render() {
         const basePath = `../${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
+        let className = "btn"
+        if (this.props.deadline) {
+            className = "btn red lighten-2 right-align"
+        }
         return (
-            <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
+            <button className={className} onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
         )
     }
 }
 
 class EditButton extends React.Component {
     render() {
-        return (
-            <button className="btn" onClick={() => { this.props.flip() }}>Edit</button>
-        )
+        let title = "Edit";
+        if (this.props.showForm) {
+            title = "Cancel";
+        }
+        return <button className="btn" onClick={() => { this.props.flip() }}>{title}</button>;
     }
 }
 

@@ -2,9 +2,11 @@ package com.studybuddy.models;
 
 import java.time.LocalDateTime;
 import java.lang.*;
+import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 
-public class Event {
+public class Event implements Comparable<Event> {
 
     private long id;
     private String title;
@@ -15,8 +17,10 @@ public class Event {
     private String location;
     private boolean isGoogleEvent;
     private boolean expired;
+    private boolean isDeadline;
+    private boolean conflict;
 
-    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location) {
+    public Event(int id, String title, LocalDateTime startTime, LocalDateTime endTime, String description, List<User> attendees, String location, boolean isDeadline) {
         this.id = id;
         this.title = title;
         this.startTime = startTime;
@@ -26,6 +30,30 @@ public class Event {
         this.location = location;
         this.isGoogleEvent = false;
         this.expired = false;
+        this.isDeadline = isDeadline;
+        this.conflict = false;
+    }
+
+    @Override
+    public boolean equals(Object e1) {
+        if (!(e1 instanceof Event)) {
+            return false;
+        }
+        Event e = (Event) e1;
+        return this.compareTo(e) == 0;
+    }
+
+    @Override
+    public int compareTo(Event e2)  {
+        long start1 = this.startTime.toEpochSecond(ZoneOffset.UTC);
+        long start2 = e2.startTime.toEpochSecond(ZoneOffset.UTC);
+        if (start1 < start2) { return -1; }
+        if (start1 > start2) {return 1; }
+        else {
+            String s1 = this.title;
+            String s2 = e2.title;
+            return s1.compareTo(s2);
+        }
     }
 
     public long getId() {
@@ -87,4 +115,62 @@ public class Event {
     public boolean isGoogleEvent() { return isGoogleEvent; }
 
     public boolean isExpired() { return expired; }
+
+    public void setGoogleEvent(boolean googleEvent) {
+        isGoogleEvent = googleEvent;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+
+    public boolean isDeadline() {
+        return isDeadline;
+    }
+
+    public boolean getIsDeadline() {
+        return isDeadline;
+    }
+
+    public void setDeadline(boolean deadline) {
+        isDeadline = deadline;
+    }
+
+    public void setIsDeadline(boolean deadline) {
+        isDeadline = deadline;
+    }
+
+    public void setConflict(boolean c) { conflict = c; }
+
+    public boolean getConflict() { return this.conflict; }
+
+    public static boolean overlaps(Event e1, Event e2) {
+        long start1 = e1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+        long start2 = e2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+        long end1 = e1.getEndTime().toEpochSecond(ZoneOffset.UTC);
+        long end2 = e2.getEndTime().toEpochSecond(ZoneOffset.UTC);
+        if (e1.isDeadline() || e2.isDeadline()) { return false; }
+        if (start1 < start2) {
+            return start2 < end1;
+        } else if (start2 < start1) {
+            return start1 < end2;
+        } else {
+            return true;
+        }
+    }
+
+    public static class EventComparator implements Comparator<Event> {
+        @Override
+        public int compare(Event e1, Event e2) {
+            long start1 = e1.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            long start2 = e2.getStartTime().toEpochSecond(ZoneOffset.UTC);
+            if (start1 < start2) { return -1; }
+            if (start1 > start2) {return 1; }
+            else {
+                String s1 = e1.getTitle();
+                String s2 = e2.getTitle();
+                return s1.compareTo(s2);
+            }
+        }
+    }
 }

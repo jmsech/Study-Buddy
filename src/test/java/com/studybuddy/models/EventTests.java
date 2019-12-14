@@ -40,7 +40,7 @@ public class EventTests {
         testHosts.add(host1);
         String eventLocation = "Library";
 
-        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts, eventLocation);
+        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts, eventLocation, false);
         assertEquals(id, event.getId());
         assertEquals(eventTitle, event.getTitle());
         assertEquals(startTime, event.getStartTime());
@@ -66,7 +66,7 @@ public class EventTests {
         User host2 = new User(2, "Joe Johnson", "joe@email.com");
 
 
-        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts, eventLocation);
+        var event = new Event(id, eventTitle, startTime, endTime, eventDescritpion, testHosts, eventLocation, false);
 
         event.setStartTime(newStartTime);
         event.setEndTime(newEndTime);

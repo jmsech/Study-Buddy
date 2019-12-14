@@ -1,7 +1,7 @@
 package com.studybuddy.controllers;
+import com.studybuddy.repositories.InitializationRepository;
 import io.javalin.http.Context;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,21 +16,61 @@ public class ApplicationController {
     private EventsController eventsController;
     private UserController userController;
     private RecsController recsController;
+    private CourseController courseController;
+    private CourseLinkRecsController courseLinkRecsController;
 
-    public ApplicationController(Connection connection) throws SQLException {
+    public ApplicationController(Connection connection) throws SQLException, IOException {
         this.eventsController = new EventsController(connection);
         this.userController = new UserController(connection);
         this.recsController = new RecsController(connection);
+        this.courseController = new CourseController(connection);
+        this.courseLinkRecsController = new CourseLinkRecsController(connection);
 
-        var statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, hashedPassword TEXT, hashSalt TEXT, firstName TEXT, lastName TEXT)");
-        statement.execute("CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, startTime DATETIME, endTime DATETIME, description TEXT, location TEXT, hostId INTEGER, isGoogleEvent BOOLEAN, expired BOOLEAN)");
-        statement.execute("CREATE TABLE IF NOT EXISTS events_to_users_mapping (id INTEGER PRIMARY KEY AUTOINCREMENT, eventId INTEGER, userId INTEGER, FOREIGN KEY (eventId) REFERENCES events (id), FOREIGN KEY (userId) REFERENCES users (id))");
-        statement.close();
+        InitializationRepository.initializeTables(connection);
     }
 
     public void getRec(Context ctx) throws SQLException {
         recsController.getRec(ctx);
+    }
+
+    public void getCourseLinkRec(Context ctx) throws SQLException {
+        courseLinkRecsController.getRec(ctx);
+    }
+
+    public void getCourses(Context ctx) throws SQLException {
+        courseController.getCourses(ctx);
+    }
+
+    public void getAllCourses(Context ctx) throws SQLException {
+        courseController.getAllCourses(ctx);
+    }
+
+    public void addCourse(Context ctx) throws SQLException {
+        courseController.addCourse(ctx);
+    }
+
+    public void archiveOldCourses(Context ctx) throws SQLException {
+        courseController.archiveOldCourses(ctx);
+    }
+
+    public void removeCourse(Context ctx) throws SQLException {
+        courseController.removeCourseFromUser(ctx);
+    }
+
+    public void updateCourseStatus(Context ctx) throws SQLException {
+        courseController.updateCourseStatus(ctx);
+    }
+
+    public void addDeadlineToCourse(Context ctx) throws SQLException {
+        courseController.addDeadlineToCourse(ctx);
+    }
+
+    public void removeDeadlineFromCourse(Context ctx) throws SQLException {
+        courseController.removeDeadlineFromCourse(ctx);
+    }
+
+    public void addCourseToUser(Context ctx) throws SQLException {
+        courseController.addCourseToUser(ctx);
     }
 
     public void getEvents(Context ctx) throws SQLException {
@@ -53,8 +93,16 @@ public class ApplicationController {
         eventsController.editEvent(ctx);
     }
 
+    public void getUser(Context ctx) throws SQLException {
+        userController.getUser(ctx);
+    }
+
     public void createUser(Context ctx) throws SQLException, InvalidKeySpecException, NoSuchAlgorithmException {
         userController.createUser(ctx);
+    }
+
+    public void getAllUsers(Context ctx) throws SQLException {
+        userController.getAllUsers(ctx);
     }
 
     public void authenticateUser(Context ctx) throws NoSuchAlgorithmException, SQLException, InvalidKeySpecException {
@@ -63,6 +111,26 @@ public class ApplicationController {
 
     public void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
         userController.collectGoogleEvents(ctx);
+    }
+
+    public void addFriend(Context ctx) throws SQLException {
+        userController.addFriend(ctx);
+    }
+
+    public void removeFriend(Context ctx) throws SQLException {
+        userController.removeFriend(ctx);
+    }
+
+    public void getPendingFromUserId(Context ctx) throws SQLException {
+        userController.getPendingFromUserId(ctx);
+    }
+
+    public void getAwaitingFromUserId(Context ctx) throws SQLException {
+        userController.getAwaitingFromUserId(ctx);
+    }
+
+    public void getFriendsFromUserId(Context ctx) throws SQLException {
+        userController.getFriendsFromUserId(ctx);
     }
 
     public void logOut(Context ctx) throws IOException {
