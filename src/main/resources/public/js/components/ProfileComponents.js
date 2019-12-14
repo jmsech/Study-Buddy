@@ -494,7 +494,7 @@ class PendingButton extends React.Component {
     }
 
     render() {
-        let title = "See Pending Requests";
+        let title = "See Pending";
         if (this.props.showPending) {
             title = "Hide";
         }
@@ -528,7 +528,7 @@ class PendingList extends React.Component {
         if (this.props.showPending) {style = {display : "block"}; }
         return (
             <div style={style}>
-                <h4>Pending Requests</h4>
+                {/*<h4>Pending Requests</h4>*/}
                 <h6>{this.state.users.length}</h6>
                 <ul>
                     {this.state.users.map(user => <Pending key={user.userId} user={user} userId={this.props.userId}/>)}
@@ -566,9 +566,17 @@ class Pending extends React.Component {
     render () {
         return (
             <div>
-                <p>{this.props.user.name}</p>
-                <button onClick={() => { this.remove() }}>-</button>
-                <button onClick={() => { this.add() }}>+</button>
+                <div className="content-row">
+                    <div className="column">
+                        <div className = "card-content">
+                            <p>{this.props.user.name}</p>
+                        </div>
+                    </div>
+                    <div className="column">
+                <button onClick={() => { this.remove() }} className="btn white-text">-</button>
+                <button onClick={() => { this.add() }} className="btn white-text">+</button>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -600,7 +608,7 @@ class AwaitingButton extends React.Component {
     }
 
     render() {
-        let title = "See Awaiting Requests";
+        let title = "See Awaiting";
         if (this.props.showAwaiting) {
             title = "Hide";
         }
@@ -634,7 +642,7 @@ class AwaitingList extends React.Component {
         if (this.props.showAwaiting) {style = {display : "block"}; }
         return (
             <div style={style}>
-                <h4>Awaiting Requests</h4>
+                {/*<h4>Awaiting Requests</h4>*/}
                 <h6>{this.state.users.length}</h6>
                 <ul>
                     {this.state.users.map(user => <Awaiting key={user.userId} user={user}/>)}

@@ -109,6 +109,27 @@ header {
     background-size: 100%;
 }
 
+.friend-plus-button {
+    font-family: "Product Sans";
+    height: 25px;
+    width: 25px;
+    background: #2ab7a9;
+
+
+}
+
+.friend-minus-button {
+    font-family: "Product Sans";
+    height: 20px;
+    width: 20px;
+    background: #2ab7a9;
+
+}
+
+.btn {
+    font-family: "Product Sans";
+}
+
 #edit-delete {
     display: flex;
     justify-content: space-between;
