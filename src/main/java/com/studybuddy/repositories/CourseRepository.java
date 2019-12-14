@@ -220,27 +220,17 @@ public class CourseRepository {
         //  which are no longer in session
     }
 
-    public static void removeCourse(Connection connection, int userId, String courseId) throws SQLException {
-        var roster = CourseRepository.getRosterFromCourseId(connection, courseId);
-        roster.remove(userId);
+    public static void removeCourseFromUser(Connection connection, int userId, String courseId) throws SQLException {
         var statement = connection.prepareStatement("DELETE FROM courses_to_users_mapping WHERE courseID = ? AND userId = ?");
         statement.setString(1, courseId);
         statement.setInt(2, userId);
-        statement.executeQuery();
+        statement.executeUpdate();
         statement.close();
 
         var courseEvents = EventRepository.getEventIDsFromCourseID(connection, courseId);
         for (var eid : courseEvents) {
             EventRepository.deleteByAttendee(eid, userId, connection);
         }
-    }
-
-    private static List<Integer> getRosterFromCourseId(Connection connection, String courseId) throws SQLException {
-        var statements = new ArrayList<PreparedStatement>();
-        var result = CourseRepository.loadCourseFields(connection, courseId, statements);
-
-        var studentIdList = result.getString("students");
-        return IdRepository.createIdListFromInviteList(connection, studentIdList);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

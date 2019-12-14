@@ -2,7 +2,6 @@ package com.studybuddy.controllers;
 import com.studybuddy.repositories.InitializationRepository;
 import io.javalin.http.Context;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -55,7 +54,7 @@ public class ApplicationController {
     }
 
     public void removeCourse(Context ctx) throws SQLException {
-        courseController.removeCourse(ctx);
+        courseController.removeCourseFromUser(ctx);
     }
 
     public void updateCourseStatus(Context ctx) throws SQLException {

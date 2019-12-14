@@ -5,7 +5,6 @@ import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -47,15 +46,14 @@ class CourseController {
         ctx.status(200);
     }
 
-    void removeCourse(Context ctx) throws SQLException {
-        String courseId = ctx.pathParam("courseId");
+    void removeCourseFromUser(Context ctx) throws SQLException {
+        String courseId = ctx.formParam("courseId", String.class).get();
         var userId = Integer.parseInt(ctx.pathParam("userId"));
-        CourseRepository.removeCourse(connection, userId, courseId);
+        CourseRepository.removeCourseFromUser(connection, userId, courseId);
         ctx.status(200);
     }
 
     void addCourseToUser(Context ctx) throws SQLException {
-        // String courseId = ctx.pathParam("courseId");
         var courseId = ctx.formParam("courseId", String.class).get();
         var userId = Integer.parseInt(ctx.pathParam("userId"));
         CourseRepository.addCourseToUser(connection, courseId, userId);

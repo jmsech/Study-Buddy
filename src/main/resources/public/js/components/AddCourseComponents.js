@@ -1,7 +1,6 @@
 class AddCourse extends React.Component {
     constructor(props) {
         super(props);
-        //this.state = {};
     }
 
     render() {
@@ -92,7 +91,7 @@ class AddCourseForm extends React.Component {
         return (
             <form id="addCourseForm" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="courseNumber">Course Name or Number (ex EN.601.226(01))</label>
+                    <label htmlFor="courseNumber">Course Name or Number </label>
                     <input id="courseNumber" name="courseNumber" type="text" className="autocomplete" required/>
                 </div>
                 <button className="btn white-text">Add Course!</button>

@@ -52,8 +52,8 @@ public class Server {
                             get(ApplicationController::getCourses);
                             post(ApplicationController::addCourse);
                             put(ApplicationController::archiveOldCourses);
+                            delete(ApplicationController::removeCourse);
                             path(":courseId", () -> {
-                                delete(ApplicationController::removeCourse);
                                 put(ApplicationController::updateCourseStatus);
                             });
                         });
