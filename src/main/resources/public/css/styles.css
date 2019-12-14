@@ -29,6 +29,9 @@ h4 {
     display: block;
 }
 
+.friendslist {
+    font-size:20px;
+}
 ul {
     padding: 0;
 }

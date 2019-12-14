@@ -23,7 +23,7 @@ class ProfileInfo extends React.Component {
             <div className="center ">
                 <h3>Profile</h3><br/>
                 <img src="../../images/profile-placeholder.png" className="profile-picture" alt="Missing profile picture"/>
-                <h5>{userName}</h5>
+                <h3>{userName}</h3>
                 <h5>{userEmail}</h5>
                 <hr/>
             </div>
@@ -35,7 +35,7 @@ class CurrentCourses extends React.Component {
     render() {
         return (
             <div className="center">
-                <h4>Your classes</h4>
+                <h4>Your classes</h4><br/>
                 <CollapsibleCourseList userId={this.props.userId}/>
                 <div className="content-row">
                 <div className="column">
@@ -45,6 +45,7 @@ class CurrentCourses extends React.Component {
                 <RemoveCourse flipRemoveCourse={this.props.flipRemoveCourseFormState} showRemoveCourseForm={this.props.showRemoveCourseForm} userId={this.props.userId}/>
                 </div>
                 </div>
+            <hr/>
             </div>
         );
     }
@@ -228,14 +229,19 @@ class Friends extends React.Component {
     render() {
         return (
             <div>
-                <FriendList userId={this.props.userId}/>
-                <FriendAddButton className="btn cyan darken-3 centralized-button"
+
+                <FriendList userId={this.props.userId} />
+                <div className="content-row">
+                    <div className="column">
+                    <FriendAddButton className="btn cyan darken-3 centralized-button"
                                  userId={this.props.userId}
                                  flipAddFriendFormState={this.flipAddFriendFormState.bind(this)}
                                  showAddFriendForm={this.state.showAddFriendForm}/>
                 <FriendAddForm userId={this.props.userId}
                                flipAddFriendFormState={this.flipAddFriendFormState.bind(this)}
                                showAddFriendForm={this.state.showAddFriendForm}/>
+                    </div>
+                    <div className="column">
                 <FriendRemoveButton className="btn cyan darken-3 centralized-button"
                                     userId={this.props.userId}
                                     flipRemoveFriendFormState={this.flipRemoveFriendFormState.bind(this)}
@@ -243,8 +249,13 @@ class Friends extends React.Component {
                 <FriendRemoveForm userId={this.props.userId}
                                   flipRemoveFriendFormState={this.flipRemoveFriendFormState.bind(this)}
                                   showRemoveFriendForm={this.state.showRemoveFriendForm}/>
+                    </div>
+                    <div className="column">
                 <Pendings userId={this.props.userId}/>
+
                 <Awaitings userId={this.props.userId}/>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -434,8 +445,8 @@ class FriendList extends React.Component {
     render () {
         return (
             <div>
-                <h2>Friends</h2>
-                <ul>
+                <h4 className="center">Your Friends</h4>
+                <ul className ="friendslist">
                     {this.state.users.map(user => <Friend key={user.userId} user={user}/>)}
                 </ul>
             </div>
