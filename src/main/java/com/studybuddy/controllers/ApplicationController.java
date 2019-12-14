@@ -69,6 +69,10 @@ public class ApplicationController {
         courseController.removeDeadlineFromCourse(ctx);
     }
 
+    public void addCourseToUser(Context ctx) throws SQLException {
+        courseController.addCourseToUser(ctx);
+    }
+
     public void getEvents(Context ctx) throws SQLException {
         eventsController.getEvents(ctx);
     }
@@ -109,8 +113,24 @@ public class ApplicationController {
         userController.collectGoogleEvents(ctx);
     }
 
-    public void addCourseToUser(Context ctx) throws SQLException {
-        courseController.addCourseToUser(ctx);
+    public void addFriend(Context ctx) throws SQLException {
+        userController.addFriend(ctx);
+    }
+
+    public void removeFriend(Context ctx) throws SQLException {
+        userController.removeFriend(ctx);
+    }
+
+    public void getPendingFromUserId(Context ctx) throws SQLException {
+        userController.getPendingFromUserId(ctx);
+    }
+
+    public void getAwaitingFromUserId(Context ctx) throws SQLException {
+        userController.getAwaitingFromUserId(ctx);
+    }
+
+    public void getFriendsFromUserId(Context ctx) throws SQLException {
+        userController.getFriendsFromUserId(ctx);
     }
 
     public void logOut(Context ctx) throws IOException {

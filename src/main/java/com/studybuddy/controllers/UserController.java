@@ -60,4 +60,34 @@ class UserController {
     void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
         CalendarQuickstart.collectEvents(this.connection, ctx);
     }
+
+    void addFriend(Context ctx) throws SQLException {
+        var userId = ctx.formParam("userId", Integer.class).get();
+        var buddyId = ctx.formParam("buddyId", Integer.class).get();
+        UserRepository.addFriend(connection, userId, buddyId);
+    }
+
+    void removeFriend(Context ctx) throws SQLException {
+        var userId = ctx.formParam("userId", Integer.class).get();
+        var buddyId = ctx.formParam("buddyId", Integer.class).get();
+        UserRepository.removeFriend(connection, userId, buddyId);
+    }
+
+    void getPendingFromUserId(Context ctx) throws SQLException {
+        var userId = ctx.formParam("userId", Integer.class).get();
+        var users = UserRepository.getPendingFromUserId(connection, userId);
+        ctx.json(users);
+    }
+
+    void getAwaitingFromUserId(Context ctx) throws SQLException {
+        var userId = ctx.formParam("userId", Integer.class).get();
+        var users = UserRepository.getAwaitingFromUserId(connection, userId);
+        ctx.json(users);
+    }
+
+    void getFriendsFromUserId(Context ctx) throws SQLException {
+        var userId = ctx.formParam("userId", Integer.class).get();
+        var users = UserRepository.getFriendsFromUserId(connection, userId);
+        ctx.json(users);
+    }
 }

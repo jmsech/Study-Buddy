@@ -1,5 +1,6 @@
 package com.studybuddy.repositories;
 
+import com.studybuddy.models.Event;
 import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
 
@@ -24,6 +25,101 @@ public class UserRepository {
             return new User(id, name, result.getString("email"));
         }
         return null;
+    }
+
+    public static List<User> getAwaitingFromUserId(Connection connection, int userId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT buddyId FROM friends WHERE userId = ? AND friend = ?");
+        statement.setInt(1, userId);
+        statement.setBoolean(2, false);
+        var result = statement.executeQuery();
+
+        List<Integer> ids = new ArrayList<>();
+        while (result.next()) {
+            ids.add(result.getInt("userId"));
+        }
+        statement.close();
+        return UserRepository.createUserListFromIdList(connection, ids);
+    }
+
+    public static List<User> getPendingFromUserId(Connection connection, int userId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT userId FROM friends WHERE buddyId = ? AND friend = ?");
+        statement.setInt(1, userId);
+        statement.setBoolean(2, false);
+        var result = statement.executeQuery();
+
+        List<Integer> ids = new ArrayList<>();
+        while (result.next()) {
+            ids.add(result.getInt("userId"));
+        }
+        statement.close();
+        return UserRepository.createUserListFromIdList(connection, ids);
+    }
+
+    public static List<User> getFriendsFromUserId(Connection connection, int userId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT buddyId FROM friends WHERE userId = ? AND friend = ?");
+        statement.setInt(1, userId);
+        statement.setBoolean(2, true);
+        var result = statement.executeQuery();
+
+        List<Integer> ids = new ArrayList<>();
+        while (result.next()) {
+            ids.add(result.getInt("buddyId"));
+        }
+        statement.close();
+        return UserRepository.createUserListFromIdList(connection, ids);
+    }
+
+    public static boolean addFriend(Connection connection, int userId, int buddyId) throws SQLException {
+        var check_statement = connection.prepareStatement("SELECT 1 FROM  friends WHERE userId = ? LIMIT 1");
+        check_statement.setInt(1, userId);
+        var check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            return false;
+        }
+        check.close();
+
+        boolean friends = false;
+        check_statement = connection.prepareStatement("SELECT 1 FROM  friends WHERE userId = ? AND buddyId = ? LIMIT 1");
+        check_statement.setInt(1, buddyId);
+        check_statement.setInt(2, userId);
+        check = check_statement.executeQuery();
+        if (check.next()) {
+            check.close();
+            friends = true;
+        }
+        check.close();
+
+        var statement = connection.prepareStatement("INSERT INTO friends(userId, buddyId, friends, weight) VALUES (?, ?, ?, ?)");
+        statement.setInt(1, userId);
+        statement.setInt(2, buddyId);
+        statement.setBoolean(3, friends);
+        statement.setDouble(4, 1.0);
+        statement.executeUpdate();
+
+        if (friends) {
+            statement = connection.prepareStatement("UPDATE friends SET friends = ?, weight = ? WHERE userId = ? AND buddyId = ?");
+            statement.setBoolean(1, friends);
+            statement.setDouble(2, 1.0);
+            statement.setInt(3, buddyId);
+            statement.setInt(4, userId);
+            statement.executeUpdate();
+        }
+        return true;
+    }
+
+    public static void removeFriend(Connection connection, int userId, int buddyId) throws SQLException {
+        var statement = connection.prepareStatement("DELETE FROM friends WHERE userId = ? AND buddyId = ?");
+        statement.setInt(1, userId);
+        statement.setInt(2, buddyId);
+        statement.executeUpdate();
+        statement.close();
+
+        statement = connection.prepareStatement("DELETE FROM friends WHERE userId = ? AND buddyId = ?");
+        statement.setInt(1, buddyId);
+        statement.setInt(2, userId);
+        statement.executeUpdate();
+        statement.close();
     }
 
     public static boolean createUser(Connection connection, String email, String password, String firstName, String lastName) throws SQLException {
