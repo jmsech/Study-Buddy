@@ -52,7 +52,7 @@ public class CourseLinkRecsController {
         user_to_weight.put(userId, (double) 100); //FIXME: THis should be a constant somewhere
 
         List<String> userCourseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
-        List<Integer> coursemateIds = IdRepository.getUserIdListFromCourseId(connection, mainCourseId);
+        List<Integer> coursemateIds = IdRepository.getUserIdListFromAllSections(connection, mainCourseId);
 
         for (var id : coursemateIds) {
             double weight = 0;
@@ -66,7 +66,6 @@ public class CourseLinkRecsController {
                 user_to_weight.put(id, weight);
             }
         }
-
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();

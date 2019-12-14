@@ -114,6 +114,40 @@ public class CourseRepository {
         return courses;
     }
 
+    public static ParticularCourse loadCourseFields(Connection connection, String courseId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT courseId, courseNum, courseDescription, courseSectionNum, " +
+                "courseName, semester, instructorName, location, credits, timeString, isActive FROM courses WHERE isActive = TRUE AND courseId = ?");
+        statement.setString(1, courseId);
+        var result = statement.executeQuery();
+
+        ParticularCourse course;
+        var students = new ArrayList<User>();
+        var tas = new ArrayList<User>();
+        var courseEvents  = new ArrayList<Event>();
+
+        if (result.isBeforeFirst()) {
+            course = new ParticularCourse(
+                    result.getString("courseId"),
+                    result.getString("courseName"),
+                    result.getString("courseDescription"),
+                    result.getString("courseNum"),
+                    result.getString("semester"),
+                    result.getString("courseSectionNum"),
+                    result.getString("location"),
+                    result.getString("credits"),
+                    result.getString("timeString"),
+                    result.getBoolean("isActive"),
+                    students,
+                    tas,
+                    result.getString("instructorName"),
+                    courseEvents
+            );
+            return course;
+        } else {
+            return null;
+        }
+    }
+
     public static List<String> getActiveCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
         var statement = connection.prepareStatement("SELECT c.courseId FROM courses " +
                 "AS c INNER JOIN courses_to_users_mapping AS ctum ON c.courseId = ctum.courseId INNER JOIN users " +
