@@ -47,7 +47,7 @@ class NewRecButton extends React.Component {
 class NewRecForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {value: '', users: []};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -97,6 +97,13 @@ class NewRecForm extends React.Component {
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
         });
+
+        // Get user information for the autocomplete
+        this.getDataFromServer();
+    }
+
+    async getDataFromServer() {
+        this.setState({ users: await (await fetch("/users")).json() });
     }
 
     formatTime(x) {
@@ -117,6 +124,19 @@ class NewRecForm extends React.Component {
     }
 
     render() {
+        let userData={};
+        for (let i = 0; i < this.state.users.length; i++) {
+            const user = this.state.users[i];
+            const userFirst = user.name;
+            const userEmail = user.email;
+            const fullUser = userFirst.concat("(", userEmail, ")");
+            Object.assign(userData, {[fullUser]: null});
+        }
+        const options = {data: userData, limit: 20};
+
+        // Initialize materialize autocomplete
+        M.Autocomplete.init(document.querySelectorAll('.autocompleteTimeRec'), options);
+
         let style = {display: "none"};
         if (this.props.showRecForm) { style = {display: "block"} }
         let date = new Date();
@@ -134,7 +154,7 @@ class NewRecForm extends React.Component {
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
-                    <input id="recInviteList" name="recInviteList" type="text" required/>
+                    <input id="recInviteList" name="recInviteList" type="text"  className="autocompleteTimeRec" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
