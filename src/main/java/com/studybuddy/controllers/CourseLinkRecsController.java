@@ -11,6 +11,7 @@ import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,7 +44,8 @@ public class CourseLinkRecsController {
 
         var semester = getCurrentSemester(endTime);
         //xxx.xxx(01)xxxxxx Note: hardcoded section 1 since the algo ignores section
-        var mainCourseId = courseNum + "(01)" + semester;
+        var index = courseNum.indexOf(")");
+        var mainCourseId = courseNum.substring(0, index + 1) + semester;
 
         var userId = ctx.formParam("userId", Integer.class).get();
         HashMap<Integer, Double> user_to_weight = new HashMap<>();
@@ -51,8 +53,6 @@ public class CourseLinkRecsController {
 
         List<String> userCourseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
         List<Integer> coursemateIds = IdRepository.getUserIdListFromCourseId(connection, mainCourseId);
-
-        for (var i : coursemateIds) System.out.println();
 
         for (var id : coursemateIds) {
             double weight = 0;
@@ -76,7 +76,7 @@ public class CourseLinkRecsController {
         List<List<TimeChunk>> busyTimes = new ArrayList<>();
         List<Integer> alwaysFree = new ArrayList<>();
         for (int buddyID : user_to_weight.keySet()) {
-            var busy = UserRepository.getUserBusyTimesFromId(connection, buddyID, null, user_to_weight.get(buddyID));
+            List<TimeChunk> busy = UserRepository.getUserBusyTimesFromId(connection, buddyID, null, user_to_weight.get(buddyID));
             if (busy == null) {
                 alwaysFree.add(buddyID);
             } else {
