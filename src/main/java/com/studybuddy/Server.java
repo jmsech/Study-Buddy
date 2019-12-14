@@ -28,15 +28,6 @@ public class Server {
                            get(ApplicationController::getUser);
                         });
                     });
-                    path("friends", () -> {
-                        post(ApplicationController::addFriend);
-                        put(ApplicationController::removeFriend);
-                        get(ApplicationController::getFriendsFromUserId);
-                    });
-                    path("followers", () -> {
-                        get(ApplicationController::getPendingFromUserId);
-                        post(ApplicationController::getAwaitingFromUserId);
-                    });
                     path("courses", () -> {
                        get(ApplicationController::getAllCourses); 
                     });
@@ -73,6 +64,15 @@ public class Server {
                         path("deadline", () -> {
                             post(ApplicationController::addDeadlineToCourse);
                             delete(ApplicationController::removeDeadlineFromCourse);
+                        });
+                        path("friends", () -> {
+                            get(ApplicationController::getFriendsFromUserId);
+                            post(ApplicationController::addFriend);
+                            put(ApplicationController::removeFriend);
+                        });
+                        path("followers", () -> {
+                            get(ApplicationController::getPendingFromUserId);
+                            post(ApplicationController::getAwaitingFromUserId);
                         });
                     });
                 })

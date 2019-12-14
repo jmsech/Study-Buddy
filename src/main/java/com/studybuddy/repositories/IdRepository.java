@@ -68,6 +68,19 @@ public class IdRepository {
         return users;
     }
 
+    public static int getIdFromEmail(String email, Connection connection) throws SQLException {
+        var statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
+        statement.setString(1, email);
+        var result = statement.executeQuery();
+        if (result.isBeforeFirst()) {
+            int id = result.getInt("id");
+            statement.close();
+            return id;
+        }
+        statement.close();
+        return -1;
+    }
+
     private static java.sql.ResultSet getIdFromEmail(String email, Connection connection, List<PreparedStatement> statements) throws SQLException {
         var statement = connection.prepareStatement("SELECT id FROM users WHERE email = ?");
         statement.setString(1, email);

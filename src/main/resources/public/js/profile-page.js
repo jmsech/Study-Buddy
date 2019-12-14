@@ -30,6 +30,7 @@ class Profile extends React.Component {
                         flipRemoveCourseFormState={this.flipRemoveCourseFormState.bind(this)}
                         showRemoveCourseForm={this.state.showRemoveCourseForm}
                     />
+                    <Friends userId={this.state.userId}/>
                 </div>
             </div>
         );

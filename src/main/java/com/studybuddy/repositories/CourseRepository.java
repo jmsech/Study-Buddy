@@ -296,7 +296,6 @@ public class CourseRepository {
             if (ampm.equals("PM")) { sec += 60*60*12; }
             return sec;
         } catch (Exception e) {
-            System.out.println(e);
             return 0;
         }
     }
