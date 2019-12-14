@@ -219,9 +219,18 @@ class EventTitle extends React.Component {
         this.state = null;
     }
 
+    componentDidMount() {
+        M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+        });
+    }
+
     render() {
+        let display = {display: "none"}
+        if (this.props.event.conflict) {
+            display = {display: "inline"}
+        }
         return (
-            <h4>{this.props.event.title}</h4>
+            <h4><a className="tooltipped" data-position="bottom" data-tooltip="This event has a time conflict with at least one other event" style={display}><i style={display} className="small material-icons" >warning</i></a> {this.props.event.title}</h4>
         );
     }
 }
