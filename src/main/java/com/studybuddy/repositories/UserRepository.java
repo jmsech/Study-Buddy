@@ -1,7 +1,5 @@
 package com.studybuddy.repositories;
 
-import com.studybuddy.models.Event;
-import com.studybuddy.models.ParticularCourse;
 import com.studybuddy.models.TimeChunk;
 import com.studybuddy.models.User;
 
@@ -12,7 +10,6 @@ import java.security.spec.KeySpec;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
