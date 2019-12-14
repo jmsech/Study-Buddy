@@ -142,7 +142,7 @@ class RemoveCourseForm extends React.Component {
     }
 
     async getDataFromServer() {
-        this.setState({ courses: await (await fetch("/courses")).json() });
+        this.setState({ courses: await (await fetch(`/${this.props.userId}/courses`)).json() });
     }
 
     async handleResponse(response) {
