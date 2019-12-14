@@ -67,11 +67,11 @@ public class UserRepository {
     public static List<User> getAllUsers(Connection connection) throws SQLException {
         var statement = connection.createStatement();
         var result = statement.executeQuery("SELECT id, email, firstName, lastName FROM users");
-        String name = result.getString("firstName") + " " + result.getString("lastName");
         var users = new ArrayList<User>();
 
         // Iterate through result
         while (result.next()) {
+            String name = result.getString("firstName") + " " + result.getString("lastName");
             users.add(
                     new User(
                             result.getInt("id"),
