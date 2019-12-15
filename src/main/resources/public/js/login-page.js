@@ -32,9 +32,8 @@ class LoginForm extends React.Component {
         // Validate username and password
         const response = await (await fetch("/users/authenticate/", {method: "POST", body: formData})).json();
         if (response !== 0) {
-            const baseUrl = "/application/application.html?id=";
-            const url = baseUrl.concat(response);
-            open(url, "_self");
+            // const url = "/application/application.html";
+            location.reload();
         } else {
             alert("Invalid email/password combination");
         }

@@ -24,6 +24,9 @@ public class Server {
                         path("authenticate/", () -> {
                             post(ApplicationController::authenticateUser);
                         });
+                        path("current/", () -> {
+                           get(ApplicationController::currentUser);
+                        });
                         path(":userId", () -> {
                            get(ApplicationController::getUser);
                         });

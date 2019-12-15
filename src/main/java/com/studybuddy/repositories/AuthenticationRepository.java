@@ -11,8 +11,8 @@ import java.sql.SQLException;
 public class AuthenticationRepository {
 
     // Don't make this private. It is used by UserRepo to create users
-    public static final int HASHING_ITERATION_COUNT = 65536;
-    public static final int HASHING_KEY_LENGTH = 128;
+    static final int HASHING_ITERATION_COUNT = 65536;
+    static final int HASHING_KEY_LENGTH = 128;
 
     public static int authenticateUser(Connection connection, String email, String password) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         // Search for the user based on their email
@@ -48,7 +48,7 @@ public class AuthenticationRepository {
 
     // Helper function to convert byte array to a hex string
     // Don't make this private. It is used by UserRepo to create users
-    public static String bytesToHex(byte[] byteArray) {
+    static String bytesToHex(byte[] byteArray) {
         StringBuilder hexStringBuilder = new StringBuilder();
         for (byte b : byteArray) {
             hexStringBuilder.append(byteToHex(b));

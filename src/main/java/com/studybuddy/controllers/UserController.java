@@ -12,9 +12,7 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 class UserController {
 
@@ -27,6 +25,17 @@ class UserController {
     void getUser(Context ctx) throws SQLException {
         var id = ctx.pathParam("userId", Integer.class).get();
         User user = UserRepository.getUser(connection, id);
+        if (user != null) {
+            ctx.json(user);
+            ctx.status(200);
+        } else {
+            // User not found
+            ctx.status(404);
+        }
+    }
+
+    void currentUser(Context ctx) {
+        var user = (User) ctx.sessionAttribute("user");
         if (user != null) {
             ctx.json(user);
             ctx.status(200);
@@ -57,6 +66,11 @@ class UserController {
         var password = ctx.formParam("password");
 
         int status = AuthenticationRepository.authenticateUser(connection, email, password);
+        if (status != 0) { // If user was found, status represents its id
+            var user = UserRepository.getUser(connection, status);
+            ctx.sessionAttribute("user", user);
+            ctx.status(200);
+        }
         ctx.json(status);
     }
 
