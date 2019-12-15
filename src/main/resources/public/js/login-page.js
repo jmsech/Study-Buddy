@@ -31,12 +31,12 @@ class LoginForm extends React.Component {
         event.preventDefault();
         // Validate username and password
         const response = await (await fetch("/users/authenticate/", {method: "POST", body: formData})).json();
-        if (response !== 0) {
-            const baseUrl = "/application/application.html?id=";
-            const url = baseUrl.concat(response);
-            open(url, "_self");
-        } else {
+        if (response !== 0 && response !== -1) {
+            location.reload();
+        } else if (response === 0) {
             alert("Invalid email/password combination");
+        } else {
+            alert("Congrats, you found the easter egg!");
         }
     }
 
@@ -57,5 +57,3 @@ class LoginForm extends React.Component {
         )
     }
 }
-
-ReactDOM.render(<LoginPage/>, document.querySelector("#login-page"));

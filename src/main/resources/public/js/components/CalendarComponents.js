@@ -311,7 +311,7 @@ class EventDateTime extends React.Component {
         return (
             <div id="EventDateTime">
                 <p>
-                    <i className="tiny material-icons">date_range</i>
+                    <i className="tiny material-icons">date_range</i>&nbsp;
                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
                     {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} -&nbsp;
@@ -332,7 +332,7 @@ class DeadlineDateTime extends React.Component {
         return (
             <div id="DeadlineDateTime">
                 <p>
-                    <i className="tiny material-icons">date_range</i>
+                    <i className="tiny material-icons">date_range</i>&nbsp;
                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
                     {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)}

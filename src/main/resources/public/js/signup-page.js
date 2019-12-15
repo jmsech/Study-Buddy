@@ -76,6 +76,7 @@ class SignUpForm extends React.Component {
             event.preventDefault();
             return;
         }
+
         const formData = new FormData();
         formData.append("firstName", event.target.firstName.value);
         formData.append("lastName", event.target.lastName.value);
@@ -86,13 +87,11 @@ class SignUpForm extends React.Component {
         const response = await (await fetch("/users", {method: "POST", body: formData})).json();
         if (response) { // If response is true, user was created
             alert("User successfully created!");
+            open("/../index.html", "_self");
         } else {
             alert("This email is already associated with a user");
         }
-        open("/../index.html", "_self");
     }
-
-
 
     render() {
         return (
@@ -118,6 +117,17 @@ class SignUpForm extends React.Component {
                     <label htmlFor="confirmPassword">Confirm password</label>
                     <input id="confirmPassword" name="confirmPassword" type="password" required/>
                 </div>
+                {/** STRUCTURE FOR PROFILE PICTURE INPUT
+                <div className="file-field input-field">
+                    <div className="btn">
+                        <span>Browse</span>
+                        <input type="file" accept="image/jpeg, image/jpg, image/png" id="profilePicture" name="profilePicture" onChange={this.fileSelectedHandler}/>
+                    </div>
+                    <div className="file-path-wrapper">
+                        <input className="file-path validate" type="text" placeholder="Insert a profile picture (optional)"/>
+                    </div>
+                </div>
+                 */}
                 <div className="center-align"><button className="btn">Sign Up</button></div>
             </form>
         )

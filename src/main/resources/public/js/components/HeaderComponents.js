@@ -1,13 +1,13 @@
 class LogoutButton extends React.Component {
     render() {
         return (
-            // TODO make this actually log out of a user
-            <a className="btn" href="../../index.html" onClick = {() => this.logOut()}>Log&nbsp;Out</a>
+            <button className="btn" onClick = {() => this.logOut()}>Log&nbsp;Out</button>
         );
     }
 
     async logOut() {
-        await fetch(`../${this.props.userID}`, {method: "DELETE"})
+        await fetch("/users/authenticate", {method: "DELETE"});
+        location.reload();
     }
 }
 
@@ -18,18 +18,16 @@ class ProfileButton extends React.Component {
 
     render() {
         return (
-            <a className="btn" href={this.props.url}>Your&nbsp;Profile</a>
+            <button className="btn" onClick={() => open(this.props.url, "_self")}>Your&nbsp;Profile</button>
         );
     }
 }
 
 class Header extends React.Component {
     render() {
-        const baseHomeUrl = "/application/application.html?id=";
-        const homeUrl = baseHomeUrl.concat(this.props.userId);
+        const homeUrl = "/";
 
-        const baseProfileUrl = "/profile/profile.html?id=";
-        const profileUrl = baseProfileUrl.concat(this.props.userId);
+        const profileUrl = "/profile/profile.html";
         return (
             <header>
                 <a href={homeUrl}>

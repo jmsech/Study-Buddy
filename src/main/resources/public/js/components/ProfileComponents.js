@@ -642,7 +642,7 @@ class AwaitingList extends React.Component {
 
     async getDataFromServer() {
         this.setState({ users: await (await fetch(`/${this.props.userId}/followers/`, {method: "POST"})).json() });
-        this.props.changeNumEntries(this.state.users.length)
+        this.props.changeNumEntries(this.state.users.length);
         window.setTimeout(() => {this.getDataFromServer();}, 200);
     }
 
@@ -658,7 +658,7 @@ class AwaitingList extends React.Component {
         return (
             <div style={style}>
                 <ul>
-                    {this.state.users.map(user => <Awaiting key={user.userId} user={user}/>)}
+                    {this.state.users.map(user => <Awaiting key={user.id} user={user}/>)}
                 </ul>
             </div>
         )

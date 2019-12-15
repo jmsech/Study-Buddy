@@ -2,21 +2,23 @@ class Application extends React.Component {
     constructor(props) {
         super(props);
 
-        // Determine the userId from the website url. (location.search)
-        const parameters = location.search.substring(1).split("&");
-        const temp = parameters[0].split("=");
-        const id = unescape(temp[1]);
-
-        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, userId: id,
+        this.state = {showEventForm: false, showRecForm: false, showCourseDisplay: false, user: null,
             showBuddyRecForm: false, showAddCourseForm: false};
+    }
+
+    async getCurrentUser() {
+        const user = await (await fetch("/users/current")).json();
+        if (user !== 0) {
+            this.setState({ user: user });
+        }
+    }
+
+    componentDidMount() {
+        this.getCurrentUser();
     }
 
     flipEventFormState() {
         this.setState({showEventForm: !this.state.showEventForm});
-    }
-
-    flipRecFormState() {
-        this.setState({showRecForm: !this.state.showRecForm});
     }
 
     flipCourseDisplay() {
@@ -36,10 +38,13 @@ class Application extends React.Component {
     }
 
     render() {
+        if (this.state.user === null) {
+            return (<LoginPage/>);
+        }
         return (
             <div>
                 <div>
-                    <Header userId={this.state.userId}/>
+                    <Header/>
                     <div className="centralized-body">
                         <User showCourseDisplay = {this.state.showCourseDisplay}
                               flipCourseDisplay = {this.flipCourseDisplay.bind(this)}
@@ -51,7 +56,7 @@ class Application extends React.Component {
                               flipBuddyRecFormState={this.flipBuddyRecFormState.bind(this)}
                               showAddCourseForm={this.state.showAddCourseForm}
                               flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
-                              userId={this.state.userId}/>
+                              user={this.state.user}/>
                     </div>
                 </div>
             </div>
@@ -59,6 +64,6 @@ class Application extends React.Component {
     }
 }
 
-ReactDOM.render(<Application/>, document.querySelector("#application"));
+ReactDOM.render(<Application/>, document.querySelector("#index"));
 
 

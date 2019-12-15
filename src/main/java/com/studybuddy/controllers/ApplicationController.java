@@ -97,6 +97,10 @@ public class ApplicationController {
         userController.getUser(ctx);
     }
 
+    public void currentUser(Context ctx) {
+        userController.currentUser(ctx);
+    }
+
     public void createUser(Context ctx) throws SQLException, InvalidKeySpecException, NoSuchAlgorithmException {
         userController.createUser(ctx);
     }
@@ -135,5 +139,6 @@ public class ApplicationController {
 
     public void logOut(Context ctx) throws IOException {
         Files.deleteIfExists(Paths.get("tokens/StoredCredential"));
+        userController.logOut(ctx);
     }
 }

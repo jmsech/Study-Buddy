@@ -21,6 +21,7 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.23.0'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
     compile 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
+    compile 'at.favre.lib:bcrypt:0.8.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }

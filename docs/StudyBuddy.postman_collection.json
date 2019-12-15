@@ -407,23 +407,20 @@
 		},
 		{
 			"name": "Authenticate User",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
 						{
 							"key": "email",
-							"value": "test@test.com",
+							"value": "vlepca1@jhu.edu",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "password",
+							"value": "Fremin1!",
 							"type": "text"
 						}
 					]
@@ -438,6 +435,13 @@
 					"path": [
 						"users",
 						"authenticate"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -590,6 +594,26 @@
 					"port": "7000",
 					"path": [
 						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users/current",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"current"
 					]
 				}
 			},

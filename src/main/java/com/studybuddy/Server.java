@@ -23,6 +23,10 @@ public class Server {
                         get(ApplicationController::getAllUsers);
                         path("authenticate/", () -> {
                             post(ApplicationController::authenticateUser);
+                            delete(ApplicationController::logOut);
+                        });
+                        path("current/", () -> {
+                           get(ApplicationController::currentUser);
                         });
                         path(":userId", () -> {
                            get(ApplicationController::getUser);
@@ -33,7 +37,6 @@ public class Server {
                     });
                     path(":userId", () -> { 
                         post(ApplicationController::collectGoogleEvents);
-                        delete(ApplicationController::logOut);
                         path("recs", () -> {
                             post(ApplicationController::getRec);
                         });

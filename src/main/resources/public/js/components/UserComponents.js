@@ -1,41 +1,27 @@
 class User extends React.Component {
-    // Constructor called by application.js
-    constructor(props) {
-        super(props);
-        this.state = {user: null};
-    }
-
-    async getUserData() {
-        this.setState({ user: await (await fetch(`/users/${this.props.userId}`)).json() });
-    }
-
-    componentDidMount() {
-        this.getUserData();
-    }
-
     render () {
         let firstName = "";
-        if (this.state.user !== null) {
-            let fullName = this.state.user.name;
+        if (this.props.user !== null) {
+            let fullName = this.props.user.name;
             var n = fullName.search(" ");
             firstName = fullName.substr(0, n);
         }
-       return (
+        return (
            <div>
                <h5>Welcome, {firstName}!</h5>
-               <SeeCourses userID={this.props.userId}/>
+               <SeeCourses userID={this.props.user.id}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
                    <div className="eventsColumn">
                        {/* Header which says Events and Google Calendar button */}
-                       <h3>Events <GetGoogleEvents userID={this.props.userId}/> </h3>
+                       <h3>Events <GetGoogleEvents userID={this.props.user.id}/> </h3>
                        {/* "New Event" Button */}
                        <NewEventButton className="new-event-button btn white-text" flip={this.props.flipEventFormState} showEventForm={this.props.showEventForm}/>
                        {/* New event form (which is hidden when "New Event" is unclicked) */}
-                       <NewEventForm userID={this.props.userId} showEventForm={this.props.showEventForm} flip={this.props.flipEventFormState}/>
+                       <NewEventForm userID={this.props.user.id} showEventForm={this.props.showEventForm} flip={this.props.flipEventFormState}/>
                        {/* List of events which user is attending */}
-                       <EventList userID={this.props.userId}/>
+                       <EventList userID={this.props.user.id}/>
                    </div>
                    <div className="recColumn">
                        {/* Recommendations Header */}
@@ -44,17 +30,17 @@ class User extends React.Component {
                        <div className="column">
                             <h5 className="center"> Find a time to study with a group of your buddies </h5>
                             {/* Display list of recommendations */}
-                            <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.props.userId}/>
+                            <Recommendations flipRec={this.props.flipRecFormState} showRecForm={this.props.showRecForm} userID={this.props.user.id}/>
                        </div>
                        <div className="column">
                             <h5 className="center"> Find new buddies to study with in one of your classes </h5>
-                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.props.userId}/>
+                            <BuddyRecommendations flipRec={this.props.flipBuddyRecFormState} showBuddyRecForm={this.props.showBuddyRecForm} userID={this.props.user.id}/>
                        </div>
                        </div>
                    </div>
                </div>
            </div>
-       );
+        );
     }
 }
 
@@ -68,9 +54,9 @@ class GetGoogleEvents extends React.Component {
         }
         if (daysToCollect) {
             const formData = new FormData();
-            formData.append("userID", this.props.userID);
+            formData.append("userID", this.props.user.id);
             formData.append("daysToCollect", daysToCollect);
-            await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
+            await fetch(`../${this.props.user.id}`, {method: "POST", body: formData})
                 .then(this.handleResponse);
         }
     }
@@ -114,7 +100,8 @@ class CourseList extends React.Component {
     }
 
     async getDataFromServer() {
-        this.setState({courses: await (await fetch(`/${this.props.userID}/courses`)).json()});
+        const userId = this.props.userID;
+        this.setState({courses: await (await fetch(`/${userId}/courses`)).json()});
         window.setTimeout(() => {
             this.getDataFromServer();
         }, 200);
@@ -129,17 +116,12 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>>
+                <div id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>
                     <span className="card-title">
                         <h4 className="center">Your Courses</h4>
                     </span>
-                    {this.state.courses.map(course =>
-                        <Course key={course.id}
-                                course={course}
-                                userID={this.props.userID}
-                        />
-                    )}
-                </ul>
+                    <ul>{this.state.courses.map(course => <Course key={course.courseId} course={course} userID={this.props.userID}/>)}</ul>
+                </div>
             </div>
         );
     }
@@ -232,7 +214,7 @@ class NewDeadlineForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("dueDate", deadline.target.dueDate.value + " " + dueTime);
         formData.append("description", description);
-        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData})
+        fetch(`../${this.props.user.id}/deadline`, {method: "POST", body: formData})
             .then(this.handleResponse);
         deadline.target.reset(); // clear the form entries
     }
