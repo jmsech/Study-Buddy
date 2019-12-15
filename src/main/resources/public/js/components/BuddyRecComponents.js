@@ -52,7 +52,7 @@ class NewBuddyRecButton extends React.Component {
 class NewBuddyRecForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {value: '', courses: []};
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -76,16 +76,23 @@ class NewBuddyRecForm extends React.Component {
     }
 
     async handleSubmit(rec) {
+        rec.preventDefault();
         this.props.flip();
         const formData = new FormData();
+        //reformat course number
+        let fullCourseName = rec.target.courseNumber.value;
+        let n = fullCourseName.search(" ");
+        let courseNum = fullCourseName.substr(0, n);
+
         formData.append("userId", this.props.userID);
-        formData.append("courseNumber", rec.target.courseNumber.value);
+        formData.append("courseNumber", courseNum);
+
         formData.append("startTime", rec.target.startDate.value + " " + rec.target.startTime.value);
         formData.append("endTime", rec.target.endDate.value + " " + rec.target.endTime.value);
         formData.append("sessionLength", rec.target.sessionLength.value);
 
         rec.preventDefault();
-        fetch(`../${this.props.userID}/courseLinkRecs`, {method: "POST", body: formData}) //FIXME: This is where I did the form stuff
+        fetch(`../${this.props.userID}/courseLinkRecs`, {method: "POST", body: formData})
              .then(this.handleResponse);
         rec.target.reset(); // clear the form entries
     }
@@ -100,6 +107,12 @@ class NewBuddyRecForm extends React.Component {
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
         });
+        // Get course information for the autocomplete
+        this.getDataFromServer();
+    }
+
+    async getDataFromServer() {
+        this.setState({ courses: await (await fetch(`/${this.props.userID}/courses`)).json() });
     }
 
     formatTime(x) {
@@ -124,6 +137,21 @@ class NewBuddyRecForm extends React.Component {
         if (this.props.showBuddyRecForm) {
             style = {display: "block"}
         }
+
+        let courseData = {};
+        for (let i = 0; i < this.state.courses.length; i++) {
+            const course = this.state.courses[i];
+            const courseNumber = course.courseNumber;
+            const courseSection = course.section;
+            const courseName = course.courseName;
+            const fullCourseName = courseNumber.concat("(", courseSection, ") - ", courseName);
+            Object.assign(courseData, {[fullCourseName]: null});
+        }
+        const options = {data: courseData, limit: 20};
+
+        // Initialize materialize autocomplete
+        M.Autocomplete.init(document.querySelector('.autocompleteBudRec'), options);
+
         let date = new Date();
         // Define default start date
         let x = date.getTime();
@@ -138,8 +166,8 @@ class NewBuddyRecForm extends React.Component {
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="courseNumber">Course Number (ex EN.601.226)</label>
-                    <input id="courseNumber" name="courseNumber" type="text" required/>
+                    <label htmlFor="courseNumber">Course Name</label>
+                    <input id="courseNumber" name="courseNumber" type="text" className="autocompleteBudRec" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>

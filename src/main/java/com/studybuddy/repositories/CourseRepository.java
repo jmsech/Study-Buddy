@@ -55,11 +55,16 @@ public class CourseRepository {
 
     public static void addDeadlineToCourse(Connection connection, String courseId, String title, String description, Timestamp time) throws SQLException {
         var eventId = EventRepository.createEventInDB(connection, new ArrayList<>(), title, time, time, description, "", courseId.hashCode(), true);
-        var statement2 = connection.prepareStatement("INSERT INTO courses_to_deadlines_mapping(courseId, eventId) VALUES (?, ?)");
-        statement2.setString(1, courseId);
-        statement2.setInt(2, eventId);
-        statement2.executeUpdate();
-        statement2.close();
+        var statement = connection.prepareStatement("INSERT INTO courses_to_deadlines_mapping(courseId, eventId) VALUES (?, ?)");
+        statement.setString(1, courseId);
+        statement.setInt(2, eventId);
+        statement.executeUpdate();
+        statement.close();
+
+        var students = CourseRepository.getRosterIDs(connection, courseId);
+        for (var sid : students) {
+            EventRepository.addEventToUser(connection, sid, eventId);
+        }
     }
 
     public static void removeDeadlineFromCourse(Connection connection, int eventId, String courseId) throws SQLException {
@@ -71,9 +76,7 @@ public class CourseRepository {
     }
 
     public static List<ParticularCourse> getCoursesForUser(Connection connection, int userId) throws SQLException {
-
         List<String> courseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
-
         return CourseRepository.getCourseListFromCourseIdList(connection, courseIDs);
     }
 
@@ -111,10 +114,41 @@ public class CourseRepository {
         return courses;
     }
 
-    public static List<String> getActiveCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
+    public static ParticularCourse loadCourseFields(Connection connection, String courseId) throws SQLException {
+        var statement = connection.prepareStatement("SELECT courseId, courseNum, courseDescription, courseSectionNum, " +
+                "courseName, semester, instructorName, location, credits, timeString, isActive FROM courses WHERE isActive = TRUE AND courseId = ?");
+        statement.setString(1, courseId);
+        var result = statement.executeQuery();
 
-        // TODO: <COMPLETED>
-        //  1) Pull list of courseIDs from associative database.
+        ParticularCourse course;
+        var students = new ArrayList<User>();
+        var tas = new ArrayList<User>();
+        var courseEvents  = new ArrayList<Event>();
+
+        if (result.isBeforeFirst()) {
+            course = new ParticularCourse(
+                    result.getString("courseId"),
+                    result.getString("courseName"),
+                    result.getString("courseDescription"),
+                    result.getString("courseNum"),
+                    result.getString("semester"),
+                    result.getString("courseSectionNum"),
+                    result.getString("location"),
+                    result.getString("credits"),
+                    result.getString("timeString"),
+                    result.getBoolean("isActive"),
+                    students,
+                    tas,
+                    result.getString("instructorName"),
+                    courseEvents
+            );
+            return course;
+        } else {
+            return null;
+        }
+    }
+
+    public static List<String> getActiveCourseIdListFromUserId(Connection connection, int userId) throws SQLException {
         var statement = connection.prepareStatement("SELECT c.courseId FROM courses " +
                 "AS c INNER JOIN courses_to_users_mapping AS ctum ON c.courseId = ctum.courseId INNER JOIN users " +
                 "AS u ON ctum.userId = u.id WHERE u.id = ? AND c.isActive = 1");
@@ -130,7 +164,6 @@ public class CourseRepository {
     }
 
     private static List<ParticularCourse> getCourseListFromCourseIdList(Connection connection, List<String> courseIDs) throws SQLException {
-
         var courses = new ArrayList<ParticularCourse>();
         ArrayList<PreparedStatement> statements = new ArrayList<>();
 
@@ -183,13 +216,6 @@ public class CourseRepository {
     }
 
     public static int addCourseToUser(Connection connection, String courseId, int userId) throws SQLException {
-
-        // TODO: (Update Functions below, this function is fine)
-        //  1) Check to see if the course exists in the database (If course not in DB, return 1)
-        //  2) Get the list of students in the the course
-        //  3) Check if student is already on list (If student not on list, return 2)
-        //  4) Add Student to list and update course roster in DB (return 0)
-
         List<Integer> rosterIDs = CourseRepository.getRosterIDs(connection, courseId);
         if (rosterIDs.contains(userId)) {return 1; }
         CourseRepository.updateCourseRoster(connection, courseId, userId);
@@ -197,10 +223,6 @@ public class CourseRepository {
     }
 
     private static List<Integer> getRosterIDs(Connection connection, String courseId) throws SQLException {
-
-        // TODO: <COMPLETED>
-        //  1) Figure out how to pull data from DB
-
         var statement = connection.prepareStatement("SELECT ctum.userId FROM courses_to_users_mapping AS ctum WHERE ctum.courseId = ?");
         statement.setString(1, courseId);
         var result = statement.executeQuery();
@@ -214,14 +236,16 @@ public class CourseRepository {
     }
 
     private static void updateCourseRoster(Connection connection, String courseId, int userId) throws SQLException {
-        // TODO: <COMPLETED>
-        //  1) Update roster of course corresponding to courseId to the new roster list
         var statement = connection.prepareStatement("INSERT INTO courses_to_users_mapping(courseId, userId) VALUES (?, ?)");
-
         statement.setString(1, courseId);
         statement.setInt(2, userId);
         statement.executeUpdate();
         statement.close();
+
+        var courseEvents = EventRepository.getEventIDsFromCourseID(connection, courseId);
+        for (var eid : courseEvents) {
+            EventRepository.addEventToUser(connection, userId, eid);
+        }
     }
 
     public static void archiveOldCourses(Connection connection) {
@@ -230,23 +254,17 @@ public class CourseRepository {
         //  which are no longer in session
     }
 
-    public static void removeCourse(Connection connection, int userId, String courseId) throws SQLException {
-        var roster = CourseRepository.getRosterFromCourseId(connection, courseId);
-        roster.remove(userId);
+    public static void removeCourseFromUser(Connection connection, int userId, String courseId) throws SQLException {
         var statement = connection.prepareStatement("DELETE FROM courses_to_users_mapping WHERE courseID = ? AND userId = ?");
         statement.setString(1, courseId);
         statement.setInt(2, userId);
-
-        statement.executeQuery();
+        statement.executeUpdate();
         statement.close();
-    }
 
-    private static List<Integer> getRosterFromCourseId(Connection connection, String courseId) throws SQLException {
-        var statements = new ArrayList<PreparedStatement>();
-        var result = CourseRepository.loadCourseFields(connection, courseId, statements);
-
-        var studentIdList = result.getString("students");
-        return IdRepository.createIdListFromInviteList(connection, studentIdList);
+        var courseEvents = EventRepository.getEventIDsFromCourseID(connection, courseId);
+        for (var eid : courseEvents) {
+            EventRepository.deleteByAttendee(eid, userId, connection);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,7 +296,6 @@ public class CourseRepository {
             if (ampm.equals("PM")) { sec += 60*60*12; }
             return sec;
         } catch (Exception e) {
-            System.out.println(e);
             return 0;
         }
     }
@@ -313,7 +330,7 @@ public class CourseRepository {
         try { y = Integer.parseInt(year); } catch (NumberFormatException e) { return false; }
         LocalDateTime firstFullWeek = LocalDateTime.of(y,6,1,0,0,0);
         // FIXME: We have changed the semester start temporarily so that you can see classes that have ended
-        if (semester.contains("Fa")) { firstFullWeek = LocalDateTime.of(y,12,10,0,0,0); }
+        if (semester.contains("Fa")) { firstFullWeek = LocalDateTime.of(y,12,18,0,0,0); }
         if (semester.contains("Sp")) { firstFullWeek = LocalDateTime.of(y,2,1,0,0,0); }
 
         for (int i = 0; i < num_dates; i++) {

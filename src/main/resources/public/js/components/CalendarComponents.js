@@ -134,7 +134,6 @@ class NewEventForm extends React.Component {
 class EventList extends React.Component {
     constructor(props) {
         super(props);
-        //TODO set up isDeadline in database. If you want to see a deadline displayed, comment out the body of getDataFromServer
         this.state = { events: [] };
     }
 
@@ -176,11 +175,12 @@ class Event extends React.Component {
     render() {
         if (this.props.event.isDeadline) {
             return (
-                <li className="card hoverable red lighten-2">
+                <li className="card hoverable red lighten-2" style={{height: "20%"}}>
                     <div className="card-content black-text">
-                    <span className="card-title">
-                        <EventTitle event={this.props.event}/>
-                    </span>
+                         <span className="rowC">
+                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                         </span>
+                        <DeadlineDateTime event={this.props.event}/>
                     </div>
                 </li>
             );
@@ -219,9 +219,18 @@ class EventTitle extends React.Component {
         this.state = null;
     }
 
+    componentDidMount() {
+        M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+        });
+    }
+
     render() {
+        let display = {display: "none"}
+        if (this.props.event.conflict) {
+            display = {display: "inline"}
+        }
         return (
-            <h4>{this.props.event.title}</h4>
+            <h4><a className="tooltipped" data-position="bottom" data-tooltip="This event has a time conflict with at least one other event" style={display}><i style={display} className="small material-icons" >warning</i></a> {this.props.event.title}</h4>
         );
     }
 }
@@ -313,6 +322,26 @@ class EventDateTime extends React.Component {
     }
 }
 
+class DeadlineDateTime extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = null;
+    }
+
+    render() {
+        return (
+            <div id="DeadlineDateTime">
+                <p>
+                    <i className="tiny material-icons">date_range</i>
+                    {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+                    {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
+                    {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)}
+                </p>
+            </div>
+        );
+    }
+}
+
 class DeleteButton extends React.Component {
     constructor(props) {
         super(props);
@@ -322,8 +351,12 @@ class DeleteButton extends React.Component {
     render() {
         const basePath = `../${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
+        let className = "btn"
+        if (this.props.deadline) {
+            className = "btn red lighten-2 right-align"
+        }
         return (
-            <button className="btn" onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
+            <button className={className} onClick={() => { fetch(path, {method: "DELETE"}) }}><i className="material-icons">delete</i></button>
         )
     }
 }

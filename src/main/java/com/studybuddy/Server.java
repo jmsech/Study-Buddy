@@ -20,6 +20,7 @@ public class Server {
                 .routes(() -> {
                     path("users", () -> {
                         post(ApplicationController::createUser);
+                        get(ApplicationController::getAllUsers);
                         path("authenticate/", () -> {
                             post(ApplicationController::authenticateUser);
                         });
@@ -52,8 +53,8 @@ public class Server {
                             get(ApplicationController::getCourses);
                             post(ApplicationController::addCourse);
                             put(ApplicationController::archiveOldCourses);
+                            delete(ApplicationController::removeCourse);
                             path(":courseId", () -> {
-                                delete(ApplicationController::removeCourse);
                                 put(ApplicationController::updateCourseStatus);
                             });
                         });
@@ -63,6 +64,15 @@ public class Server {
                         path("deadline", () -> {
                             post(ApplicationController::addDeadlineToCourse);
                             delete(ApplicationController::removeDeadlineFromCourse);
+                        });
+                        path("friends", () -> {
+                            get(ApplicationController::getFriendsFromUserId);
+                            post(ApplicationController::addFriend);
+                            put(ApplicationController::removeFriend);
+                        });
+                        path("followers", () -> {
+                            get(ApplicationController::getPendingFromUserId);
+                            post(ApplicationController::getAwaitingFromUserId);
                         });
                     });
                 })

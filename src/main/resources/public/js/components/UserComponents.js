@@ -23,7 +23,7 @@ class User extends React.Component {
        return (
            <div>
                <h5>Welcome, {firstName}!</h5>
-               <SeeCourses active={this.props.showCourseDisplay} flip={this.props.flipCourseDisplay} userID={this.props.userId}/>
+               <SeeCourses userID={this.props.userId}/>
                {/* Below is the original display on the webpage */}
                <div className="content-row">
                    {/* "Column" splits the page up into as many columns as necessary (in this case 2) */}
@@ -99,7 +99,7 @@ class SeeCourses extends React.Component {
         return (
             <div>
                 <button data-target="slide-out" className="btn sidenav-trigger"> {text} </button>
-                <CourseList userID = {this.props.userID} active={this.props.active} flip = {this.props.flip}/>
+                <CourseList userID = {this.props.userID}/>
             </div>
         )
     }
@@ -129,16 +129,14 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav teal lighten-1">
+                <ul id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>>
                     <span className="card-title">
-                        <h4>Your Courses</h4>
+                        <h4 className="center">Your Courses</h4>
                     </span>
                     {this.state.courses.map(course =>
                         <Course key={course.id}
                                 course={course}
                                 userID={this.props.userID}
-                                active={this.props.active}
-                                flip = {this.props.flip}
                         />
                     )}
                 </ul>
@@ -149,6 +147,11 @@ class CourseList extends React.Component {
 class Course extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {showDeadlineForm: false}
+    }
+
+    flipDeadlineFormState() {
+        this.setState({showDeadlineForm: !this.state.showDeadlineForm} );
     }
 
     render() {
@@ -164,8 +167,8 @@ class Course extends React.Component {
                     <p>{this.props.course.instructor}</p>
                     <p>{this.props.course.timeString}</p>
                     <CourseLocation course={this.props.course}/>
-                    <DeadlineButton userID={this.props.userID} active={this.props.active} flip = {this.props.flip}/>
-                    <NewDeadlineForm active={this.props.active} flip = {this.props.flip} courseID={this.props.course.id}/>
+                    <DeadlineButton userID={this.props.userID} active={this.state.showDeadlineForm} flip = {this.flipDeadlineFormState.bind(this)}/>
+                    <NewDeadlineForm active={this.state.showDeadlineForm} flip = {this.flipDeadlineFormState.bind(this)} courseID={this.props.course.courseId} userID={this.props.userID}/>
                 </div>
             </div>
         );
@@ -204,22 +207,34 @@ class NewDeadlineForm extends React.Component {
         this.state = {value: ''};
 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
 
+    async handleResponse(response) {
+        return response;
+    }
 
-    handleSubmit(event) {
+    handleSubmit(deadline) {
+        deadline.preventDefault();
         this.props.flip();
+        let dueTime = "11:59 PM";
+        if (deadline.target.dueTime.value !== "") {
+            dueTime = deadline.target.dueTime.value
+        }
+        let description = deadline.target.description.value;
+        if (description == "") {
+            description = " "
+        }
         const formData = new FormData();
-        formData.append("userID", this.props.userID);
-        formData.append("title", event.target.title.value);
+        // formData.append("userID", this.props.userID);
+        formData.append("title", deadline.target.title.value);
+        formData.append("courseID", this.props.courseID);
         // combine tim/date into the format yyyy-mm-dd 00:00
-        formData.append("dueDate", event.target.startDate.value + " " + event.target.dueTime.value);
-        formData.append("description", event.target.description.value);
-        form.append("courseID", this.props.courseID);
-        event.preventDefault();
-        // TODO: Call appropriate path on Server
-        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData});
-        event.target.reset(); // clear the form entries
+        formData.append("dueDate", deadline.target.dueDate.value + " " + dueTime);
+        formData.append("description", description);
+        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData})
+            .then(this.handleResponse);
+        deadline.target.reset(); // clear the form entries
     }
 
     componentDidMount() {
@@ -234,15 +249,6 @@ class NewDeadlineForm extends React.Component {
         });
     }
 
-    formatAMPM(hours, minutes) {
-        var ampm = (hours >= 12 && hours < 24) ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        hours = hours < 10 ? "0" + hours : hours;
-        minutes = minutes < 10 ? '0'+ minutes : minutes;
-        return hours + ':' + minutes + ' ' + ampm;
-    }
-
     render() {
         let style = {display: "none"};
         if (this.props.active) { style = {display: "block"}};
@@ -255,28 +261,29 @@ class NewDeadlineForm extends React.Component {
             defaultStartDate = defaultStartDate + date.getDate();
         }
         return (
-            <form id="eventform" onSubmit={this.handleSubmit} style={style}>
+            <form id="deadline-form" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="title">Title</label>
+                    <label htmlFor="title"  className="blue-grey-text text-darken-2">Title</label>
                     <input id="title" name="title" type="text" required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="description">Description</label>
+                    <label htmlFor="description" className="blue-grey-text text-darken-2">Description</label>
                     <textarea id="description" name="description" className="materialize-textarea"/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="startDate" className="active">Due Date</label>
-                    <input id="startDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
+                    <label htmlFor="dueDate" className="active blue-grey-text text-darken-2">Due Date</label>
+                    <input id="dueDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="startTime" className="active">Due Time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker"/>
+                    <label htmlFor="dueTime" className="active blue-grey-text text-darken-2">Due Time</label>
+                    <input id="dueTime" name="dueTime" type="text" className="timepicker"/>
                 </div>
                 <button className="btn white-text">Save Deadline</button>
             </form>
         );
     }
 }
+
 
 
 

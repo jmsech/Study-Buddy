@@ -2,7 +2,6 @@ package com.studybuddy.controllers;
 import com.studybuddy.repositories.InitializationRepository;
 import io.javalin.http.Context;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -55,7 +54,7 @@ public class ApplicationController {
     }
 
     public void removeCourse(Context ctx) throws SQLException {
-        courseController.removeCourse(ctx);
+        courseController.removeCourseFromUser(ctx);
     }
 
     public void updateCourseStatus(Context ctx) throws SQLException {
@@ -68,6 +67,10 @@ public class ApplicationController {
 
     public void removeDeadlineFromCourse(Context ctx) throws SQLException {
         courseController.removeDeadlineFromCourse(ctx);
+    }
+
+    public void addCourseToUser(Context ctx) throws SQLException {
+        courseController.addCourseToUser(ctx);
     }
 
     public void getEvents(Context ctx) throws SQLException {
@@ -98,6 +101,10 @@ public class ApplicationController {
         userController.createUser(ctx);
     }
 
+    public void getAllUsers(Context ctx) throws SQLException {
+        userController.getAllUsers(ctx);
+    }
+
     public void authenticateUser(Context ctx) throws NoSuchAlgorithmException, SQLException, InvalidKeySpecException {
         userController.authenticateUser(ctx);
     }
@@ -106,8 +113,24 @@ public class ApplicationController {
         userController.collectGoogleEvents(ctx);
     }
 
-    public void addCourseToUser(Context ctx) throws SQLException {
-        courseController.addCourseToUser(ctx);
+    public void addFriend(Context ctx) throws SQLException {
+        userController.addFriend(ctx);
+    }
+
+    public void removeFriend(Context ctx) throws SQLException {
+        userController.removeFriend(ctx);
+    }
+
+    public void getPendingFromUserId(Context ctx) throws SQLException {
+        userController.getPendingFromUserId(ctx);
+    }
+
+    public void getAwaitingFromUserId(Context ctx) throws SQLException {
+        userController.getAwaitingFromUserId(ctx);
+    }
+
+    public void getFriendsFromUserId(Context ctx) throws SQLException {
+        userController.getFriendsFromUserId(ctx);
     }
 
     public void logOut(Context ctx) throws IOException {

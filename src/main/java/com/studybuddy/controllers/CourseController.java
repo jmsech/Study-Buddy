@@ -5,7 +5,6 @@ import io.javalin.http.Context;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -38,9 +37,6 @@ class CourseController {
         // Create event and insert into events table
         int status = CourseRepository.addCourseToUser(connection, courseId, userId);
 
-        // TODO:
-        //  1) What should we do if status is 1 or 2?
-
         ctx.json("Success");
         ctx.status(201);
     }
@@ -50,16 +46,14 @@ class CourseController {
         ctx.status(200);
     }
 
-    void removeCourse(Context ctx) throws SQLException {
-        String courseId = ctx.pathParam("courseId");
+    void removeCourseFromUser(Context ctx) throws SQLException {
+        String courseId = ctx.formParam("courseId", String.class).get();
         var userId = Integer.parseInt(ctx.pathParam("userId"));
-        CourseRepository.removeCourse(connection, userId, courseId);
+        CourseRepository.removeCourseFromUser(connection, userId, courseId);
         ctx.status(200);
     }
 
     void addCourseToUser(Context ctx) throws SQLException {
-        // String courseId = ctx.pathParam("courseId");
-        System.out.println("Hello");
         var courseId = ctx.formParam("courseId", String.class).get();
         var userId = Integer.parseInt(ctx.pathParam("userId"));
         CourseRepository.addCourseToUser(connection, courseId, userId);
