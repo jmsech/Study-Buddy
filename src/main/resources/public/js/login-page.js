@@ -31,10 +31,12 @@ class LoginForm extends React.Component {
         event.preventDefault();
         // Validate username and password
         const response = await (await fetch("/users/authenticate/", {method: "POST", body: formData})).json();
-        if (response !== 0) {
+        if (response !== 0 && response !== -1) {
             location.reload();
-        } else {
+        } else if (response === 0) {
             alert("Invalid email/password combination");
+        } else {
+            alert("Congrats, you found the easter egg!");
         }
     }
 

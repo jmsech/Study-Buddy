@@ -44,7 +44,7 @@ class Application extends React.Component {
         return (
             <div>
                 <div>
-                    <Header userId={this.state.userId}/>
+                    <Header/>
                     <div className="centralized-body">
                         <User showCourseDisplay = {this.state.showCourseDisplay}
                               flipCourseDisplay = {this.flipCourseDisplay.bind(this)}

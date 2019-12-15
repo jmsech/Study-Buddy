@@ -2,11 +2,18 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
 
-        // Determine the userId from the website url. (location.search)
-        const parameters = location.search.substring(1).split("&");
-        const temp = parameters[0].split("=");
-        const id = unescape(temp[1]);
-        this.state = {userId: id, showAddCourseForm: false, showRemoveCourseForm: false};
+        this.state = {user: null, showAddCourseForm: false, showRemoveCourseForm: false};
+    }
+
+    async getCurrentUser() {
+        const user = await (await fetch("/users/current")).json();
+        if (user !== 0) {
+            this.setState({ user: user });
+        }
+    }
+
+    componentDidMount() {
+        this.getCurrentUser();
     }
 
     flipAddCourseFormState() {
@@ -18,19 +25,22 @@ class Profile extends React.Component {
     }
 
     render() {
+        if (this.state.user === null) {
+            return null;
+        }
         return (
             <div>
-                <Header userId={this.state.userId}/>
+                <Header/>
                 <div className="profile-body">
-                    <ProfileInfo userId={this.state.userId}/>
+                    <ProfileInfo userId={this.state.user.id}/>
                     <CurrentCourses
-                        userId={this.state.userId}
+                        userId={this.state.user.id}
                         flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
                         showAddCourseForm={this.state.showAddCourseForm}
                         flipRemoveCourseFormState={this.flipRemoveCourseFormState.bind(this)}
                         showRemoveCourseForm={this.state.showRemoveCourseForm}
                     />
-                    <Friends userId={this.state.userId}/>
+                    <Friends userId={this.state.user.id}/>
                 </div>
             </div>
         );

@@ -63,6 +63,13 @@ class UserController {
     void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
         var email = ctx.formParam("email");
         var password = ctx.formParam("password");
+        // Our little easter egg
+        assert email != null;
+        assert password != null;
+        if (email.equals("oose@is.cool") && password.equals("Surprise")) {
+            ctx.json(-1);
+            return;
+        }
 
         int status = AuthenticationRepository.authenticateUser(connection, email, password);
         if (status != 0) { // If user was found, status represents its id
@@ -71,6 +78,10 @@ class UserController {
             ctx.status(200);
         }
         ctx.json(status);
+    }
+
+    void logOut(Context ctx) {
+        ctx.sessionAttribute("user", null);
     }
 
     void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
@@ -84,8 +95,7 @@ class UserController {
             String email = buddyId.substring(1, buddyId.length() - 1);
             int id = IdRepository.getIdFromEmail(email, connection);
             UserRepository.addFriend(connection, userId, id);
-        } catch (Exception e) {
-            return;
+        } catch (Exception ignored) {
         }
     }
 
@@ -97,8 +107,7 @@ class UserController {
             String email = buddyId.substring(1, buddyId.length() - 1);
             int id = IdRepository.getIdFromEmail(email, connection);
             UserRepository.removeFriend(connection, userId, id);
-        } catch (Exception e) {
-            return;
+        } catch (Exception ignored) {
         }
     }
 

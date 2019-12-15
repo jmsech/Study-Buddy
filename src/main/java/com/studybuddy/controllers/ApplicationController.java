@@ -139,5 +139,6 @@ public class ApplicationController {
 
     public void logOut(Context ctx) throws IOException {
         Files.deleteIfExists(Paths.get("tokens/StoredCredential"));
+        userController.logOut(ctx);
     }
 }
