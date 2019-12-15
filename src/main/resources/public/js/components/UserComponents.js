@@ -116,17 +116,12 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <ul id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>>
+                <div id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>
                     <span className="card-title">
                         <h4 className="center">Your Courses</h4>
                     </span>
-                    {this.state.courses.map(course =>
-                        <Course key={course.id}
-                                course={course}
-                                userID={this.props.userID}
-                        />
-                    )}
-                </ul>
+                    <ul>{this.state.courses.map(course => <Course key={course.courseId} course={course} userID={this.props.userID}/>)}</ul>
+                </div>
             </div>
         );
     }

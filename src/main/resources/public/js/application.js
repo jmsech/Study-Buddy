@@ -7,7 +7,10 @@ class Application extends React.Component {
     }
 
     async getCurrentUser() {
-        this.setState({ user: await (await fetch("../users/current")).json() });
+        const user = await (await fetch("/users/current")).json();
+        if (user !== 0) {
+            this.setState({ user: user });
+        }
     }
 
     componentDidMount() {
@@ -61,6 +64,6 @@ class Application extends React.Component {
     }
 }
 
-ReactDOM.render(<Application/>, document.querySelector("#application"));
+ReactDOM.render(<Application/>, document.querySelector("#index"));
 
 

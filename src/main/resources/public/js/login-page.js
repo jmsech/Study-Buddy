@@ -32,7 +32,6 @@ class LoginForm extends React.Component {
         // Validate username and password
         const response = await (await fetch("/users/authenticate/", {method: "POST", body: formData})).json();
         if (response !== 0) {
-            // const url = "/application/application.html";
             location.reload();
         } else {
             alert("Invalid email/password combination");
@@ -56,5 +55,3 @@ class LoginForm extends React.Component {
         )
     }
 }
-
-ReactDOM.render(<LoginPage/>, document.querySelector("#login-page"));

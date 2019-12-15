@@ -40,8 +40,7 @@ class UserController {
             ctx.json(user);
             ctx.status(200);
         } else {
-            // User not found
-            ctx.status(404);
+            ctx.json(0);
         }
     }
 
