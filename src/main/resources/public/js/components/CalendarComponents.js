@@ -521,12 +521,12 @@ class EditEventForm extends React.Component {
 
     render() {
         let style = {display: "none"};
-        if (this.props.showForm) { style = {display: "block"}}
+        if (this.props.showForm) { style = {display: "block"} }
 
         let startMonth = convertToMonth(this.props.event.startTime.month);
         let startDay = this.props.event.startTime.dayOfMonth;
         let endMonth = convertToMonth(this.props.event.endTime.month);
-        let endDay = this.props.event.startTime.dayOfMonth;
+        let endDay = this.props.event.endTime.dayOfMonth;
 
         let startDate = this.props.event.startTime.year + '-' + startMonth + '-';
         if (startDay < 10) {
@@ -535,7 +535,7 @@ class EditEventForm extends React.Component {
             startDate = startDate + startDay;
         }
 
-        let endDate = this.props.event.startTime.year + '-' + endMonth + '-';
+        let endDate = this.props.event.endTime.year + '-' + endMonth + '-';
         if (endDay < 10) {
             endDate = endDate + "0" + endDay;
         } else {
@@ -562,19 +562,19 @@ class EditEventForm extends React.Component {
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
-                    <input id="startDate" type="text" className="datepicker" defaultValue = {startDate} required/>
+                    <input id="startDate" type="text" className="datepicker" defaultValue={startDate} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startTime" className="active">Start time</label>
-                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue = {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} required/>
+                    <input id="startTime" name="startTime" type="text" className="timepicker" defaultValue={convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endDate" className="active">End date</label>
-                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue = {endDate} required/>
+                    <input id="endDate" name="endDate" type="text" className="datepicker" defaultValue={endDate} required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="endTime" className="active">End time</label>
-                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue = {convertTo12HourFormat(this.props.event.endTime.hour, this.props.event.endTime.minute)} required/>
+                    <input id="endTime" name="endTime" type="text" className="timepicker" defaultValue={convertTo12HourFormat(this.props.event.endTime.hour, this.props.event.endTime.minute)} required/>
                 </div>
                 <button className="btn white-text">Save Event</button>
             </form>
