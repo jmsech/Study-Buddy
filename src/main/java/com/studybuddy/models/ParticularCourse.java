@@ -46,9 +46,7 @@ public class ParticularCourse implements Cloneable {
     public static class CourseComparator implements Comparator<ParticularCourse> {
         @Override
         public int compare(ParticularCourse c1, ParticularCourse c2) {
-            // TODO:
-            //  1) Fix this comparator to sort reverse chronologically, then alphabetically
-            return 0;
+             return 0;
         }
     }
 
