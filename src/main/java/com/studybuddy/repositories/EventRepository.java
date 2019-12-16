@@ -218,8 +218,58 @@ public class EventRepository {
     public static void deletePastEvents(Connection connection) throws SQLException {
         LocalDateTime cur = LocalDateTime.now();
         java.sql.Timestamp sqlCur = java.sql.Timestamp.valueOf(cur);
+
+        var state = connection.prepareStatement("SELECT id FROM events WHERE endTime < ? AND expired = false");
+        state.setTimestamp(1, sqlCur);
+        var result = state.executeQuery();
+        if (!result.isBeforeFirst()) { return; }
+        var eventIDs = new ArrayList<Integer>();
+        while (result.next()) {
+            eventIDs.add(result.getInt("id"));
+        }
+        state.close();
+        var userIDs = new ArrayList<Integer>();
+        for (var eid : eventIDs) {
+            state = connection.prepareStatement("SELECT userId FROM events_to_users_mapping WHERE eventId = ?");
+            state.setInt(1, eid);
+            result  =state.executeQuery();
+            if (result.isBeforeFirst()) {
+                while (result.next()) {
+                    userIDs.add(result.getInt("userId"));
+                }
+            }
+            state.close();
+        }
+        var uniqueIDs = new ArrayList<Integer>();
+        for (var uid : userIDs) {
+            if (!uniqueIDs.contains(uid)) {
+                uniqueIDs.add(uid);
+            }
+        }
+        for (int i : uniqueIDs) {
+            for (int j : uniqueIDs) {
+                double weight = 1;
+                state = connection.prepareStatement("SELECT weight FROM friends WHERE userId = ? AND buddyId = ?");
+                state.setInt(1, i);
+                state.setInt(2, j);
+                result = state.executeQuery();
+                if (result.isBeforeFirst()) {
+                    while (result.next()) {
+                        weight = result.getDouble("weight");
+                    }
+                }
+                state.close();
+                weight += 0.5;
+                state = connection.prepareStatement("UPDATE friends SET weight = ? WHERE userId = ? AND buddyId = ?");
+                state.setDouble(1, weight);
+                state.setInt(2, i);
+                state.setInt(3, j);
+                state.executeUpdate();
+            }
+        }
+
         var statement = connection.prepareStatement("UPDATE events SET expired = true WHERE endTime < ?");
-        statement.setTimestamp(1,sqlCur);
+        statement.setTimestamp(1, sqlCur);
         statement.executeUpdate();
         statement.close();
     }

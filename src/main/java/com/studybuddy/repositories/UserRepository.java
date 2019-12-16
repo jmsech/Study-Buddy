@@ -237,7 +237,7 @@ public class UserRepository {
 
     public static List<TimeChunk> getUserBusyTimesFromId(Connection connection, int id, List<TimeChunk> busyTimes, double weight) throws SQLException {
         if (busyTimes == null) { busyTimes = new ArrayList<TimeChunk>(); }
-        var statement = connection.prepareStatement("SELECT e.startTime, e.endTime " +
+        var statement = connection.prepareStatement("SELECT e.startTime, e.endTime, e.isDeadline " +
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = FALSE");
@@ -250,14 +250,16 @@ public class UserRepository {
         }
 
         while (result.next()) {
-            busyTimes.add(
-                    new TimeChunk(
-                            result.getTimestamp("startTime").toLocalDateTime(),
-                            result.getTimestamp("endTime").toLocalDateTime(),
-                            weight,
-                            id
-                    )
-            );
+            if (!result.getBoolean("isDeadline")) {
+                busyTimes.add(
+                        new TimeChunk(
+                                result.getTimestamp("startTime").toLocalDateTime(),
+                                result.getTimestamp("endTime").toLocalDateTime(),
+                                weight,
+                                id
+                        )
+                );
+            }
         }
         statement.close();
         return busyTimes;
