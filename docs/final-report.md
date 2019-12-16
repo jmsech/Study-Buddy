@@ -58,6 +58,9 @@ Update the project board with tasks for a hypothetical Iteration 7.
 -->
 Some ideas we put on the backburner but would be cool for the future is having a specified user type of instructor, who could use the app to schedule TA office hours, staff meetings, and uniquely schedule deadlines and exams. 
 We'd also like to implement having a distinction between public and privated events, where anyone who is in the associated course could see any public study event happening (currently, all events (besides lectures) are by invite only). 
+We might also want to integrate with blackboard & gradescope to pull exam dates, and assignment due dates so that they are automatically added to users event list. 
+These due dates could be used to automatically generate study events at key times that would be most useful for students in the class. 
+We also want to integrate with Facebook and Instagram so users can share events and group information.
 
 
 # A Final Message to Your Advisor
