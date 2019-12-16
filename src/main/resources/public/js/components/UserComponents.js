@@ -54,9 +54,9 @@ class GetGoogleEvents extends React.Component {
         }
         if (daysToCollect) {
             const formData = new FormData();
-            formData.append("userID", this.props.user.id);
+            formData.append("userID", this.props.userID);
             formData.append("daysToCollect", daysToCollect);
-            await fetch(`../${this.props.user.id}`, {method: "POST", body: formData})
+            await fetch(`../${this.props.userID}`, {method: "POST", body: formData})
                 .then(this.handleResponse);
         }
     }
@@ -116,7 +116,7 @@ class CourseList extends React.Component {
     render() {
         return (
             <div>
-                <div id="slide-out" className="sidenav teal lighten-1" style={{width: "25%"}}>
+                <div id="slide-out" className="sidenav teal lighten-1" style={{width: "30%"}}>
                     <span className="card-title">
                         <h4 className="center">Your Courses</h4>
                     </span>
@@ -214,7 +214,7 @@ class NewDeadlineForm extends React.Component {
         // combine tim/date into the format yyyy-mm-dd 00:00
         formData.append("dueDate", deadline.target.dueDate.value + " " + dueTime);
         formData.append("description", description);
-        fetch(`../${this.props.user.id}/deadline`, {method: "POST", body: formData})
+        fetch(`../${this.props.userID}/deadline`, {method: "POST", body: formData})
             .then(this.handleResponse);
         deadline.target.reset(); // clear the form entries
     }
