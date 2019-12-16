@@ -96,7 +96,6 @@ class NewEventForm extends React.Component {
             Object.assign(users, {[string]: null});
         }
 
-        console.log(users);
         const chipsAutocompleteOptions = {data: users, limit: 20};
         const options = {placeholder: "Invite List", autocompleteOptions: chipsAutocompleteOptions};
         // Initialize materialize autocomplete
