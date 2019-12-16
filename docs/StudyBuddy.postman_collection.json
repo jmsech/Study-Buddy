@@ -551,13 +551,7 @@
 							"pm.test(\"Status code is 201\", () => {",
 							"    pm.response.to.have.status(201);",
 							"});",
-							"",
-							"pm.test(\"Data inserted is valid\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
-							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
-							"        pm.expect(response.json().last().description).to.equal(\"This is an event for our postman POST test\");",
-							"    });",
-							"});"
+							""
 						],
 						"type": "text/javascript"
 					}
