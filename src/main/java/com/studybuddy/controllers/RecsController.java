@@ -33,9 +33,17 @@ class RecsController {
         ArrayList<Integer> idInviteList = new ArrayList<>();
         idInviteList.add(userId);
         idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, idInviteList);
-        if (idInviteList == null) {ctx.json("InviteListError"); return;}
+        if (idInviteList == null) {
+            ctx.json("InviteListError");
+            ctx.json(400);
+            return;
+        }
         var inviteList = UserRepository.createUserListFromIdList(connection, inviteListString);
-        if (inviteList == null) {ctx.json("InviteListError"); return;}
+        if (inviteList == null) {
+            ctx.json("InviteListError");
+            ctx.json(400);
+            return;
+        }
 
         //get session length
         var sessionLen = ctx.formParam("sessionLength", Integer.class).get();
@@ -47,6 +55,7 @@ class RecsController {
         // Ensure that startTime is before endTime
         if (!endTime.isAfter(startTime)) {
             ctx.json("RecPeriodError");
+            ctx.status(400);
             return;
         }
 
@@ -83,8 +92,10 @@ class RecsController {
 
         if (recsToDisplay.isEmpty()) {
             ctx.json("NoRecsToDisplay");
+            ctx.json(200);
         } else {
             ctx.json(recsToDisplay);
+            ctx.status(201);
         }
     }
 }

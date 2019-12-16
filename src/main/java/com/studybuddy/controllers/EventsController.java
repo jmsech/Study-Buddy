@@ -21,6 +21,7 @@ class EventsController {
         var userId = ctx.pathParam("userId", Integer.class).get();
         var events = EventRepository.getEventsForUser(userId, this.connection);
         ctx.json(events);
+        ctx.status(200);
     }
 
     void createEvent(Context ctx) throws SQLException {

@@ -1,268 +1,10 @@
 {
 	"info": {
-		"_postman_id": "4a7b0458-ee7a-400f-984c-1f62ced07d26",
+		"_postman_id": "78065897-606b-4499-8b77-96272f557009",
 		"name": "StudyBuddy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Get Events",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "37ff3b57-239f-480e-9828-032406ddd234",
-						"exec": [
-							"pm.environment.set(\"id\", \"1\");",
-							"pm.sendRequest({ url: \"http://localhost:7000/events\", method: \"POST\" });"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "8ba983e9-398a-43df-ae52-45d350082a4a",
-						"exec": [
-							"pm.test(\"Status code is 200\", () => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Response JSON is a list\", () => {",
-							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
-							"});",
-							"pm.test(\"Items have identifier, title, start and end times, description, hosts, userID, and GoogleCal\", () => {",
-							"    pm.response.json().forEach(event => {",
-							"        pm.expect(event).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\", \"hosts\", \"userID\", \"isGoogleEvent\");",
-							"    });",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:7000/{{id}}/events",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "7000",
-					"path": [
-						"{{id}}",
-						"events"
-					]
-				}
-			},
-			"response": [
-				{
-					"name": "Successful",
-					"originalRequest": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost/events",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"path": [
-								"events"
-							]
-						}
-					},
-					"status": "OK",
-					"code": 200,
-					"_postman_previewlanguage": "Text",
-					"header": [],
-					"cookie": [],
-					"body": "[\n\t{\"id\": 1,\"title\": \"study\", \"startTime\": \"2019-10-09T10:30:00\" ,\"endTime\": \"2019-10-09T11:30:00\",\"description\": \"Event 1\"},\n\t{\"id\": 2, \"title\": \"homework\", \"startTime\": \"2019-10-11T11:30:00\" ,\"endTime\": \"2019-10-11T12:30:00\" ,\"description\": \"Event 2\"},\n\t{\"id\": 3, \"title\": \"review\", \"startTime\": \"2019-10-13T16:30:00\" ,\"endTime\": \"2019-10-13T18:00:00\" ,\"description\": \"Event 3\"},\n\t{\"id\": 4, \"title\": \"study 2\", \"startTime\": \"2019-10-16T12:30:00\" ,\"endTime\": \"2019-10-16T14:30:00\" ,\"description\": \"Event 4\"}\n]"
-				}
-			]
-		},
-		{
-			"name": "Create Event",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "7d529064-1984-4211-b193-63455e5163c3",
-						"exec": [
-							"pm.environment.set(\"id\", \"1\");",
-							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" });",
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "e58af215-e065-4b0c-857c-66a3299395ad",
-						"exec": [
-							"pm.test(\"Status code is 201\", () => {",
-							"    pm.response.to.have.status(201);",
-							"});",
-							"",
-							"pm.test(\"Identifiers are always increasing\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
-							"        const identifiers = response.json().map(event => event.id).reverse();",
-							"        pm.expect(identifiers[0]).to.be.equal(identifiers[1] + 1);",
-							"    });",
-							"});",
-							"",
-							"pm.test(\"Data inserted is valid\", () => {",
-							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
-							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
-							"        pm.expect(response.json().last().description).to.equal(\"This is an event for our postman POST test\");",
-							"    });",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "title",
-							"value": "Postman title",
-							"type": "text"
-						},
-						{
-							"key": "startTime",
-							"value": "2019-10-20 05:30 PM",
-							"type": "text"
-						},
-						{
-							"key": "endTime",
-							"value": "2019-10-20 07:30 PM",
-							"type": "text"
-						},
-						{
-							"key": "description",
-							"value": "This is an event for our postman POST test",
-							"type": "text"
-						},
-						{
-							"key": "userID",
-							"value": "1",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:7000/{{id}}/events",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "7000",
-					"path": [
-						"{{id}}",
-						"events"
-					]
-				}
-			},
-			"response": [
-				{
-					"name": "Successful",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "http://localhost/events",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"path": [
-								"events"
-							]
-						}
-					},
-					"status": "Created",
-					"code": 201,
-					"_postman_previewlanguage": "Text",
-					"header": [],
-					"cookie": [],
-					"body": ""
-				}
-			]
-		},
-		{
-			"name": "Delete Event",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "a0994837-5634-4c18-a9e5-06eb82f0abdd",
-						"exec": [
-							"pm.environment.set(\"userID\", \"1\");",
-							"",
-							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" }, () => {",
-							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
-							"        pm.environment.set(\"id\", response.json().last().id);",
-							"    });",
-							"});",
-							"",
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "3ff270f0-c428-409a-aff7-525cb1acd9a6",
-						"exec": [
-							"pm.test(\"Status code is 200\", () => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Event is deleted\"), () => {",
-							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
-							"        pm.expect(",
-							"            response.json().map(item => event.id)",
-							"        ).to.not.include(parseInt(pm.environment.get(\"id\")));",
-							"    });",
-							"}",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": []
-				},
-				"url": {
-					"raw": "http://localhost:7000/{{userID}}/events/{{id}}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "7000",
-					"path": [
-						"{{userID}}",
-						"events",
-						"{{id}}"
-					]
-				},
-				"description": "This request deletes a specific event"
-			},
-			"response": []
-		},
 		{
 			"name": "Create User",
 			"event": [
@@ -302,7 +44,7 @@
 						},
 						{
 							"key": "password",
-							"value": "password",
+							"value": "Password#1",
 							"type": "text"
 						},
 						{
@@ -407,6 +149,30 @@
 		},
 		{
 			"name": "Authenticate User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ed121a91-4af3-49e5-b862-0efbb845572b",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "54a2c484-b688-43ca-a37d-8034908c26a2",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -426,7 +192,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:7000/users/authenticate",
+					"raw": "http://localhost:7000/users/authenticate?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -448,7 +214,571 @@
 			"response": []
 		},
 		{
+			"name": "Get All Users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "27ded64c-40d7-4cd5-96d8-b6f69a682cb0",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ea29e26d-7136-4239-a76b-580c8c2307e5",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users"
+					]
+				},
+				"description": "Tests the functionality of getAllUsers request"
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "083944f0-06ac-4365-965f-4742031c68fa",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users/authenticate?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current null user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3fa80862-799f-4ecf-b11e-dc846b299c41",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users/current",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ddd70749-18a7-43cc-873f-59f868b12e0c",
+						"exec": [
+							"pm.environment.set(\"id\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a43b60f7-e178-4896-83bd-6d2bb471b169",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/users/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "459d231c-1a81-4adc-aab1-cfadf4045209",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"    //",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recommendation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c25295eb-4b78-4df4-8772-88ed0ac55d9e",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "37b91786-9c32-4c5a-8f10-320839520d07",
+						"exec": [
+							"pm.test(\"Status code is 400\", () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/recs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"recs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Events",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "37ff3b57-239f-480e-9828-032406ddd234",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8ba983e9-398a-43df-ae52-45d350082a4a",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});",
+							"pm.test(\"Items have all required form data\", () => {",
+							"    pm.response.json().forEach(event => {",
+							"        pm.expect(event).to.have.all.keys(\"id\",\"title\", \"startTime\", \"endTime\", \"description\", \"attendees\",\"location\", \"expired\", \"isDeadline\", \"conflict\", \"deadline\", \"googleEvent\");",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"events"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": "[\n\t{\"id\": 1,\"title\": \"study\", \"startTime\": \"2019-10-09T10:30:00\" ,\"endTime\": \"2019-10-09T11:30:00\",\"description\": \"Event 1\"},\n\t{\"id\": 2, \"title\": \"homework\", \"startTime\": \"2019-10-11T11:30:00\" ,\"endTime\": \"2019-10-11T12:30:00\" ,\"description\": \"Event 2\"},\n\t{\"id\": 3, \"title\": \"review\", \"startTime\": \"2019-10-13T16:30:00\" ,\"endTime\": \"2019-10-13T18:00:00\" ,\"description\": \"Event 3\"},\n\t{\"id\": 4, \"title\": \"study 2\", \"startTime\": \"2019-10-16T12:30:00\" ,\"endTime\": \"2019-10-16T14:30:00\" ,\"description\": \"Event 4\"}\n]"
+				}
+			]
+		},
+		{
+			"name": "Create Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7d529064-1984-4211-b193-63455e5163c3",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e58af215-e065-4b0c-857c-66a3299395ad",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Data inserted is valid\", () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
+							"        pm.expect(response.json().last().title).to.equal(\"Postman title\");",
+							"        pm.expect(response.json().last().description).to.equal(\"This is an event for our postman POST test\");",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Postman title",
+							"type": "text"
+						},
+						{
+							"key": "startTime",
+							"value": "2019-12-31 05:30 PM",
+							"type": "text"
+						},
+						{
+							"key": "endTime",
+							"value": "2019-12-31 07:30 PM",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is an event for our postman POST test",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"events"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Successful",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "Text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Delete Past Events",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a06f3bc1-61ae-49c3-af36-e95cd08b6e1e",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "03be91e4-9e87-4aad-8ce6-5ebc1e16ef96",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/{{userID}}/events/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userID}}",
+						"events",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a0994837-5634-4c18-a9e5-06eb82f0abdd",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
+							"        pm.environment.set(\"id\", response.json().last().id);",
+							"    });",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3ff270f0-c428-409a-aff7-525cb1acd9a6",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Event is deleted\"), () => {",
+							"    pm.sendRequest(\"http://localhost:7000/events\", (err, response) => {",
+							"        pm.expect(",
+							"            response.json().map(item => event.id)",
+							"        ).to.not.include(parseInt(pm.environment.get(\"id\")));",
+							"    });",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/events/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"events",
+						"{{id}}"
+					]
+				},
+				"description": "This request deletes a specific event"
+			},
+			"response": []
+		},
+		{
 			"name": "Edit Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7d3f7166-ba94-4d83-8d46-a5fe299abd42",
+						"exec": [
+							"pm.environment.set(\"id\", \"\")",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/events\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/events\", (err, response) => {",
+							"        pm.environment.set(\"id\", response.json().last().id);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "75dea12c-7df8-409f-8ab2-956ee244f9ed",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -483,12 +813,12 @@
 						},
 						{
 							"key": "startTime",
-							"value": "nwo",
+							"value": "2019-12-31 05:30 PM",
 							"type": "text"
 						},
 						{
 							"key": "endTime",
-							"value": "now",
+							"value": "2019-12-31 07:30 PM",
 							"type": "text"
 						},
 						{
@@ -497,7 +827,7 @@
 							"type": "text"
 						},
 						{
-							"key": "userID",
+							"key": "userId",
 							"value": "1",
 							"type": "text"
 						}
@@ -514,6 +844,800 @@
 						"1",
 						"events",
 						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Courses",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0cb040f8-5dba-4099-9393-78482b9576bb",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ae780870-35c1-42c2-9a0a-8f72aec96489",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Course",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c3f16e48-8cf1-4511-9d65-38bdd47ccf31",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d741b02-5597-44a8-9514-6abe31acbbd1",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseId",
+							"value": "9999",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Course Status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5294cc83-20e2-4da4-9b55-e5d178543541",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/courses\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/courses\", (err, response) => {",
+							"        pm.environment.set(\"courseId\", response.json().last().id);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f297158e-7b2c-4c0c-bfe9-d517c0570857",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/courses/{{courseId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"courses",
+						"{{courseId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Course",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a686c9d2-fce7-4bca-a764-acce52319bd7",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/courses\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/courses\", (err, response) => {",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "038fa291-8ae1-4147-b2bd-9b7dead20a2d",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Course is deleted\"), () => {",
+							"    pm.sendRequest(\"http://localhost:7000/courses\", (err, response) => {",
+							"        pm.expect(",
+							"            response.json().map(course => course.id)",
+							"        ).to.not.include(parseInt(pm.environment.get(\"9999\")));",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseId",
+							"value": "9999",
+							"type": "text"
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Archive Old Courses",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dcb42fc4-ec69-4dd7-b8cf-c33336130468",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7dfb7a6f-df4e-477a-b710-9dbdecb14c7f",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/courses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Course To User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a61a016d-3549-4e7a-9817-74f447ea989e",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5f5525ec-e955-4fbf-9035-b1ca85f7ab66",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseId",
+							"value": "9999",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/addCourse",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"addCourse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Deadline to Course",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d18d58c0-98ea-4889-9e1c-83f2c4900d49",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							"pm.sendRequest({ url: \"http://localhost:7000/1/courses\", method: \"POST\" }, () => {",
+							"    pm.sendRequest(\"http://localhost:7000/1/courses\", (err, response) => {",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4635d295-af70-49b9-8cb7-9145060389c7",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "deadline Titile",
+							"type": "text"
+						},
+						{
+							"key": "courseID",
+							"value": "9999",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "new Description",
+							"type": "text"
+						},
+						{
+							"key": "dueDate",
+							"value": "2019-12-31 05:30 PM",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/deadline",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"deadline"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Dealine From Course",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb5aa6e3-c70b-43a3-8a72-6fbf10fe77b3",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e61f484f-d39a-4334-8867-8661ee434a5f",
+						"exec": [
+							"pm.test(\"Status code is 400\", () => {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseId",
+							"value": "9999",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/deadline",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"deadline"
+					],
+					"query": [
+						{
+							"key": "courseID",
+							"value": "9999",
+							"disabled": true
+						},
+						{
+							"key": "eventID",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Friends From User ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2d6b4aa4-68fc-4b5e-a3e6-4f5f9c938151",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "466dfe4d-17c1-4290-9fd3-87776c2536f8",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"friends"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Friend",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c2abc31a-77bc-48d4-8bf5-cf707639eaa9",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "09f56eb8-d449-4953-aae3-a040c8747777",
+						"exec": [
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "buddyId",
+							"value": "2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"friends"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Friend",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c5fc373d-9918-4c3f-b1b2-9c56104614ac",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "496441f0-f330-49d9-9947-f3612dca674e",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "buddyId",
+							"value": "2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"friends"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pending From User ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "df7cf280-3bf3-405f-a637-2d483ee550f3",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "3211c52a-27db-440f-989b-56747cbf5ecd",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/followers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"followers"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Awaiting From User ID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dd186e4c-fe5a-4f4d-bda2-c54becc2f3a3",
+						"exec": [
+							"pm.environment.set(\"userId\", \"1\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ca034736-017a-404e-bc1e-a9ce31eefff6",
+						"exec": [
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response JSON is a list\", () => {",
+							"    pm.expect(pm.response.json()).to.be.an(\"array\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:7000/{{userId}}/followers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7000",
+					"path": [
+						"{{userId}}",
+						"followers"
 					]
 				}
 			},
@@ -549,38 +1673,6 @@
 			"response": []
 		},
 		{
-			"name": "Get User",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "ddd70749-18a7-43cc-873f-59f868b12e0c",
-						"exec": [
-							"pm.environment.set(\"id\", \"1\");"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:7000/users/{{id}}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "7000",
-					"path": [
-						"users",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get all courses in DB",
 			"request": {
 				"method": "GET",
@@ -594,26 +1686,6 @@
 					"port": "7000",
 					"path": [
 						"courses"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get current user",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:7000/users/current",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "7000",
-					"path": [
-						"users",
-						"current"
 					]
 				}
 			},

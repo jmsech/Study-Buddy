@@ -58,6 +58,7 @@ class UserController {
     void getAllUsers(Context ctx) throws SQLException {
         var users = UserRepository.getAllUsers(connection);
         ctx.json(users);
+        ctx.status(201);
     }
 
     void authenticateUser(Context ctx) throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -82,10 +83,12 @@ class UserController {
 
     void logOut(Context ctx) {
         ctx.sessionAttribute("user", null);
+        ctx.status(201);
     }
 
     void collectGoogleEvents(Context ctx) throws GeneralSecurityException, IOException, SQLException {
         CalendarQuickstart.collectEvents(this.connection, ctx);
+        ctx.status(202);
     }
 
     void addFriend(Context ctx) throws SQLException {
@@ -97,6 +100,7 @@ class UserController {
             UserRepository.addFriend(connection, userId, id);
         } catch (Exception ignored) {
         }
+        ctx.status(201);
     }
 
     void removeFriend(Context ctx) throws SQLException {
@@ -109,23 +113,27 @@ class UserController {
             UserRepository.removeFriend(connection, userId, id);
         } catch (Exception ignored) {
         }
+        ctx.status(200);
     }
 
     void getPendingFromUserId(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
         var users = UserRepository.getPendingFromUserId(connection, userId);
         ctx.json(users);
+        ctx.status(200);
     }
 
     void getAwaitingFromUserId(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
         var users = UserRepository.getAwaitingFromUserId(connection, userId);
         ctx.json(users);
+        ctx.status(200);
     }
 
     void getFriendsFromUserId(Context ctx) throws SQLException {
         var userId = ctx.pathParam("userId", Integer.class).get();
         var users = UserRepository.getFriendsFromUserId(connection, userId);
         ctx.json(users);
+        ctx.status(201);
     }
 }

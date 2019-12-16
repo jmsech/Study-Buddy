@@ -25,6 +25,7 @@ class CourseController {
     void getAllCourses(Context ctx) throws SQLException {
         var courses = CourseRepository.getAllCourses(this.connection);
         ctx.json(courses);
+        ctx.status(201);
     }
 
     void addCourse(Context ctx) throws SQLException {
@@ -70,6 +71,7 @@ class CourseController {
 
         var description = ctx.formParam("description", String.class).get();
         CourseRepository.addDeadlineToCourse(connection, courseId, title, description, time);
+        ctx.status(201);
     }
 
     void removeDeadlineFromCourse(Context ctx) throws SQLException {
