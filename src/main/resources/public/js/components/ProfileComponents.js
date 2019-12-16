@@ -35,7 +35,7 @@ class CurrentCourses extends React.Component {
     render() {
         return (
             <div className="center">
-                <h4>Your classes</h4><br/>
+                <h4>Your Classes</h4><br/>
                 <CollapsibleCourseList userId={this.props.userId}/>
                 <div className="content-row">
                 <div className="column">
@@ -241,15 +241,6 @@ class Friends extends React.Component {
                                showAddFriendForm={this.state.showAddFriendForm}/>
                     </div>
                     <div className="column">
-                <FriendRemoveButton className="btn cyan darken-3 centralized-button"
-                                    userId={this.props.userId}
-                                    flipRemoveFriendFormState={this.flipRemoveFriendFormState.bind(this)}
-                                    showRemoveFriendForm={this.state.showRemoveFriendForm}/>
-                <FriendRemoveForm userId={this.props.userId}
-                                  flipRemoveFriendFormState={this.flipRemoveFriendFormState.bind(this)}
-                                  showRemoveFriendForm={this.state.showRemoveFriendForm}/>
-                    </div>
-                    <div className="column">
                 <Pendings userId={this.props.userId}/>
 
                 <Awaitings userId={this.props.userId}/>
@@ -271,7 +262,7 @@ class FriendAddButton extends React.Component {
             title = "Cancel";
         }
         return (
-            <button className="btn centralized-button"
+            <button className="btn cyan darken-3 centralized-button"
                        onClick={() => { this.props.flipAddFriendFormState() }}
             >{title}</button>
         )
@@ -305,7 +296,7 @@ class FriendAddForm extends React.Component {
         this.props.flipAddFriendFormState();
         const formData = new FormData();
         formData.append("userId", this.props.userId);
-        let name = form.target.buddyId.value;
+        let name = form.target.addBuddyId.value;
         name = name.substr(name.indexOf("("), name.length);
         formData.append("buddyId", name);
         fetch(`../${this.props.userId}/friends/`, {method: "POST", body: formData})
@@ -333,8 +324,8 @@ class FriendAddForm extends React.Component {
         return (
             <form id="addFriendForm" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="buddyId">User Name or Email</label>
-                    <input id="buddyId" name="buddyId" type="text" className="autocompleteAddFriend" required/>
+                    <label htmlFor="addBuddyId">User Name or Email</label>
+                    <input id="addBuddyId" name="removeBuddyId" type="text" className="autocompleteAddFriend" required/>
                 </div>
                 <button className="btn white-text">Add Friend!</button>
             </form>
@@ -347,80 +338,19 @@ class FriendRemoveButton extends React.Component {
         super(props);
     }
 
-    render() {
-        let title = "Remove Friend :(";
-        if (this.props.showRemoveFriendForm) {
-            title = "Cancel";
-        }
-        return (
-            <button className="btn centralized-button"
-                    onClick={() => { this.props.flipRemoveFriendFormState() }}
-            >{title}</button>
-        )
-    }
-}
-
-class FriendRemoveForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { users: [] };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleResponse = this.handleResponse.bind(this);
-    }
-
-    async componentDidMount() {
-        // Get course information for the autocomplete
-        this.getDataFromServer();
-    }
-
-    async getDataFromServer() {
-        this.setState({ users: await (await fetch(`/${this.props.userId}/friends/`, {method: "GET"})).json() });
-    }
-
-    async handleResponse(response) {
-        return response;
-    }
-
-    async handleSubmit(form) {
-        form.preventDefault();
-        this.props.flipRemoveFriendFormState();
+    async removeBuddy() {
         const formData = new FormData();
         formData.append("userId", this.props.userId);
-        let name = form.target.buddyId.value;
-        name = name.substr(name.indexOf("("), name.length);
-        formData.append("buddyId", name);
-        fetch(`../${this.props.userId}/friends/`, {method: "PUT", body: formData})
-            .then(this.handleResponse);
-        form.target.reset(); // clear the form entries
+        formData.append("buddyId", "(" + this.props.buddyEmail + ")");
+        await fetch(`../${this.props.userId}/friends/`, {method: "PUT", body: formData})
     }
 
     render() {
-        let users = {};
-        for (let i = 0; i < this.state.users.length; i++) {
-            const user = this.state.users[i];
-            const name = user.name;
-            const email = user.email;
-            const string = name + " (" + email + ")";
-            Object.assign(users, {[string]: null});
-        }
-        const options = {data: users, limit: 20};
-
-        // Initialize materialize autocomplete
-        M.Autocomplete.init(document.querySelectorAll('.autocompleteRemoveFriend'), options);
-
-        let style = {display: "none"};
-        if (this.props.showRemoveFriendForm) { style = {display: "block"} }
-
         return (
-            <form id="addFriendForm" onSubmit={this.handleSubmit} style={style}>
-                <div className="input-field">
-                    <label htmlFor="buddyId">User Name or Email</label>
-                    <input id="buddyId" name="buddyId" type="text" className="autocompleteRemoveFriend" required/>
-                </div>
-                <button className="btn white-text">Remove Friend!</button>
-            </form>
-        );
+            <button className="btn centralized-button"
+                    onClick={() => { this.removeBuddy() }}
+            >Remove Friend :(</button>
+        )
     }
 }
 
@@ -438,15 +368,15 @@ class FriendList extends React.Component {
     componentDidMount() {
         this.getDataFromServer();
         // Initialize materialize collapsible
-        // M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
+        M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     }
 
     render () {
         return (
             <div>
                 <h4 className="center">Your Friends</h4>
-                <ul className ="friendslist">
-                    {this.state.users.map(user => <Friend key={user.userId} user={user}/>)}
+                <ul className ="collapsible popout">
+                    {this.state.users.map(friend => <Friend userId={this.props.userId} friend={friend}/>)}
                 </ul>
             </div>
         )
@@ -460,9 +390,19 @@ class Friend extends React.Component {
 
     render () {
         return (
-            <div>
-                <p>{this.props.user.name}</p>
-            </div>
+            <li className="card hoverable teal lighten-2" style={{height: "20%"}}>
+                <div className="card-content black-text">
+                     <div className="rowC">
+                         <div>{this.props.friend.name}</div>
+                         <div>{this.props.friend.email}</div>
+                         <div>
+                             <FriendRemoveButton className="btn cyan darken-3 centralized-button"
+                                    userId={this.props.userId}
+                                                 buddyEmail={this.props.friend.email}/>
+                         </div>
+                     </div>
+                </div>
+            </li>
         )
     }
 }
@@ -506,7 +446,7 @@ class PendingButton extends React.Component {
             title = "Hide Pending (" + this.props.numEntries + ")";
         }
         return (
-            <button className="btn centralized-button"
+            <button className="btn cyan darken-3 centralized-button"
                     onClick={() => { this.props.flipPendingState() }}
             >{title}</button>
         )
@@ -627,7 +567,7 @@ class AwaitingButton extends React.Component {
             title = "Hide Awaiting (" + this.props.numEntries + ")";
         }
         return (
-            <button className="btn centralized-button"
+            <button className="btn cyan darken-3 centralized-button"
                     onClick={() => { this.props.flipAwaitingState() }}
             >{title}</button>
         )
@@ -642,7 +582,7 @@ class AwaitingList extends React.Component {
 
     async getDataFromServer() {
         this.setState({ users: await (await fetch(`/${this.props.userId}/followers/`, {method: "POST"})).json() });
-        this.props.changeNumEntries(this.state.users.length);
+        this.props.changeNumEntries(this.state.users.length)
         window.setTimeout(() => {this.getDataFromServer();}, 200);
     }
 
@@ -658,7 +598,7 @@ class AwaitingList extends React.Component {
         return (
             <div style={style}>
                 <ul>
-                    {this.state.users.map(user => <Awaiting key={user.id} user={user}/>)}
+                    {this.state.users.map(user => <Awaiting key={user.userId} user={user}/>)}
                 </ul>
             </div>
         )

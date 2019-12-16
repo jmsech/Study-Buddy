@@ -111,9 +111,6 @@ public class UserRepository {
     }
 
     public static void removeFriend(Connection connection, int userId, int buddyId) throws SQLException {
-        System.out.println("Hello");
-        System.out.println(userId);
-        System.out.println(buddyId);
         var statement = connection.prepareStatement("DELETE FROM friends WHERE userId = ? AND buddyId = ?");
         statement.setInt(1, userId);
         statement.setInt(2, buddyId);

@@ -46,12 +46,9 @@ public class ParticularCourse implements Cloneable {
     public static class CourseComparator implements Comparator<ParticularCourse> {
         @Override
         public int compare(ParticularCourse c1, ParticularCourse c2) {
-            // TODO:
-            //  1) Fix this comparator to sort reverse chronologically, then alphabetically
-            return 0;
+             return 0;
         }
     }
-
     /**
      * Initialize the roster of students for a ParticularCourse
      *
@@ -91,13 +88,13 @@ public class ParticularCourse implements Cloneable {
         this.students.add(stu);
     }
 
+
     /**
      * Create a group of students (likely for a group project)
      *
      * @param stu - students to be added to roster
      */
     public void createGroup(List<User> stu) {
-        //TODO
     }
 
     /**
@@ -106,7 +103,6 @@ public class ParticularCourse implements Cloneable {
      * @return - HashMap maps from grades to percentage of students in each grade range.
      */
     public HashMap<String, Double> getDistribution() {
-        //TODO
         return null;
     }
 
@@ -117,18 +113,10 @@ public class ParticularCourse implements Cloneable {
         //TODO
     }
 
+
     ///////////////////////////////
     // Getters and Setters Below //
     ///////////////////////////////
-
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
 
     public String getCourseName() {
         return courseName;
@@ -160,6 +148,14 @@ public class ParticularCourse implements Cloneable {
 
     public void setSemester(String semester) {
         this.semester = semester;
+    }
+
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 
     public String getSection() {
@@ -201,7 +197,6 @@ public class ParticularCourse implements Cloneable {
     public void setActive(boolean active) {
         this.active = active;
     }
-
     public List<User> getStudents() {
         return students;
     }
@@ -233,4 +228,5 @@ public class ParticularCourse implements Cloneable {
     public void setClassEvents(List<Event> classEvents) {
         this.classEvents = classEvents;
     }
+
 }

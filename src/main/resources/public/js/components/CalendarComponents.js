@@ -11,14 +11,9 @@ class NewEventButton extends React.Component {
 class NewEventForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {users: []};
 
-        this.handleChange = this.handleChange.bind(this); // FIXME I don't think we use this
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) { // FIXME I don't think we every call this
-        this.setState({value: event.target.value});
     }
 
     async handleResponse(response) {
@@ -26,9 +21,13 @@ class NewEventForm extends React.Component {
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
         } else if (msg === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         }
         return response;
+    }
+
+    async getDataFromServer() {
+        this.setState({ users: await (await fetch("/users/", {method : "GET"})).json() });
     }
 
     handleSubmit(event) {
@@ -41,7 +40,21 @@ class NewEventForm extends React.Component {
         formData.append("endTime", event.target.endDate.value + " " + event.target.endTime.value);
         formData.append("description", event.target.description.value);
         formData.append("location", event.target.location.value);
-        formData.append("inviteList", event.target.newEventInviteList.value);
+        // Build list of comma separated emails from the chips
+        const chips = M.Chips.getInstance(document.getElementById("newEventChipsInviteList")).chipsData;
+        let inviteList = "";
+        for (let i = 0; i < chips.length; i++) {
+            const data = chips[i].tag;
+            const startIndex = data.indexOf("(") + 1;
+            const endIndex = data.indexOf(")");
+            const length = endIndex - startIndex;
+            const email = data.substr(startIndex, length);
+            inviteList = inviteList.concat(email);
+            if (i < chips.length - 1) { // If not the last email
+                inviteList = inviteList.concat(", ");
+            }
+        }
+        formData.append("inviteList", inviteList);
         event.preventDefault();
         // TODO: get default values to not be covered on the second time after you submit form
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
@@ -50,6 +63,8 @@ class NewEventForm extends React.Component {
     }
 
     componentDidMount() {
+        this.getDataFromServer();
+        // Initialize materialize datepicker and timepicker
         M.Datepicker.init(document.querySelectorAll('.datepicker'), {
             autoClose: true,
             showClearBtn: true,
@@ -71,8 +86,23 @@ class NewEventForm extends React.Component {
     }
 
     render() {
+        // Create autocomplete list of users
+        let users = {};
+        for (let i = 0; i < this.state.users.length; i++) {
+            const user = this.state.users[i];
+            const name = user.name;
+            const email = user.email;
+            const string = name.concat(" (", email, ")");
+            Object.assign(users, {[string]: null});
+        }
+
+        const chipsAutocompleteOptions = {data: users, limit: 20};
+        const options = {placeholder: "Invite List", autocompleteOptions: chipsAutocompleteOptions};
+        // Initialize materialize autocomplete
+        M.Chips.init(document.querySelectorAll('.chips'), options);
+
         let style = {display: "none"};
-        if (this.props.showEventForm) { style = {display: "block"}};
+        if (this.props.showEventForm) { style = {display: "block"} }
         let date = new Date();
         // Define default start date
         let defaultStartDate = date.getFullYear()+'-'+(date.getMonth()+1)+'-';
@@ -105,9 +135,8 @@ class NewEventForm extends React.Component {
                     <label htmlFor="location">Event location</label>
                     <input id="location" name="location" type="text"/>
                 </div>
-                <div className="input-field">
-                    <label htmlFor="newEventInviteList">Invite list (insert comma-separated emails)</label>
-                    <textarea id="newEventInviteList" name="newEventInviteList" className="materialize-textarea"/>
+                <div className="chips chips-placeholder chips-autocomplete" id="newEventChipsInviteList">
+                    <input id="newEventInviteList" name="newEventInviteList" className="custom-class"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Start date</label>
@@ -178,7 +207,12 @@ class Event extends React.Component {
                 <li className="card hoverable red lighten-2" style={{height: "20%"}}>
                     <div className="card-content black-text">
                          <span className="rowC">
-                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                             <div>
+                                 <EventTitle event={this.props.event}/>
+                             </div>
+                             <div>
+                                 <DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                             </div>
                          </span>
                         <DeadlineDateTime event={this.props.event}/>
                     </div>
@@ -244,7 +278,7 @@ class EventDescription extends React.Component {
     render() {
         if (this.props.event.description !== "" && this.props.event.description !== null) {
             return (
-                <p> <i className="tiny material-icons">description</i>{this.props.event.description}</p>
+                <p> <i className="tiny material-icons">description</i> {this.props.event.description}</p>
             );
         } else return null;
     }
@@ -424,14 +458,9 @@ class AddToGoogleCalendarButton extends React.Component {
 class EditEventForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {};
 
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
-        this.setState({value: event.target.value});
     }
 
     async handleResponse(response) {
@@ -439,7 +468,7 @@ class EditEventForm extends React.Component {
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
         } else if (msg === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         }
         return response;
     }
@@ -492,7 +521,7 @@ class EditEventForm extends React.Component {
 
     render() {
         let style = {display: "none"};
-        if (this.props.showForm) { style = {display: "block"}};
+        if (this.props.showForm) { style = {display: "block"}}
 
         let startMonth = convertToMonth(this.props.event.startTime.month);
         let startDay = this.props.event.startTime.dayOfMonth;

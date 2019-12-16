@@ -20,7 +20,6 @@ public class CourseRepository {
                                  String courseSectionNum, String courseName, String instructorName, String semester, String location,
                                  String credits, String timeString, boolean isActive) throws SQLException {
 
-        // FIXME: There has to be a better way to check but this will do for now
         var check_statement = connection.prepareStatement("SELECT 1 FROM  courses WHERE courseId = ?");
         check_statement.setString(1, courseId);
         var check = check_statement.executeQuery();
@@ -206,9 +205,6 @@ public class CourseRepository {
             );
         }
 
-        // TODO:
-        //  1) Make course comparator
-
         for (var s : statements) {s.close();}
         courses.sort(new ParticularCourse.CourseComparator());
 
@@ -249,9 +245,6 @@ public class CourseRepository {
     }
 
     public static void archiveOldCourses(Connection connection) {
-        // TODO:
-        //  1) Figure out how to determine when the semester is over and remove all classes
-        //  which are no longer in session
     }
 
     public static void removeCourseFromUser(Connection connection, int userId, String courseId) throws SQLException {
@@ -272,8 +265,6 @@ public class CourseRepository {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static java.sql.ResultSet loadCourseFields(Connection connection, String courseId, List<PreparedStatement> statements) throws SQLException {
-        // TODO: <COMPLETED>
-        //  1) Pull course information from course database. Return a SQL.ResultSet please
 
         var statement = connection.prepareStatement("SELECT c.courseNum, c.courseDescription, c.courseSectionNum, " +
                 "c.courseName, c.semester, c.instructorName, c.location, c.credits, c.timeString, c.isActive FROM courses AS c " +
@@ -302,7 +293,8 @@ public class CourseRepository {
 
     private static void add_12_weeks_of_courses_to_DB(Connection connection, LocalDateTime day, long startSec,
                                                       long endSec, String courseName, String location, String courseId) throws SQLException {
-        // FIXME: Change to 12 later
+
+        // FIXME: Change to 12 later (this is also edited for Demo purposes)
         for (int j = 0; j < 1; j++) {
             LocalDateTime startOfClass = LocalDateTime.ofEpochSecond(day.toEpochSecond(ZoneOffset.UTC) + startSec + j*60*60*24*7, 0, ZoneOffset.ofHours(0));
             LocalDateTime endOfClass = LocalDateTime.ofEpochSecond(day.toEpochSecond(ZoneOffset.UTC) + endSec + j*60*60*24*7, 0, ZoneOffset.ofHours(0));
@@ -329,7 +321,8 @@ public class CourseRepository {
         int y;
         try { y = Integer.parseInt(year); } catch (NumberFormatException e) { return false; }
         LocalDateTime firstFullWeek = LocalDateTime.of(y,6,1,0,0,0);
-        // FIXME: We have changed the semester start temporarily so that you can see classes that have ended
+
+        // FIXME: We have changed the semester start temporarily (for demo purposes) so that you can see classes that have ended
         if (semester.contains("Fa")) { firstFullWeek = LocalDateTime.of(y,12,18,0,0,0); }
         if (semester.contains("Sp")) { firstFullWeek = LocalDateTime.of(y,2,1,0,0,0); }
 

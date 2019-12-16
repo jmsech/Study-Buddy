@@ -146,7 +146,6 @@ public class TimeChunk {
         return LocalDateTime.ofEpochSecond(t,0,ZoneOffset.ofHours(0));
     }
 
-    // FIXME Should we sort by weight or numPeopleAvailable or somethingElse?
     public static class TimeChunkComparator implements Comparator<TimeChunk> {
         @Override
         public int compare(TimeChunk t1, TimeChunk t2) {

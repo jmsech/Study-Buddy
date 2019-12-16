@@ -43,13 +43,12 @@ public class CourseLinkRecsController {
         courseNum = courseNum.replaceAll(" ", "");
 
         var semester = getCurrentSemester(endTime);
-        //xxx.xxx(01)xxxxxx Note: hardcoded section 1 since the algo ignores section
         var index = courseNum.indexOf(")");
         var mainCourseId = courseNum.substring(0, index + 1) + semester;
 
         var userId = ctx.formParam("userId", Integer.class).get();
         HashMap<Integer, Double> user_to_weight = new HashMap<>();
-        user_to_weight.put(userId, (double) 100); //FIXME: THis should be a constant somewhere
+        user_to_weight.put(userId, (double) 100);
 
         List<String> userCourseIDs = CourseRepository.getActiveCourseIdListFromUserId(connection, userId);
         List<Integer> coursemateIds = IdRepository.getUserIdListFromAllSections(connection, mainCourseId);
@@ -101,7 +100,7 @@ public class CourseLinkRecsController {
 
         for (int i = 0; i < recTimes.size(); i++) {
             var recommendation = recTimes.get(i);
-            var id = i + 1; // FIXME Is this correct?
+            var id = i + 1;
             List<User> users = UserRepository.createUserListFromIdList(connection, recommendation.getUserIDs());
             if (users == null) { users = new ArrayList<>(); }
             recsToDisplay.add((new Event(id, "Suggested Study Time with Your New Buddies",

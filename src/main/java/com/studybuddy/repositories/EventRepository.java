@@ -15,7 +15,7 @@ public class EventRepository {
                 "FROM events AS e INNER JOIN events_to_users_mapping AS etum ON e.id = etum.eventId " +
                 "INNER JOIN users as u ON etum.userId = u.id " +
                 "WHERE u.id = ? AND e.expired = false");
-        //  AND e.expired = false //TODO: Add and remove this line in the query to care or not care for old events
+
         statement.setInt(1, userId);
         ArrayList<PreparedStatement> statements = new ArrayList<>();
         statements.add(statement);
@@ -38,7 +38,7 @@ public class EventRepository {
                         )
                 );
             }
-            // TODO: Make sure event isn't already in list
+
             events.add(
                     new Event(
                             result.getInt("id"),
