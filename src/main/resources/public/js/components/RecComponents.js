@@ -47,15 +47,10 @@ class NewRecButton extends React.Component {
 class NewRecForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: '', users: []};
+        this.state = {users: []};
 
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
-    }
-
-    handleChange(rec) {
-        this.setState({value: rec.target.value});
     }
 
     async handleResponse(response) {
@@ -65,7 +60,7 @@ class NewRecForm extends React.Component {
         } else if (data ==="NoRecsToDisplay") {
             alert("There are no times in the specified time period where everyone is available")
         } else if (data === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         } else {
             this.props.setRecs(data);
         }
@@ -77,7 +72,21 @@ class NewRecForm extends React.Component {
         this.props.flip();
         const formData = new FormData();
         formData.append("userId", this.props.userID);
-        formData.append("inviteList", rec.target.recInviteList.value);
+        // Build list of comma separated emails from the chips
+        const chips = M.Chips.getInstance(document.getElementById("recChipsInviteList")).chipsData;
+        let inviteList = "";
+        for (let i = 0; i < chips.length; i++) {
+            const data = chips[i].tag;
+            const startIndex = data.indexOf("(") + 1;
+            const endIndex = data.indexOf(")");
+            const length = endIndex - startIndex;
+            const email = data.substr(startIndex, length);
+            inviteList = inviteList.concat(email);
+            if (i < chips.length - 1) { // If not the last email
+                inviteList = inviteList.concat(", ");
+            }
+        }
+        formData.append("inviteList", inviteList);
         formData.append("startTime", rec.target.startDate.value + " " + rec.target.startTime.value);
         formData.append("endTime", rec.target.endDate.value + " " + rec.target.endTime.value);
         formData.append("sessionLength", rec.target.sessionLength.value);
@@ -88,7 +97,12 @@ class NewRecForm extends React.Component {
         rec.target.reset(); // clear the form entries
     }
 
+    async getDataFromServer() {
+        this.setState({ users: await (await fetch("/users/", {method : "GET"})).json() });
+    }
+
     componentDidMount() {
+        this.getDataFromServer();
         M.Datepicker.init(document.querySelectorAll('.datepicker'), {
             autoClose: true,
             showClearBtn: true,
@@ -98,13 +112,6 @@ class NewRecForm extends React.Component {
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
         });
-
-        // Get user information for the autocomplete
-        this.getDataFromServer();
-    }
-
-    async getDataFromServer() {
-        this.setState({ users: await (await fetch("/users")).json() });
     }
 
     formatTime(x) {
@@ -125,21 +132,20 @@ class NewRecForm extends React.Component {
     }
 
     render() {
-        let userData={};
+        // Create autocomplete list of users
+        let users = {};
         for (let i = 0; i < this.state.users.length; i++) {
             const user = this.state.users[i];
-            const userFirst = user.name;
-            const userEmail = user.email;
-            const fullUser = userFirst.concat("(", userEmail, ")");
-            Object.assign(userData, {[fullUser]: null});
+            const name = user.name;
+            const email = user.email;
+            const string = name.concat(" (", email, ")");
+            Object.assign(users, {[string]: null});
         }
 
-        let options = {autocompleteOptions: { data: userData, limit: 20}};
-        M.Chips.init(document.querySelector('.chips-autocomplete'), options);
-
-        //const options = { data: userData, limit: 20};
+        const chipsAutocompleteOptions = {data: users, limit: 20};
+        const options = {placeholder: "Invite List", autocompleteOptions: chipsAutocompleteOptions};
         // Initialize materialize autocomplete
-        //M.Chips.init(document.querySelector('.chips-autocomplete'), options);
+        M.Chips.init(document.querySelectorAll('.chips'), options);
 
         let style = {display: "none"};
         if (this.props.showRecForm) { style = {display: "block"} }
@@ -156,9 +162,8 @@ class NewRecForm extends React.Component {
 
         return (
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
-                <div className="input-field">
-                    <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
-                    <input id="recInviteList" name="recInviteList" className="chips-autocomplete" required/>
+                <div className="chips chips-placeholder chips-autocomplete" id="recChipsInviteList">
+                    <input id="recInviteList" name="recInviteList" className="custom-class"/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
@@ -284,7 +289,7 @@ class RecAcceptButton extends React.Component {
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
         } else if (msg === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         }
         return response;
     }

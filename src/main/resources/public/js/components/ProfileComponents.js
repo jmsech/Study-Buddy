@@ -296,7 +296,7 @@ class FriendAddForm extends React.Component {
         this.props.flipAddFriendFormState();
         const formData = new FormData();
         formData.append("userId", this.props.userId);
-        let name = form.target.buddyId.value;
+        let name = form.target.addBuddyId.value;
         name = name.substr(name.indexOf("("), name.length);
         formData.append("buddyId", name);
         fetch(`../${this.props.userId}/friends/`, {method: "POST", body: formData})
@@ -324,8 +324,8 @@ class FriendAddForm extends React.Component {
         return (
             <form id="addFriendForm" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
-                    <label htmlFor="buddyId">User Name or Email</label>
-                    <input id="buddyId" name="buddyId" type="text" className="autocompleteAddFriend" required/>
+                    <label htmlFor="addBuddyId">User Name or Email</label>
+                    <input id="addBuddyId" name="removeBuddyId" type="text" className="autocompleteAddFriend" required/>
                 </div>
                 <button className="btn white-text">Add Friend!</button>
             </form>
