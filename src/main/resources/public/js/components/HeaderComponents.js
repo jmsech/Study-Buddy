@@ -7,7 +7,7 @@ class LogoutButton extends React.Component {
 
     async logOut() {
         await fetch("/users/authenticate", {method: "DELETE"});
-        location.reload();
+        open("/", "_self");
     }
 }
 
