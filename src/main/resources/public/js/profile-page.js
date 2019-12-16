@@ -32,15 +32,17 @@ class Profile extends React.Component {
             <div>
                 <Header/>
                 <div className="profile-body">
-                    <ProfileInfo userId={this.state.user.id}/>
-                    <CurrentCourses
-                        userId={this.state.user.id}
-                        flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
-                        showAddCourseForm={this.state.showAddCourseForm}
-                        flipRemoveCourseFormState={this.flipRemoveCourseFormState.bind(this)}
-                        showRemoveCourseForm={this.state.showRemoveCourseForm}
-                    />
-                    <Friends userId={this.state.user.id}/>
+                    <div className="profileColumn center-align">
+                        <ProfileInfo userId={this.state.user.id}/>
+                        <CurrentCourses
+                            userId={this.state.user.id}
+                            flipAddCourseFormState={this.flipAddCourseFormState.bind(this)}
+                            showAddCourseForm={this.state.showAddCourseForm}
+                            flipRemoveCourseFormState={this.flipRemoveCourseFormState.bind(this)}
+                            showRemoveCourseForm={this.state.showRemoveCourseForm}
+                        />
+                        <Friends userId={this.state.user.id}/>
+                    </div>
                 </div>
             </div>
         );
