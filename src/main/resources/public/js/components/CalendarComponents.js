@@ -259,7 +259,7 @@ class EventTitle extends React.Component {
     }
 
     render() {
-        let display = {display: "none"}
+        let display = {display: "none"};
         if (this.props.event.conflict) {
             display = {display: "inline"}
         }
@@ -385,7 +385,7 @@ class DeleteButton extends React.Component {
     render() {
         const basePath = `../${this.props.userID}/events/`;
         const path = basePath.concat(this.props.event.id);
-        let className = "btn"
+        let className = "btn";
         if (this.props.deadline) {
             className = "btn red lighten-2 right-align"
         }
