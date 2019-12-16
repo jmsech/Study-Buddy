@@ -35,7 +35,7 @@ class CurrentCourses extends React.Component {
     render() {
         return (
             <div className="center">
-                <h4>Your classes</h4><br/>
+                <h4>Your classes</h4>
                 <CollapsibleCourseList userId={this.props.userId}/>
                 <div className="content-row">
                 <div className="column">
@@ -45,7 +45,6 @@ class CurrentCourses extends React.Component {
                 <RemoveCourse flipRemoveCourse={this.props.flipRemoveCourseFormState} showRemoveCourseForm={this.props.showRemoveCourseForm} userId={this.props.userId}/>
                 </div>
                 </div>
-            <hr/>
             </div>
         );
     }
@@ -206,12 +205,6 @@ class RemoveCourseForm extends React.Component {
     }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// BELOW THIS LINE IS CODE THAT BRANDON JUST ADDED ////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 class Friends extends React.Component {
     constructor(props) {
         super(props);
@@ -230,7 +223,7 @@ class Friends extends React.Component {
         return (
             <div>
                 <FriendList userId={this.props.userId}/>
-                <div className="content-row">
+            <div className="content-row">
                     <div className="column">
                     <FriendAddButton className="btn cyan darken-3 centralized-button"
                                  userId={this.props.userId}
@@ -249,12 +242,12 @@ class Friends extends React.Component {
                                   flipRemoveFriendFormState={this.flipRemoveFriendFormState.bind(this)}
                                   showRemoveFriendForm={this.state.showRemoveFriendForm}/>
                     </div>
-                    <div className="column">
+                </div>
                 <Pendings userId={this.props.userId}/>
 
                 <Awaitings userId={this.props.userId}/>
-                    </div>
-                </div>
+
+
             </div>
         )
     }
@@ -438,7 +431,6 @@ class FriendList extends React.Component {
     componentDidMount() {
         this.getDataFromServer();
         // Initialize materialize collapsible
-        // M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     }
 
     render () {
@@ -448,6 +440,7 @@ class FriendList extends React.Component {
                 <ul className ="friendslist">
                     {this.state.users.map(user => <Friend key={user.userId} user={user}/>)}
                 </ul>
+
             </div>
         )
     }

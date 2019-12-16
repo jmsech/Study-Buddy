@@ -79,8 +79,5 @@ class CourseController {
     }
 
     void updateCourseStatus(Context ctx) {
-        // TODO:
-        //  Should a student be able to update a course? Maybe for a discussion board or something, idk.
-        //  We can leave this alone for now.
     }
 }

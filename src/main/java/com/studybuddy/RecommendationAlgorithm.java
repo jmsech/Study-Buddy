@@ -25,8 +25,8 @@ public class RecommendationAlgorithm {
     private static final long MINUTES_OF_SLEEP = SECONDS_OF_SLEEP/SECONDS_PER_MINUTE;
     private static final long FIFTEEN_MINUTES = SECONDS_PER_MINUTE * MINUTES_PER_HOUR / 4;
 
-    private static final double SLEEP_WEIGHT = -20; //FIXME?
-    private static final double HOST_UNAVAILABLE_WEIGHT = -1000;  //FIXME?
+    private static final double SLEEP_WEIGHT = -20;
+    private static final double HOST_UNAVAILABLE_WEIGHT = -1000;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // RECOMMENDATION ALGORITHM 1 //////////////////////////////////////////////////////////////////////////////////////
@@ -64,8 +64,6 @@ public class RecommendationAlgorithm {
             }
         }
 
-//        printTimeArray(timeArray); // FIXME
-
         return findStudyTimes(timeArray, startSec, fraction);
     }
 
@@ -78,8 +76,6 @@ public class RecommendationAlgorithm {
             if (timeArray[i] == 0) { freeTime[i] = 1; }
             else { freeTime[i] = 0; }
         }
-
-//        printFreeTimeChunks(freeTime); // FIXME
 
         List<TimeChunk> chunks = new ArrayList<>();
         int state = -1;
@@ -95,7 +91,6 @@ public class RecommendationAlgorithm {
                             makeTime(startSec + (i) * SECONDS_PER_MINUTE)
                     );
                     chunks.add(c);
-//                    printTimeChunkWithTag(c, "x"); //FIXME
                     state = -1;
                 }
             }
@@ -106,7 +101,6 @@ public class RecommendationAlgorithm {
                     makeTime(startSec + (length-1)*SECONDS_PER_MINUTE)
             );
             chunks.add(c);
-//            printTimeChunkWithTag(c, "y"); //FIXME
         }
 
         return createStudyChunks(chunks, fraction);
@@ -122,7 +116,6 @@ public class RecommendationAlgorithm {
             long end = chunk.getEndTime().toEpochSecond(ZoneOffset.UTC)/SECONDS_PER_MINUTE;
             int chunkLength = (int) (end - start);
 
-//            printTimeChunkWithTag(chunk, "c"); //FIXME
 
             if (studyLength <= chunkLength) {
                 double fractionSlots = (chunkLength + 5) * (1.0) / studyLength;
@@ -136,7 +129,6 @@ public class RecommendationAlgorithm {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "f"); //FIXME
                     studyChunks.add(c);
 
                     long reverseEnd = end - i*studyLength;
@@ -145,7 +137,6 @@ public class RecommendationAlgorithm {
                             makeTime(reverseBegin*SECONDS_PER_MINUTE),
                             makeTime(reverseEnd*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "r"); //FIXME
                     studyChunks.add(c);
 
                 }
@@ -156,7 +147,6 @@ public class RecommendationAlgorithm {
                             makeTime((forwardBegin-1)*SECONDS_PER_MINUTE),
                             makeTime((forwardEnd-1)*SECONDS_PER_MINUTE)
                     );
-//                    printTimeChunkWithTag(c, "a"); //FIXME
                     studyChunks.add(c);
                 }
             }
@@ -235,7 +225,7 @@ public class RecommendationAlgorithm {
             }
         }
 
-        // Initialize sleep start time // FIXME This should probably become a constant
+        // Initialize sleep start time
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
         int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
@@ -282,13 +272,11 @@ public class RecommendationAlgorithm {
         int lengthStudy = (int) (fraction*MINUTES_PER_HOUR);
         double[] chunkValues;
 
-//        printFreeTimeChunks(available); //FIXME
-//        System.out.println(); // FIXME
+
 
         for (int n = 0; n < numRecs; n++) {
             // Initialize array of values of Studying Chunks
             chunkValues = new double[lengthInMinutes - lengthStudy];
-//            chunkValues = new double[available.length - lengthStudy]; //FIXME
 
             // Calculate first value of first TimeChunk
             for (int i = 0; i < lengthStudy; i++) {
@@ -328,8 +316,6 @@ public class RecommendationAlgorithm {
                     available[i] = min - 1;
                 }
             }
-//            System.out.println(startIndex); //FIXME
-//            System.out.println(n); //FIXME
         }
 
         class TimeChunkComparator implements Comparator<TimeChunk>{

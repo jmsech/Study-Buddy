@@ -30,7 +30,8 @@ public class InitializationRepository {
         statement.close();
 
         add_test_users(connection);
-        add_test_courses(connection);
+//        add_test_courses(connection);
+        populateCoursesTable(connection);
         add_test_deadlines(connection);
         add_test_students(connection);
     }
@@ -58,6 +59,10 @@ public class InitializationRepository {
         }
         check.close();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////ADDING REAL FAKE DATA FOR TESTING AND DEMO PURPOSES/////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         UserRepository.createUser(connection, "bfremin32@gmail.com", "Fremin1!", "Brandon",
                 "Fremin");
         UserRepository.createUser(connection, "sweill1@jhu.edu", "Fremin1!", "Sara",
@@ -66,10 +71,31 @@ public class InitializationRepository {
                 "Lepca");
         UserRepository.createUser(connection, "jsech1@jhu.edu", "Fremin1!", "Justin",
                 "Sech");
-        UserRepository.createUser(connection, "a@gmail.com", "a", "A", "a");
-        UserRepository.createUser(connection, "b@gmail.com", "b", "B", "b");
-        UserRepository.createUser(connection, "c@gmail.com", "c", "C", "c");
-        UserRepository.createUser(connection, "d@gmail.com", "d", "D", "d");
+        UserRepository.createUser(connection, "ireshobayo1@gmail.com", "Fremin1!", "Ire",
+                "Shobayo");
+        UserRepository.createUser(connection, "mmoor127@jhu.edu", "Fremin1!", "Michael",
+                "Moore");
+
+        UserRepository.createUser(connection, "alex.alessi@jhu.edu", "Fremin1!", "Alex",
+                "Alessi");
+        UserRepository.createUser(connection, "bob.builder@jhu.edu", "Fremin1!", "Bob",
+                "Builder");
+        UserRepository.createUser(connection, "candice.cameron@jhu.edu", "Fremin1!", "Candice",
+                "Cameron");
+        UserRepository.createUser(connection, "daniel.dean@jhu.edu", "Fremin1!", "Daniel",
+                "Dean");
+        UserRepository.createUser(connection, "elvis.elder@jhu.edu", "Fremin1!", "Elvis",
+                "Elder");
+        UserRepository.createUser(connection, "freddie.ferris@jhu.edu", "Fremin1!", "Freddie",
+                "Ferris");
+        UserRepository.createUser(connection, "grant.garnet@jhu.edu", "Fremin1!", "Grant",
+                "Garnet");
+        UserRepository.createUser(connection, "harry.hoffman@jhu.edu", "Fremin1!", "Harry",
+                "Hoffman");
+        UserRepository.createUser(connection, "iris.indigo@jhu.edu", "Fremin1!", "Iris",
+                "Indigo");
+        UserRepository.createUser(connection, "jerry.juice@jhu.edu", "Fremin1!", "Jerry",
+                "Jones");
     }
 
     private static void add_test_students(Connection connection) throws SQLException, IOException {
@@ -81,17 +107,80 @@ public class InitializationRepository {
         }
         check.close();
 
+        // Brandon Courses
         CourseRepository.addCourseToUser(connection, "EN.530.254(03)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.530.327(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.530.352(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.601.231(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 1);
         CourseRepository.addCourseToUser(connection, "EN.601.433(01)Fa2019", 1);
-        CourseRepository.addCourseToUser(connection, "AS.050.360(01)Fa2019", 1);
 
+        // Sara Courses
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 2);
+        CourseRepository.addCourseToUser(connection, "EN.553.211(01)Fa2019", 2);
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 2);
+        CourseRepository.addCourseToUser(connection, "EN.601.417(01)Fa2019", 2);
+
+
+        // Vini Courses
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 3);
+        CourseRepository.addCourseToUser(connection, "EN.553.211(01)Fa2019", 3);
+        CourseRepository.addCourseToUser(connection, "AS.210.301(01)Fa2019", 3);
+        CourseRepository.addCourseToUser(connection, "EN.601.845(01)Fa2019", 3);
+
+
+        //Justin Courses
         CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 4);
+        CourseRepository.addCourseToUser(connection, "EN.553.211(01)Fa2019", 4);
+        CourseRepository.addCourseToUser(connection, "AS.376.242(02)Fa2019", 4);
+        CourseRepository.addCourseToUser(connection, "AS.080.308(01)Fa2019", 4);
+
+
+        // Ire Courses
+        CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 5);
+        CourseRepository.addCourseToUser(connection, "EN.553.211(01)Fa2019", 5);
+        CourseRepository.addCourseToUser(connection, "AS.376.242(02)Fa2019", 5);
+        CourseRepository.addCourseToUser(connection, "EN.553.461(01)Fa2019", 5);
+
+        // Michael Courses
+        CourseRepository.addCourseToUser(connection, "EN.601.421(01)Fa2019", 6);
+        CourseRepository.addCourseToUser(connection, "EN.553.211(01)Fa2019", 6);
+        CourseRepository.addCourseToUser(connection, "AS.376.242(02)Fa2019", 6);
+        CourseRepository.addCourseToUser(connection, "AS.376.242(02)Fa2019", 6);
+        CourseRepository.addCourseToUser(connection, "AS.171.605(01)Fa2019", 6);
+
+        // A courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 7);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 7);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 7);
+        CourseRepository.addCourseToUser(connection, "EN.530.352(01)Fa2019", 7);
+
+        // B Courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 8);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 8);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 8);
+        CourseRepository.addCourseToUser(connection, "EN.530.352(01)Fa2019", 8);
+
+        //C Courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 9);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 9);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 9);
+
+        // D Courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 10);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 10);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 10);
+
+        // E Courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 11);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 11);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 11);
+
+        // F Courses
+        CourseRepository.addCourseToUser(connection, "AS.100.102(01)Fa2019", 12);
+        CourseRepository.addCourseToUser(connection, "AS.110.202(04)Fa2019", 12);
+        CourseRepository.addCourseToUser(connection, "EN.570.643(01)Fa2019", 12);
+
     }
 
     private static void add_test_courses(Connection connection) throws SQLException, IOException {
