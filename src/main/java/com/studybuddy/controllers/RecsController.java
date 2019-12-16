@@ -92,7 +92,7 @@ class RecsController {
 
         if (recsToDisplay.isEmpty()) {
             ctx.json("NoRecsToDisplay");
-            ctx.json(200);
+            ctx.status(200);
         } else {
             ctx.json(recsToDisplay);
             ctx.status(201);
