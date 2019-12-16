@@ -70,30 +70,6 @@ public class EventRepositoryTests {
         assertEquals(location, checkEvent.getLocation());
     }
 
-   /* @Test
-    void testGetAttendees() throws SQLException {
-        UserRepository.createUser(connection, "getAttendees@studybuddy.com", "StudyBuddy!", "Study", "Buddy");
-        var statement = connection.prepareStatement("SELECT id FROM users WHERE email = 'getAttendees@studybuddy.com'");
-        var result = statement.executeQuery();
-        testIdAtt = result.getInt("id");
-        statement.close();
-
-        List<Integer> idInviteList = new ArrayList<Integer>();
-        idInviteList.add(testIdAtt);
-        idInviteList.add(999999);
-        idInviteList.add(1000000);
-        idInviteList.add(1000001);
-        String title = "Get Attendees Event";
-        LocalDateTime startTime = jan_1_2020_7_00_PM;
-        LocalDateTime endTime = jan_1_2020_8_00_PM;
-        java.sql.Timestamp sqlStartDate = java.sql.Timestamp.valueOf(startTime);
-        java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
-        String description = "This is a test event.";
-        String location = "Gilman 50";
-        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testId);
-        var inviteList =
-    }*/
-
     @Test
     void testDeleteEventbyHost() throws SQLException {
         // create user
