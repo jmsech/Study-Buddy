@@ -32,8 +32,8 @@ public class WeightedRecommendationAlgorithm {
     private static final double BASELINE_VALUE = 0.1;
     private static final int OFF_BY_ONE = 1; // Accounting for off-by-one errors
 
-    private static final double SLEEP_WEIGHT = -20; //FIXME?
-    private static final double HOST_UNAVAILABLE_WEIGHT = -1000;  //FIXME?
+    private static final double SLEEP_WEIGHT = -20;
+    private static final double HOST_UNAVAILABLE_WEIGHT = -1000;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // RECOMMENDATION ALGORITHM ////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,6 @@ public class WeightedRecommendationAlgorithm {
         // Initialize sleep start time. This done by using a reference sleep time at some point in the future
         // and using modular arithmetic to determine when people are sleeping during other days. The relative
         // sleep start is the time where a person sleeps relative to the start of the time interval
-        // FIXME This should probably become a constant that depends by person
         long sleepStart = (LocalDateTime.of(2020,1,1,0,0)).toEpochSecond(ZoneOffset.UTC);
         int relativeSleepStart = (int) ((sleepStart - startSec) % SECONDS_PER_DAY) / SECONDS_PER_MINUTE;
 
@@ -251,7 +250,7 @@ public class WeightedRecommendationAlgorithm {
                     available[i] = min - 1;
                 }
             } else {
-                break; // FIXME is breaking okay?
+                break;
             }
         }
 

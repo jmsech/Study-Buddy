@@ -13,11 +13,11 @@ class NewEventForm extends React.Component {
         super(props);
         this.state = {value: ''};
 
-        this.handleChange = this.handleChange.bind(this); // FIXME I don't think we use this
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) { // FIXME I don't think we every call this
+    handleChange(event) {
         this.setState({value: event.target.value});
     }
 
@@ -43,7 +43,7 @@ class NewEventForm extends React.Component {
         formData.append("location", event.target.location.value);
         formData.append("inviteList", event.target.newEventInviteList.value);
         event.preventDefault();
-        // TODO: get default values to not be covered on the second time after you submit form
+
         fetch(`../${this.props.userID}/events`, {method: "POST", body: formData})
             .then(this.handleResponse);
         event.target.reset(); // clear the form entries
