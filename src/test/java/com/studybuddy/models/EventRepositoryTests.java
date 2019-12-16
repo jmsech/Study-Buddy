@@ -58,7 +58,7 @@ public class EventRepositoryTests {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         String description = "This is a test event.";
         String location = "Gilman 50";
-        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testId);
+        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testId, false);
         List<Event> checkEvents = EventRepository.getEventsForUser(testId, connection);
         Event checkEvent = checkEvents.get(0);
 
@@ -113,7 +113,7 @@ public class EventRepositoryTests {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         String description = "Delete This Event.";
         String location = "Gilman 50";
-        int eventId = EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdDel);
+        int eventId = EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdDel, false);
         EventRepository.deleteEvent(connection, eventId, testIdDel);
         List<Event> checkEvents = EventRepository.getEventsForUser(testIdDel, connection);
         assertTrue(checkEvents.isEmpty());
@@ -129,7 +129,7 @@ public class EventRepositoryTests {
         java.sql.Timestamp sqlEndDate2 = java.sql.Timestamp.valueOf(endTime2);
         String description2 = "Delete This Event.";
         String location2 = "Gilman 50";
-        eventId = EventRepository.createEventInDB(connection, idInviteList2, title2, sqlStartDate2, sqlEndDate2, description2, location2, testIdDel);
+        eventId = EventRepository.createEventInDB(connection, idInviteList2, title2, sqlStartDate2, sqlEndDate2, description2, location2, testIdDel, false);
         EventRepository.deleteEvent(connection, eventId, 1000);
         List<Event> checkEvents2 = EventRepository.getEventsForUser(testIdDel, connection);
         assertFalse(checkEvents2.isEmpty());
@@ -152,7 +152,7 @@ public class EventRepositoryTests {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         String description = "This is a test event.";
         String location = "Gilman 50";
-        int eventId = EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdUp);
+        int eventId = EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdUp, false);
 
         String inviteListString = "";
         title = "Event is now Updated.";
@@ -193,7 +193,7 @@ public class EventRepositoryTests {
         java.sql.Timestamp sqlEndDate = java.sql.Timestamp.valueOf(endTime);
         String description = "This is a test event.";
         String location = "Gilman 50";
-        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdExp);
+        EventRepository.createEventInDB(connection, idInviteList, title, sqlStartDate, sqlEndDate, description, location, testIdExp, false);
         EventRepository.deletePastEvents(connection);
 
         var statement2 = connection.prepareStatement("SELECT expired FROM events WHERE hostId = ?");

@@ -57,7 +57,7 @@ public class TimeChunkTests {
         LocalDateTime endTime3 = startTime1.plusHours(2);
         TimeChunk tc3 = new TimeChunk(startTime3, endTime3);
 
-        assertTrue(tc3.isOverlapping(tc1));
+        assertTrue(!tc3.isOverlapping(tc1));
 
         //these two overlap for the last hour, same end time
         LocalDateTime startTime4 = startTime1.plusHours(2);

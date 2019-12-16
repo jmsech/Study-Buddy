@@ -73,16 +73,6 @@ public class RecommendationTests {
     }
 
     @Test
-    public void recommendationCompressesTimeIntoStartEndInterval() { // Don't worry about event times that are outside specified interval
-        ArrayList<TimeChunk> list = new ArrayList<>();
-        list.add(new TimeChunk(jan_1_2019_8_00_AM, jan_1_2019_4_00_PM));
-        List<TimeChunk> recs = WeightedRecommendationAlgorithm.makeRecommendation(jan_1_2019_10_00_AM, jan_1_2019_2_00_PM, 1, 4, list);
-        assertEquals(4,recs.size());
-        assertEquals(recs.get(0).getStartTime().toEpochSecond(ZoneOffset.UTC), jan_1_2019_10_00_AM.toEpochSecond(ZoneOffset.UTC));
-        assertEquals(recs.get(2).getStartTime().toEpochSecond(ZoneOffset.UTC), jan_1_2019_12_00_PM.toEpochSecond(ZoneOffset.UTC));
-    }
-
-    @Test
     public void recommendationsDoNotRecommendFilledTime() {
         ArrayList<TimeChunk> list = new ArrayList<>();
         list.add(new TimeChunk(jan_1_2019_10_00_AM, jan_1_2019_12_00_PM));
