@@ -376,7 +376,7 @@ class FriendList extends React.Component {
             <div>
                 <h4 className="center">Your Friends</h4>
                 <ul className ="collapsible popout">
-                    {this.state.users.map(friend => <Friend userId={this.props.userId} friend={friend}/>)}
+                    {this.state.users.map(friend => <Friend key={this.props.userId} userId={this.props.userId} friend={friend}/>)}
                 </ul>
             </div>
         )
@@ -477,7 +477,7 @@ class PendingList extends React.Component {
         return (
             <div style={style}>
                 <ul>
-                    {this.state.users.map(user => <Pending key={user.userId} user={user} userId={this.props.userId}/>)}
+                    {this.state.users.map(user => <Pending key={user.id} user={user} userId={this.props.userId}/>)}
                 </ul>
             </div>
         )
@@ -598,7 +598,7 @@ class AwaitingList extends React.Component {
         return (
             <div style={style}>
                 <ul>
-                    {this.state.users.map(user => <Awaiting key={user.userId} user={user}/>)}
+                    {this.state.users.map(user => <Awaiting key={user.id} user={user}/>)}
                 </ul>
             </div>
         )
