@@ -60,11 +60,21 @@ application.js: The beginning of the JavaScript section of the client that mount
 
 login-page.js: Displays the login page and the form in which the user inputs their user info.
 
-signup-page.js: Displays the sign up page and the form that users use to sign up for a StudyBuddy account
+signup-page.js: Displays the sign up page and the form that users use to sign up for a StudyBuddy account.
 
-RecComponent.js: Displays and handles the buttons and forms the user uses to get a recommendation.
+profile-page.js: Displays the user's profile page. 
 
-CalendarComponent.js: Displays and handles the buttons and forms that the user uses to create and delete events.
+RecComponent.js: Displays and handles the buttons and forms the user uses to get a time recommendation.
+
+BuddyRecComponents.js: Displays and handles the buttons and forms the user uses to get a buddy recommendation.
+
+CalendarComponents.js: Displays and handles the buttons and forms that the user uses to create and delete events.
+
+HeaderComponents.js: Displays and handles the buttons on the site header (both home page and profile page).
+
+ProfileComponents.js: Displays and handles everything on the user's profile page: friends, courses, and personal info.
+
+AddCourseComponents.js: Displays and handles the buttons and cards displaying the users courses on their profile.
 
 UserComponent.js: Renders the relevant information for the user.
 
