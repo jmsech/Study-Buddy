@@ -352,7 +352,7 @@ public class InitializationRepository {
             String classesContent = obtainJHUClassesInSpecificSchool(schoolString);
             List sisCourses = jsonMapper(classesContent);
             int numCourses = sisCourses.size();
-            numCourses = 500; // Heroku Doesn't Deploy Otherwise
+            numCourses = 100; // Heroku Doesn't Deploy Otherwise
             for (int j = 0; j < numCourses; j++) {
                 Object o = sisCourses.get(j);
                 SISCourse sisCourse = (SISCourse) o;
