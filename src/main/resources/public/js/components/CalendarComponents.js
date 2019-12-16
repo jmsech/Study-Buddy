@@ -146,12 +146,25 @@ class EventList extends React.Component {
 
     componentDidMount() {
         this.getDataFromServer();
+        M.Collapsible.init(document.querySelectorAll('.collapsible'), {});
     }
 
     render() {
         return (
         <div>
-            <ul>{this.state.events.map(event => <Event key={event.id} event={event} userID={this.props.userID}/>)}</ul>
+            {this.state.events.map(event => {
+                if (event.isDeadline) {
+                    return (
+                        <ul className = "collapsible popout">
+                            <DeadlineEvent key={event.id} event={event} userID={this.props.userID}/>
+                        </ul>
+                    )}
+                return (
+                    <ul>
+                        <Event key={event.id} event={event} userID={this.props.userID}/>
+                    </ul>
+                )
+            })}
         </div>
         );
     }
@@ -173,43 +186,45 @@ class Event extends React.Component {
     }
 
     render() {
-        if (this.props.event.isDeadline) {
-            return (
-                <li className="card hoverable red lighten-2" style={{height: "20%"}}>
-                    <div className="card-content black-text">
-                         <span className="rowC">
-                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
-                         </span>
-                        <DeadlineDateTime event={this.props.event}/>
+        return (
+            <li className="card hoverable teal lighten-2">
+                <div className="card-content black-text">
+                    <span className="card-title">
+                        <EventTitle event={this.props.event}/>
+                    </span>
+                    <EventDateTime event={this.props.event}/>
+                    <EventDescription event={this.props.event}/>
+                    <EventLocation event={this.props.event}/>
+                    <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}
+                                         showAttendees={this.state.showAttendees}/>
+                    <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
+                    <AddToGoogleCalendarButton event={this.props.event}/>
+                </div>
+                <div className="card-action right-align">
+                    <div id="edit-delete">
+                        <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
+                        <DeleteButton event={this.props.event} userID={this.props.userID}/>
                     </div>
-                </li>
-            );
-        } else {
-            return (
-                <li className="card hoverable teal lighten-2">
-                    <div className="card-content black-text">
-                        <span className="card-title">
-                            <EventTitle event={this.props.event}/>
-                        </span>
-                        <EventDateTime event={this.props.event}/>
-                        <EventDescription event={this.props.event}/>
-                        <EventLocation event={this.props.event}/>
-                        <ShowAttendeesButton flip={this.flipAttendeesState.bind(this)}
-                                             showAttendees={this.state.showAttendees}/>
-                        <EventInviteList event={this.props.event} showAttendees={this.state.showAttendees}/><br/>
-                        <AddToGoogleCalendarButton event={this.props.event}/>
-                    </div>
-                    <div className="card-action right-align">
-                        <div id="edit-delete">
-                            <EditButton flip={this.flipFormState.bind(this)} showForm={this.state.showForm}/>
-                            <DeleteButton event={this.props.event} userID={this.props.userID}/>
-                        </div>
-                        <EditEventForm event={this.props.event} userID={this.props.userID}
-                                       showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
-                    </div>
-                </li>
-            );
-        }
+                    <EditEventForm event={this.props.event} userID={this.props.userID}
+                                   showForm={this.state.showForm} flip={this.flipFormState.bind(this)}/>
+                </div>
+            </li>
+        );
+    }
+}
+
+class DeadlineEvent extends React.Component {
+    render() {
+        return (
+            <li className="card hoverable red lighten-2">
+                <div className="collapsible-header red lighten-2">{this.props.event.title}</div>
+                <div className="collapsible-body red lighten-2">
+                    <p className="collapsible-course-body">
+                        {this.props.event.title}
+                    </p>
+                </div>
+            </li>
+        );
     }
 }
 
@@ -333,7 +348,7 @@ class DeadlineDateTime extends React.Component {
             <div id="DeadlineDateTime">
                 <p>
                     <i className="tiny material-icons">date_range</i>
-                    {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
+                     {titleCase(this.props.event.startTime.dayOfWeek)},&nbsp;
                     {titleCase(this.props.event.startTime.month)} {this.props.event.startTime.dayOfMonth}:&nbsp;
                     {convertTo12HourFormat(this.props.event.startTime.hour, this.props.event.startTime.minute)}
                 </p>
