@@ -246,8 +246,10 @@ public class EventRepository {
                 uniqueIDs.add(uid);
             }
         }
-        for (int i : uniqueIDs) {
-            for (int j : uniqueIDs) {
+        for (int i1 = 0; i1 < uniqueIDs.size(); i1++) {
+            int i = uniqueIDs.get(i1);
+            for (int j1 = 0; j1 < uniqueIDs.size(); j1++) {
+                int j = uniqueIDs.get(j1);
                 double weight = 1;
                 state = connection.prepareStatement("SELECT weight FROM friends WHERE userId = ? AND buddyId = ?");
                 state.setInt(1, i);
