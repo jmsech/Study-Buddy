@@ -47,15 +47,10 @@ class NewRecButton extends React.Component {
 class NewRecForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: '', users: []};
+        this.state = {users: []};
 
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
-    }
-
-    handleChange(rec) {
-        this.setState({value: rec.target.value});
     }
 
     async handleResponse(response) {
@@ -65,7 +60,7 @@ class NewRecForm extends React.Component {
         } else if (data ==="NoRecsToDisplay") {
             alert("There are no times in the specified time period where everyone is available")
         } else if (data === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         } else {
             this.props.setRecs(data);
         }
@@ -98,13 +93,6 @@ class NewRecForm extends React.Component {
         M.Timepicker.init(document.querySelectorAll('.timepicker'), {
             showClearBtn: true
         });
-
-        // Get user information for the autocomplete
-        this.getDataFromServer();
-    }
-
-    async getDataFromServer() {
-        this.setState({ users: await (await fetch("/users")).json() });
     }
 
     formatTime(x) {
@@ -125,22 +113,6 @@ class NewRecForm extends React.Component {
     }
 
     render() {
-        let userData={};
-        for (let i = 0; i < this.state.users.length; i++) {
-            const user = this.state.users[i];
-            const userFirst = user.name;
-            const userEmail = user.email;
-            const fullUser = userFirst.concat("(", userEmail, ")");
-            Object.assign(userData, {[fullUser]: null});
-        }
-
-        let options = {autocompleteOptions: { data: userData, limit: 20}};
-        M.Chips.init(document.querySelector('.chips-autocomplete'), options);
-
-        //const options = { data: userData, limit: 20};
-        // Initialize materialize autocomplete
-        //M.Chips.init(document.querySelector('.chips-autocomplete'), options);
-
         let style = {display: "none"};
         if (this.props.showRecForm) { style = {display: "block"} }
         let date = new Date();
@@ -158,7 +130,7 @@ class NewRecForm extends React.Component {
             <form id="eventform" onSubmit={this.handleSubmit} style={style}>
                 <div className="input-field">
                     <label htmlFor="recInviteList">Buddy list (insert comma-separated emails)</label>
-                    <input id="recInviteList" name="recInviteList" className="chips-autocomplete" required/>
+                    <textarea id="recInviteList" name="recInviteList" className="materialize-textarea" required/>
                 </div>
                 <div className="input-field">
                     <label htmlFor="startDate" className="active">Recommend no earlier than this day</label>
@@ -284,7 +256,7 @@ class RecAcceptButton extends React.Component {
         if (msg === "EventPeriodError") {
             alert("Invalid event period (start has to be before end)");
         } else if (msg === "InviteListError") {
-            alert("Invalid invite list (should be comma separated list of existing user's emails");
+            alert("Invalid invite list (should be list of existing users");
         }
         return response;
     }
