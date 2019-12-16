@@ -178,7 +178,12 @@ class Event extends React.Component {
                 <li className="card hoverable red lighten-2" style={{height: "20%"}}>
                     <div className="card-content black-text">
                          <span className="rowC">
-                             <EventTitle event={this.props.event}/><DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                             <div>
+                                 <EventTitle event={this.props.event}/>
+                             </div>
+                             <div>
+                                 <DeleteButton event={this.props.event} userID={this.props.userID} deadline={true}/>
+                             </div>
                          </span>
                         <DeadlineDateTime event={this.props.event}/>
                     </div>
