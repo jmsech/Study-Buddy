@@ -29,9 +29,16 @@ User: Class used to represent the users who sign up for StudyBuddy. There are tw
 Students and Professors who have different functionality.
 
 ApplicationController: Main controller class, which calls all of the other controllers.
-EventsController: Contains the functions for creating, rendering, deleting, and editing events.
-RecsController: Contains the functions for asking for recommendations, calling the recommendation algorithm, and displaying the possible recommended study events.
-UserController: Contains the functions for managing users signup, login, and authentication, as well as collecting events from the user's google cal.
+
+- EventsController: Contains the functions for creating, rendering, deleting, and editing events.
+
+- RecsController: Contains the functions for asking for time recommendations, calling the recommendation algorithm, and displaying the possible recommended study events.
+
+- UserController: Contains the functions for managing users signup, login, and authentication, as well as collecting events from the user's google cal.
+
+- BuddyRecsController: Contains the functions for asking for buddy recommendations for a certain class, calling the recommendation algorithm, and displaying the possible recommended study events. 
+
+- CourseLinkRecsController: Contains functions for linking users between courses, and calling the recommendation algorithm.
 
 RecommendationAlgorithm: The main algorithm for this app. It takes in a list of busy times 
 from all of the users it's generating the recommendation for, as well as their desired length
