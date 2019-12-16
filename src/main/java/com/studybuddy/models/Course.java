@@ -88,5 +88,10 @@ public class Course implements Cloneable {
 
     public void setTime(LocalDateTime time) { this.time = time; }
 
+    public void generateMatches(){
+    }
+    public void makeDistribution(){
+    }
+
 
 }
