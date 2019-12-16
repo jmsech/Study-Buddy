@@ -307,11 +307,15 @@ class EventInviteList extends React.Component {
         this.state = null;
     }
 
+    removeAttendee(user) {
+        alert(user.id + " yay");
+    }
+
     render() {
         if (this.props.showAttendees) {
             return (
                 <div>
-                    <ul>{this.props.event.attendees.map(user => <li key={user.id}>{user.name}</li>)}</ul>
+                    <ul>{this.props.event.attendees.map(user => <li key={user.id}>{user.name}&nbsp;<a onClick={this.removeAttendee}>(Remove)</a></li>)}</ul>
                 </div>
             );
         }
