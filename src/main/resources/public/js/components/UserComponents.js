@@ -249,10 +249,6 @@ class NewDeadlineForm extends React.Component {
                     <input id="title" name="title" type="text" required/>
                 </div>
                 <div className="input-field">
-                    <label htmlFor="description" className="blue-grey-text text-darken-2">Description</label>
-                    <textarea id="description" name="description" className="materialize-textarea"/>
-                </div>
-                <div className="input-field">
                     <label htmlFor="dueDate" className="active blue-grey-text text-darken-2">Due Date</label>
                     <input id="dueDate" type="text" className="datepicker" defaultValue={defaultStartDate} required/>
                 </div>
