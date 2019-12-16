@@ -203,10 +203,7 @@ class NewDeadlineForm extends React.Component {
         if (deadline.target.dueTime.value !== "") {
             dueTime = deadline.target.dueTime.value
         }
-        let description = deadline.target.description.value;
-        if (description == "") {
-            description = " "
-        }
+        let description = " "
         const formData = new FormData();
         // formData.append("userID", this.props.userID);
         formData.append("title", deadline.target.title.value);

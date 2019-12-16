@@ -46,7 +46,7 @@ public class ParticularCourseTests {
         List<Event> classEvents = new ArrayList<>();
         LocalDateTime start = LocalDateTime.of(2020,1,2,3,0);;
         LocalDateTime end = LocalDateTime.of(2020,1,2,4,0);;
-        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman");
+        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman", false);
         classEvents.add(fakeEvent);
         ParticularCourse fakeCourse = new ParticularCourse(courseId, courseName, courseDescription, courseNumber, semester, section,
                 location, credits, timeString, active, students, tas, instructor, classEvents);
@@ -88,7 +88,7 @@ public class ParticularCourseTests {
         List<Event> classEvents = new ArrayList<>();
         LocalDateTime start = LocalDateTime.of(2020,1,2,3,0);;
         LocalDateTime end = LocalDateTime.of(2020,1,2,4,0);;
-        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman");
+        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman", false);
         classEvents.add(fakeEvent);
         ParticularCourse fakeCourse = new ParticularCourse(courseId, courseName, courseDescription, courseNumber, semester, section,
                 location, credits, timeString, active, students, tas, instructor, classEvents);
@@ -112,7 +112,7 @@ public class ParticularCourseTests {
         List<Event> newClassEvents = new ArrayList<>();
         LocalDateTime newStart = LocalDateTime.of(2020,1,2,3,0);;
         LocalDateTime newEnd = LocalDateTime.of(2020,1,2,4,0);;
-        Event newFakeEvent = new Event(1111112, "Fake Event 2", newStart, newEnd, "Fake Description 2", students, "Shaffer");
+        Event newFakeEvent = new Event(1111112, "Fake Event 2", newStart, newEnd, "Fake Description 2", students, "Shaffer", false);
         classEvents.add(newFakeEvent);
 
         fakeCourse.setActive(false);

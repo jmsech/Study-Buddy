@@ -47,7 +47,7 @@ public class CourseTests {
         ;
         LocalDateTime end = LocalDateTime.of(2020, 1, 2, 4, 0);
         ;
-        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman");
+        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman", false);
         classEvents.add(fakeEvent);
         ParticularCourse fakeSemester = new ParticularCourse("AS.999.999(01)Fa2018", "Fake Particular Course", "Fake Course",
                 "AS.999.999", "Fa2021", "01", "Gilman", "3.00", "M 3:00 PM - 3:50 PM", true,
@@ -98,7 +98,7 @@ public class CourseTests {
         ;
         LocalDateTime end = LocalDateTime.of(2020, 1, 2, 4, 0);
         ;
-        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman");
+        Event fakeEvent = new Event(111111, "Fake Event", start, end, "Fake Description", students, "Gilman", false);
         classEvents.add(fakeEvent);
         ParticularCourse fakeSemester = new ParticularCourse("AS.999.999(01)Fa2018", "Fake Particular Course", "Fake Course",
                 "AS.999.999", "Fa2021", "01", "Gilman", "3.00", "M 3:00 PM - 3:50 PM", true,
@@ -136,7 +136,7 @@ public class CourseTests {
         ;
         LocalDateTime newend = LocalDateTime.of(2020, 1, 2, 5, 0);
         ;
-        Event newfakeEvent = new Event(1111112, "Fake Event 2", newstart, newend, "Fake Description 2", newstudents, "Mergenthaler");
+        Event newfakeEvent = new Event(1111112, "Fake Event 2", newstart, newend, "Fake Description 2", newstudents, "Mergenthaler", false);
         classEvents.add(newfakeEvent);
         ParticularCourse newfakeSemester = new ParticularCourse("AS.999.888(01)Fa2018", "Fake Particular Course 2", "Fake Course 2",
                 "AS.999.999", "Fa2021", "01", "Gilman", "3.00", "M 3:00 PM - 3:50 PM", true,
