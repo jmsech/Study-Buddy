@@ -102,7 +102,6 @@ class UserController {
     void removeFriend(Context ctx) throws SQLException {
         var userId = ctx.formParam("userId", Integer.class).get();
         var buddyId = ctx.formParam("buddyId", String.class).get();
-        System.out.println(buddyId);
         try {
             String email = buddyId.substring(1, buddyId.length() - 1);
             int id = IdRepository.getIdFromEmail(email, connection);
