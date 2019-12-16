@@ -25,9 +25,9 @@ In software engineering things rarely go as planned: tools don’t work as we ex
 What were some of the biggest challenges you found when developing your project? How did you overcome them?
 -->
 There was a steep learning curve getting this project started. All of us had just taken Intermediate and Data Structures previously, so while we were well equipped on the backend, the frontend was a lot to get started, especially at the beginning. 
-The hardest part of this project was continually just getting the frontend to work, dealing with the javascript and server calls.  
+The hardest part of this project was continually just getting the frontend to work, dealing with the javascript and server calls.  We did overcome this after many hours of debugging, and it was always incredibly relieving and exciting once we finally got things to work. We found that we were most effective when we worked in pairs, especially to debug, because both people had different ideas to try and could help each other from getting too frustrated. 
 
-Another issue we had unfortunately was people pushing things to master that shouldn't have been pushed, which often set back the project by a few days and was really frustrating at times. 
+Another issue we had unfortunately was people pushing things to master that shouldn't have been pushed, which often set back the project by a few days and was really frustrating at times. We had to communicate to everyone how important it was to be careful of what you push, and make sure that everyone was communicating properly about what they were working on and when. 
 
 # Experience with Tools
 
@@ -36,7 +36,7 @@ Which tools did you learn to like? Why?
 
 Which tools did you learn to dislike? Why? And what other tools would you have replaced them with if you were to start all over again?
 -->
-We really liked using Materialze for CSS. It made our app look polished and user friendly, and was *usually* pretty easy to implement. 
+We really liked using Materialze for CSS. It made our app look polished and user friendly, and was *usually* pretty easy to implement. Materialize was a lot of fun to play around with and try all the cool features. 
 
 We don't like javascript. We felt a little underprepared in terms of instruction on the topic, and found it was difficult to work with because of its lack of helpful error messages and its ability to allow you to do anything meant we never knew what was going wrong when things didn't work.
 I'm not sure javascript is avoidable, but at this point we would probably be able to get a lot more done if we took this class all over again.
