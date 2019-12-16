@@ -35,13 +35,13 @@ class RecsController {
         idInviteList = IdRepository.createIdListFromInviteList(connection, inviteListString, idInviteList);
         if (idInviteList == null) {
             ctx.json("InviteListError");
-            ctx.json(400);
+            ctx.status(400);
             return;
         }
         var inviteList = UserRepository.createUserListFromIdList(connection, inviteListString);
         if (inviteList == null) {
             ctx.json("InviteListError");
-            ctx.json(400);
+            ctx.status(400);
             return;
         }
 

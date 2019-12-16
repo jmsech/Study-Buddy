@@ -2,9 +2,9 @@
 
 ## Deployment
 
-You can find StudyBuddy deployed [here](http://oose-studybuddy.herokuapp.com/)
+You can find StudyBuddy deployed [here](http://oose-study-buddy.herokuapp.com/)
 
-NOTE: The Google calendar integration button works fully in the local version of the app but is currently dissabled in the heroku deployment, this is an issue to be resolved in the next iteration. To use StudyBuddy with Google Calendar integration download the project as described below.
+NOTE: The Google calendar integration button works fully in the local version of the app but is currently dissabled in the heroku deployment, this is an issue to be resolved in the next iteration. To use StudyBuddy with Google Calendar integration download the project as described below. Also, Since uploading the entire catalogue from SIS on Heroku takes more time than its timeout permits we were forced to only load 500 courses. If the full catalogue is needed please operate StudyBuddy from the master branch on the repository. 
 
 ## Download
 
